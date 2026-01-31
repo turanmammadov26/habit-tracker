@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Трекер привычек</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Default theme */
+            --bg-gradient-start: #1a1a2e;
+            --bg-gradient-end: #16213e;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #fff;
+            --text-secondary: #888;
+            --text-tertiary: #aaa;
+            --accent-start: #667eea;
+            --accent-end: #764ba2;
+            --stat-color: #667eea;
+            --month-bg: rgba(0, 0, 0, 0.2);
+            --day-cell-bg: rgba(255, 255, 255, 0.08);
+            --day-cell-hover: rgba(255, 255, 255, 0.15);
+            --input-bg: rgba(255, 255, 255, 0.1);
+            --input-focus: rgba(255, 255, 255, 0.15);
+            --delete-start: #f093fb;
+            --delete-end: #f5576c;
+            --archive-start: #ffa751;
+            --archive-end: #ffe259;
+        }
+
+        /* Telegram theme integration */
+        body.telegram-theme {
+            --bg-gradient-start: var(--tg-theme-bg-color, #1a1a2e);
+            --bg-gradient-end: var(--tg-theme-bg-color, #16213e);
+            --card-bg: var(--tg-theme-secondary-bg-color, rgba(255, 255, 255, 0.05));
+            --text-primary: var(--tg-theme-text-color, #fff);
+            --text-secondary: var(--tg-theme-hint-color, #888);
+            --text-tertiary: var(--tg-theme-hint-color, #aaa);
+            --accent-start: var(--tg-theme-button-color, #667eea);
+            --accent-end: var(--tg-theme-button-color, #764ba2);
+            --stat-color: var(--tg-theme-button-color, #667eea);
+        }
+
+        [data-theme="dark"] {
+            --bg-gradient-start: #000000;
+            --bg-gradient-end: #0a0a0a;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #fff;
+            --text-secondary: #666;
+            --text-tertiary: #999;
+            --accent-start: #ffffff;
+            --accent-end: #cccccc;
+            --stat-color: #ffffff;
+            --month-bg: rgba(255, 255, 255, 0.05);
+            --day-cell-bg: rgba(255, 255, 255, 0.05);
+            --day-cell-hover: rgba(255, 255, 255, 0.1);
+            --input-bg: rgba(255, 255, 255, 0.08);
+            --input-focus: rgba(255, 255, 255, 0.12);
+            --delete-start: #ff3333;
+            --delete-end: #cc0000;
+            --archive-start: #ffaa00;
+            --archive-end: #ff8800;
+        }
+
+        [data-theme="bw"] {
+            --bg-gradient-start: #1a1a1a;
+            --bg-gradient-end: #0d0d0d;
+            --card-bg: rgba(255, 255, 255, 0.04);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: #808080;
+            --text-tertiary: #a0a0a0;
+            --accent-start: #ffffff;
+            --accent-end: #e0e0e0;
+            --stat-color: #ffffff;
+            --month-bg: rgba(255, 255, 255, 0.06);
+            --day-cell-bg: rgba(255, 255, 255, 0.06);
+            --day-cell-hover: rgba(255, 255, 255, 0.12);
+            --input-bg: rgba(255, 255, 255, 0.08);
+            --input-focus: rgba(255, 255, 255, 0.12);
+            --delete-start: #ffffff;
+            --delete-end: #cccccc;
+            --archive-start: #bbbbbb;
+            --archive-end: #999999;
+        }
+
+        [data-theme="ocean"] {
+            --bg-gradient-start: #0f2027;
+            --bg-gradient-end: #203a43;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #fff;
+            --text-secondary: #7aa8b8;
+            --text-tertiary: #a0c4d0;
+            --accent-start: #2c7a9b;
+            --accent-end: #1f5e7a;
+            --stat-color: #4da8da;
+            --month-bg: rgba(0, 0, 0, 0.3);
+            --day-cell-bg: rgba(45, 120, 155, 0.2);
+            --day-cell-hover: rgba(45, 120, 155, 0.35);
+            --input-bg: rgba(255, 255, 255, 0.08);
+            --input-focus: rgba(255, 255, 255, 0.12);
+            --delete-start: #e63946;
+            --delete-end: #a4161a;
+            --archive-start: #f4a261;
+            --archive-end: #e76f51;
+        }
+
+        [data-theme="forest"] {
+            --bg-gradient-start: #1a2f1a;
+            --bg-gradient-end: #0d1f0d;
+            --card-bg: rgba(255, 255, 255, 0.04);
+            --card-border: rgba(144, 238, 144, 0.15);
+            --text-primary: #e8f5e9;
+            --text-secondary: #81c784;
+            --text-tertiary: #a5d6a7;
+            --accent-start: #4caf50;
+            --accent-end: #2e7d32;
+            --stat-color: #66bb6a;
+            --month-bg: rgba(0, 0, 0, 0.25);
+            --day-cell-bg: rgba(76, 175, 80, 0.15);
+            --day-cell-hover: rgba(76, 175, 80, 0.25);
+            --input-bg: rgba(255, 255, 255, 0.08);
+            --input-focus: rgba(255, 255, 255, 0.12);
+            --delete-start: #ef5350;
+            --delete-end: #c62828;
+            --archive-start: #ffb74d;
+            --archive-end: #ffa726;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 10px;
+            margin: 0;
+            overflow-x: hidden;
+            /* Telegram specific */
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* Allow text selection only in input fields */
+        input, .subtitle {
+            -webkit-user-select: text;
+            user-select: text;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            background: linear-gradient(135deg, var(--accent-start) 0%, var(--accent-end) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 1.2em;
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: color 0.3s;
+            position: relative;
+            padding: 8px 40px;
+        }
+
+        .subtitle:hover {
+            color: var(--text-tertiary);
+        }
+
+        .subtitle::after {
+            content: '✏️';
+            font-size: 0.7em;
+            opacity: 0;
+            transition: opacity 0.3s;
+            margin-left: 10px;
+        }
+
+        .subtitle:hover::after {
+            opacity: 0.6;
+        }
+
+        .subtitle-input {
+            text-align: center;
+            font-size: 1.2em;
+            color: var(--text-primary);
+            font-style: italic;
+            letter-spacing: 2px;
+            background: var(--input-bg);
+            border: 2px solid var(--accent-start);
+            border-radius: 8px;
+            padding: 8px 20px;
+            margin: 0 auto 30px auto;
+            display: block;
+            max-width: 600px;
+            width: 90%;
+        }
+
+        .subtitle-input:focus {
+            outline: none;
+            background: var(--input-focus);
+        }
+
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .language-switcher {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 5px;
+        }
+
+        .theme-selector {
+            position: absolute;
+            top: 56px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .theme-label {
+            font-size: 0.8em;
+            color: var(--text-secondary);
+        }
+
+        .theme-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .theme-btn {
+            width: 24px;
+            height: 24px;
+            border: 2px solid transparent;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .theme-btn:hover {
+            transform: scale(1.15);
+            border-color: var(--text-tertiary);
+        }
+
+        .theme-btn.active {
+            border-color: var(--accent-start);
+            box-shadow: 0 0 8px var(--accent-start);
+        }
+
+        .theme-btn[data-theme="default"] {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .theme-btn[data-theme="dark"] {
+            background: linear-gradient(135deg, #000000 0%, #333333 100%);
+        }
+
+        .theme-btn[data-theme="bw"] {
+            background: linear-gradient(135deg, #ffffff 0%, #888888 100%);
+        }
+
+        .theme-btn[data-theme="ocean"] {
+            background: linear-gradient(135deg, #2c7a9b 0%, #1f5e7a 100%);
+        }
+
+        .theme-btn[data-theme="forest"] {
+            background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+        }
+
+        .lang-btn {
+            padding: 6px 14px;
+            border: none;
+            border-radius: 6px;
+            background: var(--day-cell-bg);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .lang-btn:hover {
+            background: var(--day-cell-hover);
+            color: var(--text-primary);
+        }
+
+        .lang-btn.active {
+            background: linear-gradient(135deg, var(--accent-start) 0%, var(--accent-end) 100%);
+            color: var(--text-primary);
+        }
+
+        .habit-section {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+        }
+
+        .habit-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .habit-header:hover .habit-name {
+            color: #667eea;
+        }
+
+        .habit-name {
+            font-size: 1.5em;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .habit-name::before {
+            content: '▼ ';
+            font-size: 0.7em;
+            margin-right: 8px;
+            transition: transform 0.3s;
+            display: inline-block;
+        }
+
+        .habit-section.collapsed .habit-name::before {
+            transform: rotate(-90deg);
+        }
+
+        .calendar-container {
+            overflow: hidden;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+            max-height: 10000px;
+            opacity: 1;
+        }
+
+        .habit-section.collapsed .calendar-container {
+            max-height: 0;
+            opacity: 0;
+        }
+
+        .habit-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 0.9em;
+            color: var(--text-secondary);
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--stat-color);
+        }
+
+        .calendar {
+            display: grid;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .month-section {
+            background: var(--month-bg);
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .month-name {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--accent-start);
+            cursor: pointer;
+            user-select: none;
+            transition: color 0.2s;
+        }
+
+        .month-name:hover {
+            color: var(--accent-end);
+        }
+
+        .month-name::before {
+            content: '▼ ';
+            font-size: 0.8em;
+            margin-right: 5px;
+            transition: transform 0.3s;
+            display: inline-block;
+        }
+
+        .month-section.collapsed .month-name::before {
+            transform: rotate(-90deg);
+        }
+
+        .month-content {
+            overflow: hidden;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+            max-height: 5000px;
+            opacity: 1;
+        }
+
+        .month-section.collapsed .month-content {
+            max-height: 0;
+            opacity: 0;
+        }
+
+        .week-grid {
+            display: grid;
+            grid-template-columns: 60px repeat(7, 1fr);
+            gap: 4px;
+            margin-bottom: 4px;
+        }
+
+        .day-label {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            padding: 5px;
+            text-align: center;
+        }
+
+        .day-cell {
+            aspect-ratio: 1;
+            background: var(--day-cell-bg);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .day-cell:hover {
+            background: var(--day-cell-hover);
+            transform: scale(1.1);
+        }
+
+        .day-cell.completed {
+            background: linear-gradient(135deg, var(--accent-start) 0%, var(--accent-end) 100%);
+        }
+
+        .day-cell.today {
+            border: 2px solid #ffd700;
+        }
+
+        .add-habit {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .archive-toggle {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .archive-btn {
+            background: var(--input-bg);
+            padding: 10px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .archive-btn:hover {
+            background: var(--input-focus);
+        }
+
+        .archive-btn.active {
+            background: linear-gradient(135deg, var(--accent-start) 0%, var(--accent-end) 100%);
+            border-color: var(--accent-start);
+        }
+
+        .add-habit input {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            background: var(--input-bg);
+            color: var(--text-primary);
+            font-size: 1em;
+        }
+
+        .add-habit input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .add-habit input:focus {
+            outline: none;
+            background: var(--input-focus);
+        }
+
+        button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--accent-start) 0%, var(--accent-end) 100%);
+            color: white;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .delete-btn {
+            background: linear-gradient(135deg, var(--delete-start) 0%, var(--delete-end) 100%);
+            padding: 8px 20px;
+            font-size: 0.9em;
+        }
+
+        .archive-habit-btn {
+            background: linear-gradient(135deg, var(--archive-start) 0%, var(--archive-end) 100%);
+            padding: 8px 20px;
+            font-size: 0.9em;
+            margin-left: 10px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state h2 {
+            margin-bottom: 10px;
+            color: var(--text-tertiary);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+
+            .container {
+                padding: 0;
+            }
+
+            .week-grid {
+                grid-template-columns: 40px repeat(7, 1fr);
+                gap: 2px;
+            }
+
+            .day-label {
+                font-size: 0.7em;
+            }
+
+            h1 {
+                font-size: 1.8em;
+                margin-bottom: 5px;
+            }
+
+            .subtitle {
+                font-size: 1em;
+                margin-bottom: 20px;
+            }
+
+            .habit-name {
+                font-size: 1.1em;
+            }
+
+            .habit-section {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+
+            .language-switcher {
+                position: static;
+                margin: 0 auto 10px auto;
+            }
+
+            .theme-selector {
+                position: static;
+                margin: 0 auto 20px auto;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .theme-buttons {
+                justify-content: center;
+            }
+
+            .add-habit {
+                flex-direction: column;
+            }
+
+            .add-habit input {
+                width: 100%;
+                min-width: auto;
+            }
+
+            .add-habit button {
+                width: 100%;
+            }
+
+            .habit-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .habit-stats {
+                width: 100%;
+                justify-content: space-around;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="mainTitle">Трекер привычек</h1>
+        <div class="subtitle" id="subtitle" onclick="editSubtitle()">Just Do It</div>
+        
+        <div class="language-switcher">
+            <button class="lang-btn active" onclick="setLanguage('ru')">RU</button>
+            <button class="lang-btn" onclick="setLanguage('en')">EN</button>
+        </div>
+
+        <div class="theme-selector">
+            <div class="theme-label">Тема</div>
+            <div class="theme-buttons">
+                <div class="theme-btn active" data-theme="default" onclick="setTheme('default')" title="По умолчанию"></div>
+                <div class="theme-btn" data-theme="dark" onclick="setTheme('dark')" title="Темная"></div>
+                <div class="theme-btn" data-theme="bw" onclick="setTheme('bw')" title="Черно-белая"></div>
+                <div class="theme-btn" data-theme="ocean" onclick="setTheme('ocean')" title="Океан"></div>
+                <div class="theme-btn" data-theme="forest" onclick="setTheme('forest')" title="Лес"></div>
+            </div>
+        </div>
+
+        <div class="archive-toggle">
+            <button class="archive-btn active" id="activeBtn" onclick="showActive()">📋 Активные</button>
+            <button class="archive-btn" id="archiveBtn" onclick="showArchived()" style="margin-left: 10px;">📦 Архив</button>
+        </div>
+
+        <div class="add-habit">
+            <input type="text" id="habitInput" placeholder="Название новой привычки..." maxlength="50">
+            <button id="addBtn" onclick="addHabit()">➕ Добавить привычку</button>
+        </div>
+
+        <div id="habitsContainer"></div>
+    </div>
+
+    <script>
+        const MONTHS = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
+        const DAYS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+        
+        const MONTHS_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const DAYS_EN = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        
+        const translations = {
+            ru: {
+                title: 'Трекер привычек',
+                defaultSubtitle: 'Just Do It',
+                themeLabel: 'Тема',
+                active: 'Активные',
+                archive: 'Архив',
+                addPlaceholder: 'Название новой привычки...',
+                addButton: '➕ Добавить привычку',
+                streak: 'Серия',
+                thisMonth: 'В месяце',
+                percent: 'Процент',
+                total: 'Всего',
+                toArchive: '📦 В архив',
+                restore: '📤 Восстановить',
+                delete: '🗑️ Удалить',
+                deleteConfirm: 'Удалить эту привычку?',
+                noActiveHabits: 'У вас пока нет активных привычек',
+                noActiveHabitsDesc: 'Добавьте свою первую привычку, чтобы начать отслеживание!',
+                emptyArchive: 'Архив пуст',
+                emptyArchiveDesc: 'Здесь будут отображаться архивированные привычки',
+                week: 'Н'
+            },
+            en: {
+                title: 'Habit Tracker',
+                defaultSubtitle: 'Just Do It',
+                themeLabel: 'Theme',
+                active: 'Active',
+                archive: 'Archive',
+                addPlaceholder: 'New habit name...',
+                addButton: '➕ Add Habit',
+                streak: 'Streak',
+                thisMonth: 'This Month',
+                percent: 'Percent',
+                total: 'Total',
+                toArchive: '📦 Archive',
+                restore: '📤 Restore',
+                delete: '🗑️ Delete',
+                deleteConfirm: 'Delete this habit?',
+                noActiveHabits: 'You have no active habits yet',
+                noActiveHabitsDesc: 'Add your first habit to start tracking!',
+                emptyArchive: 'Archive is empty',
+                emptyArchiveDesc: 'Archived habits will be displayed here',
+                week: 'W'
+            }
+        };
+        
+        let habits = [];
+        let currentView = 'active'; // 'active' or 'archived'
+        let currentLang = 'ru';
+        let customSubtitle = '';
+        let currentTheme = 'default';
+
+        async function loadHabits() {
+            try {
+                const habitsData = localStorage.getItem('habits');
+                if (habitsData) {
+                    habits = JSON.parse(habitsData);
+                }
+            } catch (error) {
+                console.log('No saved habits found');
+                habits = [];
+            }
+            
+            try {
+                const lang = localStorage.getItem('language');
+                if (lang) {
+                    currentLang = lang;
+                }
+            } catch (error) {
+                currentLang = 'ru';
+            }
+            
+            try {
+                const subtitle = localStorage.getItem('customSubtitle');
+                if (subtitle) {
+                    customSubtitle = subtitle;
+                }
+            } catch (error) {
+                customSubtitle = '';
+            }
+            
+            try {
+                const theme = localStorage.getItem('theme');
+                if (theme) {
+                    currentTheme = theme;
+                    document.documentElement.setAttribute('data-theme', currentTheme);
+                }
+            } catch (error) {
+                currentTheme = 'default';
+            }
+            
+            updateLanguageUI();
+            updateThemeUI();
+            renderHabits();
+        }
+
+        async function saveSubtitle(text) {
+            customSubtitle = text;
+            try {
+                localStorage.setItem('customSubtitle', text);
+            } catch (error) {
+                console.error('Error saving subtitle:', error);
+            }
+        }
+
+        async function saveHabits() {
+            try {
+                localStorage.setItem('habits', JSON.stringify(habits));
+            } catch (error) {
+                console.error('Error saving habits:', error);
+            }
+        }
+
+        async function setLanguage(lang) {
+            currentLang = lang;
+            try {
+                localStorage.setItem('language', lang);
+            } catch (error) {
+                console.error('Error saving language:', error);
+            }
+            updateLanguageUI();
+            renderHabits();
+        }
+
+        async function setTheme(theme) {
+            currentTheme = theme;
+            document.documentElement.setAttribute('data-theme', theme);
+            try {
+                localStorage.setItem('theme', theme);
+            } catch (error) {
+                console.error('Error saving theme:', error);
+            }
+            updateThemeUI();
+        }
+
+        function updateThemeUI() {
+            const themeButtons = document.querySelectorAll('.theme-btn');
+            themeButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-theme') === currentTheme);
+            });
+        }
+
+        function updateLanguageUI() {
+            const t = translations[currentLang];
+            
+            document.getElementById('mainTitle').textContent = t.title;
+            
+            const subtitleElement = document.getElementById('subtitle');
+            const displayText = customSubtitle || t.defaultSubtitle;
+            subtitleElement.textContent = displayText;
+            
+            document.querySelector('.theme-label').textContent = t.themeLabel;
+            document.getElementById('activeBtn').textContent = '📋 ' + t.active;
+            document.getElementById('archiveBtn').textContent = '📦 ' + t.archive;
+            document.getElementById('habitInput').placeholder = t.addPlaceholder;
+            document.getElementById('addBtn').textContent = t.addButton;
+            
+            const langButtons = document.querySelectorAll('.lang-btn');
+            langButtons[0].classList.toggle('active', currentLang === 'ru');
+            langButtons[1].classList.toggle('active', currentLang === 'en');
+        }
+
+        function editSubtitle() {
+            const subtitleElement = document.getElementById('subtitle');
+            const currentText = subtitleElement.textContent;
+            
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = currentText;
+            input.className = 'subtitle-input';
+            input.maxLength = 100;
+            
+            subtitleElement.replaceWith(input);
+            input.focus();
+            input.select();
+            
+            function saveAndRestore() {
+                const newText = input.value.trim();
+                const newSubtitle = document.createElement('div');
+                newSubtitle.id = 'subtitle';
+                newSubtitle.className = 'subtitle';
+                newSubtitle.textContent = newText || translations[currentLang].defaultSubtitle;
+                newSubtitle.onclick = editSubtitle;
+                
+                input.replaceWith(newSubtitle);
+                saveSubtitle(newText);
+            }
+            
+            input.addEventListener('blur', saveAndRestore);
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    saveAndRestore();
+                }
+            });
+        }
+
+        function addHabit() {
+            const input = document.getElementById('habitInput');
+            const name = input.value.trim();
+            
+            if (!name) return;
+            
+            const habit = {
+                id: Date.now(),
+                name: name,
+                completed: [],
+                collapsed: false,
+                archived: false
+            };
+            
+            habits.push(habit);
+            input.value = '';
+            saveHabits();
+            renderHabits();
+        }
+
+        function deleteHabit(id, event) {
+            event.stopPropagation();
+            const t = translations[currentLang];
+            if (confirm(t.deleteConfirm)) {
+                habits = habits.filter(h => h.id !== id);
+                saveHabits();
+                renderHabits();
+            }
+        }
+
+        function archiveHabit(id, event) {
+            event.stopPropagation();
+            const habit = habits.find(h => h.id === id);
+            if (!habit) return;
+            
+            habit.archived = !habit.archived;
+            saveHabits();
+            renderHabits();
+        }
+
+        function showActive() {
+            currentView = 'active';
+            updateViewButtons();
+            renderHabits();
+        }
+
+        function showArchived() {
+            currentView = 'archived';
+            updateViewButtons();
+            renderHabits();
+        }
+
+        function updateViewButtons() {
+            const buttons = document.querySelectorAll('.archive-btn');
+            buttons[0].classList.toggle('active', currentView === 'active');
+            buttons[1].classList.toggle('active', currentView === 'archived');
+        }
+
+        function toggleCollapse(habitId, event) {
+            const habit = habits.find(h => h.id === habitId);
+            if (!habit) return;
+            
+            habit.collapsed = !habit.collapsed;
+            saveHabits();
+            renderHabits();
+        }
+
+        function toggleDay(habitId, dateStr) {
+            const habit = habits.find(h => h.id === habitId);
+            if (!habit) return;
+            
+            const index = habit.completed.indexOf(dateStr);
+            if (index > -1) {
+                habit.completed.splice(index, 1);
+            } else {
+                habit.completed.push(dateStr);
+            }
+            
+            saveHabits();
+            renderHabits();
+        }
+
+        function getDateString(date) {
+            return date.toISOString().split('T')[0];
+        }
+
+        function getDaysInMonth(year, month) {
+            return new Date(year, month + 1, 0).getDate();
+        }
+
+        function getFirstDayOfMonth(year, month) {
+            let day = new Date(year, month, 1).getDay();
+            return day === 0 ? 6 : day - 1;
+        }
+
+        function toggleMonth(habitId, month, event) {
+            event.stopPropagation();
+            const habit = habits.find(h => h.id === habitId);
+            if (!habit) return;
+            
+            if (!habit.collapsedMonths) {
+                habit.collapsedMonths = [];
+            }
+            
+            const index = habit.collapsedMonths.indexOf(month);
+            if (index > -1) {
+                habit.collapsedMonths.splice(index, 1);
+            } else {
+                habit.collapsedMonths.push(month);
+            }
+            
+            saveHabits();
+            renderHabits();
+        }
+
+        function generateCalendar(habit) {
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            const currentMonth = now.getMonth();
+            const today = getDateString(now);
+            
+            const months = currentLang === 'ru' ? MONTHS : MONTHS_EN;
+            const days = currentLang === 'ru' ? DAYS : DAYS_EN;
+            const weekLabel = translations[currentLang].week;
+            
+            // Initialize collapsedMonths if not exists
+            if (!habit.collapsedMonths) {
+                habit.collapsedMonths = [];
+                // Auto-collapse past months
+                for (let m = 0; m < currentMonth; m++) {
+                    habit.collapsedMonths.push(m);
+                }
+                // Auto-collapse future months
+                for (let m = currentMonth + 1; m < 12; m++) {
+                    habit.collapsedMonths.push(m);
+                }
+            }
+            
+            let html = '<div class="calendar">';
+            
+            for (let month = 0; month < 12; month++) {
+                const daysInMonth = getDaysInMonth(currentYear, month);
+                const firstDay = getFirstDayOfMonth(currentYear, month);
+                const isCollapsed = habit.collapsedMonths.includes(month);
+                
+                html += `<div class="month-section ${isCollapsed ? 'collapsed' : ''}">`;
+                html += `<div class="month-name" onclick="toggleMonth(${habit.id}, ${month}, event)">${months[month]}</div>`;
+                html += '<div class="month-content">';
+                
+                html += '<div class="week-grid">';
+                html += '<div class="day-label"></div>';
+                days.forEach(day => {
+                    html += `<div class="day-label">${day}</div>`;
+                });
+                html += '</div>';
+                
+                let dayCount = 1;
+                let weeks = Math.ceil((daysInMonth + firstDay) / 7);
+                
+                for (let week = 0; week < weeks; week++) {
+                    html += '<div class="week-grid">';
+                    html += `<div class="day-label">${weekLabel}${week + 1}</div>`;
+                    
+                    for (let day = 0; day < 7; day++) {
+                        if ((week === 0 && day < firstDay) || dayCount > daysInMonth) {
+                            html += '<div></div>';
+                        } else {
+                            const date = new Date(currentYear, month, dayCount);
+                            const dateStr = getDateString(date);
+                            const isCompleted = habit.completed.includes(dateStr);
+                            const isToday = dateStr === today;
+                            
+                            html += `<div class="day-cell ${isCompleted ? 'completed' : ''} ${isToday ? 'today' : ''}" 
+                                         onclick="toggleDay(${habit.id}, '${dateStr}')"
+                                         title="${dayCount} ${months[month]}"
+                                    ></div>`;
+                            dayCount++;
+                        }
+                    }
+                    html += '</div>';
+                }
+                
+                html += '</div>'; // month-content
+                html += '</div>'; // month-section
+            }
+            
+            html += '</div>';
+            return html;
+        }
+
+        function calculateStats(habit) {
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+            
+            const totalDays = habit.completed.length;
+            
+            const thisMonthCompleted = habit.completed.filter(dateStr => {
+                const date = new Date(dateStr);
+                return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
+            }).length;
+            
+            const daysInCurrentMonth = getDaysInMonth(currentYear, currentMonth);
+            const currentDay = now.getDate();
+            const percentThisMonth = currentDay > 0 ? Math.round((thisMonthCompleted / currentDay) * 100) : 0;
+            
+            let streak = 0;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            for (let i = 0; i < 365; i++) {
+                const checkDate = new Date(today);
+                checkDate.setDate(today.getDate() - i);
+                const dateStr = getDateString(checkDate);
+                
+                if (habit.completed.includes(dateStr)) {
+                    streak++;
+                } else if (i > 0) {
+                    break;
+                }
+            }
+            
+            return { totalDays, thisMonthCompleted, percentThisMonth, streak };
+        }
+
+        function renderHabits() {
+            const container = document.getElementById('habitsContainer');
+            const t = translations[currentLang];
+            
+            const filteredHabits = habits.filter(h => {
+                if (currentView === 'active') {
+                    return !h.archived;
+                } else {
+                    return h.archived;
+                }
+            });
+            
+            if (filteredHabits.length === 0) {
+                if (currentView === 'active') {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <h2>${t.noActiveHabits}</h2>
+                            <p>${t.noActiveHabitsDesc}</p>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <h2>${t.emptyArchive}</h2>
+                            <p>${t.emptyArchiveDesc}</p>
+                        </div>
+                    `;
+                }
+                return;
+            }
+            
+            let html = '';
+            
+            filteredHabits.forEach(habit => {
+                const stats = calculateStats(habit);
+                const collapsedClass = habit.collapsed ? 'collapsed' : '';
+                const archiveButtonText = habit.archived ? t.restore : t.toArchive;
+                
+                html += `
+                    <div class="habit-section ${collapsedClass}">
+                        <div class="habit-header" onclick="toggleCollapse(${habit.id}, event)">
+                            <div class="habit-name">${habit.name}</div>
+                            <div class="habit-stats">
+                                <div class="stat-item">
+                                    <div class="stat-value">${stats.streak}</div>
+                                    <div>${t.streak}</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">${stats.thisMonthCompleted}</div>
+                                    <div>${t.thisMonth}</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">${stats.percentThisMonth}%</div>
+                                    <div>${t.percent}</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">${stats.totalDays}</div>
+                                    <div>${t.total}</div>
+                                </div>
+                            </div>
+                            <div>
+                                <button class="archive-habit-btn" onclick="archiveHabit(${habit.id}, event)">${archiveButtonText}</button>
+                                <button class="delete-btn" onclick="deleteHabit(${habit.id}, event)">${t.delete}</button>
+                            </div>
+                        </div>
+                        <div class="calendar-container">
+                            ${generateCalendar(habit)}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        document.getElementById('habitInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addHabit();
+            }
+        });
+
+        // Telegram WebApp initialization
+        let tg = window.Telegram?.WebApp;
+
+        function initTelegramApp() {
+            if (tg) {
+                // Expand the app to full height
+                tg.expand();
+                
+                // Enable closing confirmation
+                tg.enableClosingConfirmation();
+                
+                // Set header color
+                tg.setHeaderColor('secondary_bg_color');
+                
+                // Apply Telegram theme if available
+                if (tg.themeParams) {
+                    document.body.classList.add('telegram-theme');
+                    
+                    // Set CSS variables from Telegram theme
+                    const root = document.documentElement;
+                    if (tg.themeParams.bg_color) {
+                        root.style.setProperty('--tg-theme-bg-color', tg.themeParams.bg_color);
+                    }
+                    if (tg.themeParams.text_color) {
+                        root.style.setProperty('--tg-theme-text-color', tg.themeParams.text_color);
+                    }
+                    if (tg.themeParams.hint_color) {
+                        root.style.setProperty('--tg-theme-hint-color', tg.themeParams.hint_color);
+                    }
+                    if (tg.themeParams.button_color) {
+                        root.style.setProperty('--tg-theme-button-color', tg.themeParams.button_color);
+                    }
+                    if (tg.themeParams.button_text_color) {
+                        root.style.setProperty('--tg-theme-button-text-color', tg.themeParams.button_text_color);
+                    }
+                    if (tg.themeParams.secondary_bg_color) {
+                        root.style.setProperty('--tg-theme-secondary-bg-color', tg.themeParams.secondary_bg_color);
+                    }
+                }
+                
+                // Handle back button
+                tg.BackButton.onClick(() => {
+                    if (confirm('Выйти из приложения?')) {
+                        tg.close();
+                    }
+                });
+                
+                // Show back button when needed
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 100) {
+                        tg.BackButton.show();
+                    } else {
+                        tg.BackButton.hide();
+                    }
+                });
+                
+                // Notify Telegram that app is ready
+                tg.ready();
+                
+                console.log('Telegram WebApp initialized');
+            }
+        }
+
+        // Initialize on load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initTelegramApp);
+        } else {
+            initTelegramApp();
+        }
+
+        loadHabits();
+    </script>
+</body>
+</html>
