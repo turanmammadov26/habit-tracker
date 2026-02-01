@@ -614,6 +614,14 @@
             font-size: 0.85em;
         }
 
+        .month-download-btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            padding: 6px 14px;
+            font-size: 0.8em;
+            margin-top: 10px;
+            width: 100%;
+        }
+
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -756,6 +764,7 @@
                 addButton: '➕ Добавить привычку',
                 thisMonth: 'В месяце',
                 total: 'Всего',
+                downloadMonth: '📥 Скачать месяц',
                 toArchive: '📦 В архив',
                 restore: '📤 Восстановить',
                 delete: '🗑️ Удалить',
@@ -776,6 +785,7 @@
                 addButton: '➕ Add Habit',
                 thisMonth: 'This Month',
                 total: 'Total',
+                downloadMonth: '📥 Download Month',
                 toArchive: '📦 Archive',
                 restore: '📤 Restore',
                 delete: '🗑️ Delete',
@@ -1071,6 +1081,170 @@
             return (day + 6) % 7;
         }
 
+        function downloadHabitMonth(habitId, month, year, event) {
+            event.stopPropagation();
+            const habit = habits.find(h => h.id === habitId);
+            if (!habit) return;
+            
+            generateCalendarImage([habit], month, year);
+        }
+
+        function generateCalendarImage(habitsToExport, month, year) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            const months = currentLang === 'ru' ? MONTHS : MONTHS_EN;
+            const days = currentLang === 'ru' ? DAYS : DAYS_EN;
+            
+            // Square format 1:1
+            const size = 1080;
+            canvas.width = size;
+            canvas.height = size;
+            
+            const padding = 60;
+            const contentWidth = size - (padding * 2);
+            
+            // Background gradient
+            const bgGradient = ctx.createLinearGradient(0, 0, size, size);
+            bgGradient.addColorStop(0, '#1a1a2e');
+            bgGradient.addColorStop(1, '#16213e');
+            ctx.fillStyle = bgGradient;
+            ctx.fillRect(0, 0, size, size);
+            
+            // Calculate calendar dimensions first to center everything
+            const cellSize = 70;
+            const cellGap = 8;
+            const daysInMonth = getDaysInMonth(year, month);
+            const firstDay = getFirstDayOfMonth(year, month);
+            const weeks = Math.ceil((daysInMonth + firstDay) / 7);
+            
+            const calendarHeight = (weeks * (cellSize + cellGap)) - cellGap;
+            const totalContentHeight = 100 + 70 + 80 + 40 + calendarHeight + 60;
+            
+            let yOffset = (size - totalContentHeight) / 2;
+            
+            // Title
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 42px -apple-system, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(`📊 ${translations[currentLang].title}`, size / 2, yOffset + 35);
+            yOffset += 70;
+            
+            // Month and year
+            ctx.font = 'bold 36px -apple-system, sans-serif';
+            ctx.fillStyle = '#667eea';
+            ctx.fillText(`${months[month]} ${year}`, size / 2, yOffset + 30);
+            yOffset += 70;
+            
+            habitsToExport.forEach((habit, habitIndex) => {
+                const stats = calculateStats(habit);
+                
+                // Habit name and stats on same line
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 32px -apple-system, sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText(habit.name, padding, yOffset);
+                
+                ctx.font = '24px -apple-system, sans-serif';
+                ctx.fillStyle = '#aaaaaa';
+                ctx.textAlign = 'right';
+                const statsText = `${stats.thisMonthCompleted} ${currentLang === 'ru' ? 'дней' : 'days'}`;
+                ctx.fillText(statsText, size - padding, yOffset);
+                
+                yOffset += 50;
+                
+                // Draw calendar grid
+                const gridWidth = (cellSize * 7) + (cellGap * 6);
+                const startX = (size - gridWidth) / 2;
+                
+                // Day labels
+                ctx.font = 'bold 18px -apple-system, sans-serif';
+                ctx.fillStyle = '#aaaaaa';
+                ctx.textAlign = 'center';
+                
+                for (let d = 0; d < 7; d++) {
+                    const x = startX + (d * (cellSize + cellGap)) + cellSize / 2;
+                    ctx.fillText(days[d], x, yOffset + 20);
+                }
+                
+                yOffset += 40;
+                
+                // Draw days
+                let dayNum = 1;
+                
+                for (let week = 0; week < weeks; week++) {
+                    for (let day = 0; day < 7; day++) {
+                        if ((week === 0 && day < firstDay) || dayNum > daysInMonth) {
+                            continue;
+                        }
+                        
+                        const x = startX + (day * (cellSize + cellGap));
+                        const y = yOffset + (week * (cellSize + cellGap));
+                        
+                        const date = new Date(year, month, dayNum);
+                        const dateStr = getDateString(date);
+                        const isCompleted = habit.completed.includes(dateStr);
+                        
+                        // Cell background with rounded corners
+                        ctx.save();
+                        const radius = 10;
+                        ctx.beginPath();
+                        ctx.moveTo(x + radius, y);
+                        ctx.lineTo(x + cellSize - radius, y);
+                        ctx.quadraticCurveTo(x + cellSize, y, x + cellSize, y + radius);
+                        ctx.lineTo(x + cellSize, y + cellSize - radius);
+                        ctx.quadraticCurveTo(x + cellSize, y + cellSize, x + cellSize - radius, y + cellSize);
+                        ctx.lineTo(x + radius, y + cellSize);
+                        ctx.quadraticCurveTo(x, y + cellSize, x, y + cellSize - radius);
+                        ctx.lineTo(x, y + radius);
+                        ctx.quadraticCurveTo(x, y, x + radius, y);
+                        ctx.closePath();
+                        
+                        if (isCompleted) {
+                            const gradient = ctx.createLinearGradient(x, y, x + cellSize, y + cellSize);
+                            gradient.addColorStop(0, '#667eea');
+                            gradient.addColorStop(1, '#764ba2');
+                            ctx.fillStyle = gradient;
+                        } else {
+                            ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+                        }
+                        ctx.fill();
+                        ctx.restore();
+                        
+                        // Day number
+                        ctx.fillStyle = isCompleted ? '#ffffff' : '#888888';
+                        ctx.font = 'bold 24px -apple-system, sans-serif';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(dayNum, x + cellSize / 2, y + cellSize / 2 + 8);
+                        
+                        dayNum++;
+                    }
+                }
+                
+                yOffset += calendarHeight + 50;
+            });
+            
+            // Footer
+            ctx.fillStyle = '#666666';
+            ctx.font = '20px -apple-system, sans-serif';
+            ctx.textAlign = 'center';
+            const subtitle = customSubtitle || translations[currentLang].defaultSubtitle;
+            ctx.fillText(subtitle, size / 2, yOffset);
+            
+            // Download
+            const habitName = habitsToExport[0]?.name || 'habit';
+            const fileName = `${habitName.replace(/[^a-zA-Zа-яА-Я0-9]/g, '-')}-${months[month]}-${year}.png`;
+            
+            canvas.toBlob(blob => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+        }
+
         function toggleMonth(habitId, month, event) {
             event.stopPropagation();
             const habit = habits.find(h => h.id === habitId);
@@ -1157,6 +1331,10 @@
                     }
                     html += '</div>';
                 }
+                
+                // Add download button for this month
+                const t = translations[currentLang];
+                html += `<button class="month-download-btn" onclick="downloadHabitMonth(${habit.id}, ${month}, ${currentYear}, event)">${t.downloadMonth}</button>`;
                 
                 html += '</div>'; // month-content
                 html += '</div>'; // month-section
