@@ -1231,17 +1231,42 @@
             const subtitle = customSubtitle || translations[currentLang].defaultSubtitle;
             ctx.fillText(subtitle, size / 2, yOffset);
             
-            // Download
+            // Send to Telegram chat or download
             const habitName = habitsToExport[0]?.name || 'habit';
             const fileName = `${habitName.replace(/[^a-zA-Zа-яА-Я0-9]/g, '-')}-${months[month]}-${year}.png`;
             
             canvas.toBlob(blob => {
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = fileName;
-                a.click();
-                URL.revokeObjectURL(url);
+                // Check if running in Telegram
+                if (window.Telegram?.WebApp) {
+                    // Convert blob to base64 for Telegram
+                    const reader = new FileReader();
+                    reader.onloadend = function() {
+                        const base64data = reader.result;
+                        
+                        // Send image data back to Telegram
+                        window.Telegram.WebApp.sendData(JSON.stringify({
+                            type: 'image',
+                            data: base64data,
+                            filename: fileName
+                        }));
+                        
+                        // Show success message
+                        window.Telegram.WebApp.showAlert(
+                            currentLang === 'ru' 
+                                ? '✅ Календарь отправлен в чат!' 
+                                : '✅ Calendar sent to chat!'
+                        );
+                    };
+                    reader.readAsDataURL(blob);
+                } else {
+                    // Regular download for browser
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = fileName;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                }
             });
         }
 
