@@ -1231,43 +1231,39 @@
             const subtitle = customSubtitle || translations[currentLang].defaultSubtitle;
             ctx.fillText(subtitle, size / 2, yOffset);
             
-            // Send to Telegram chat or download
+            // Download - optimized for Telegram
             const habitName = habitsToExport[0]?.name || 'habit';
             const fileName = `${habitName.replace(/[^a-zA-Zа-яА-Я0-9]/g, '-')}-${months[month]}-${year}.png`;
             
+            // Convert to blob and download immediately
             canvas.toBlob(blob => {
-                // Check if running in Telegram
-                if (window.Telegram?.WebApp) {
-                    // Convert blob to base64 for Telegram
-                    const reader = new FileReader();
-                    reader.onloadend = function() {
-                        const base64data = reader.result;
-                        
-                        // Send image data back to Telegram
-                        window.Telegram.WebApp.sendData(JSON.stringify({
-                            type: 'image',
-                            data: base64data,
-                            filename: fileName
-                        }));
-                        
-                        // Show success message
-                        window.Telegram.WebApp.showAlert(
-                            currentLang === 'ru' 
-                                ? '✅ Календарь отправлен в чат!' 
-                                : '✅ Calendar sent to chat!'
-                        );
-                    };
-                    reader.readAsDataURL(blob);
-                } else {
-                    // Regular download for browser
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = fileName;
-                    a.click();
+                if (!blob) return;
+                
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                a.style.display = 'none';
+                document.body.appendChild(a);
+                
+                // Trigger download
+                a.click();
+                
+                // Cleanup after a short delay
+                setTimeout(() => {
+                    document.body.removeChild(a);
                     URL.revokeObjectURL(url);
+                }, 100);
+                
+                // Show notification in Telegram
+                if (window.Telegram?.WebApp) {
+                    window.Telegram.WebApp.showAlert(
+                        currentLang === 'ru' 
+                            ? '✅ Календарь сохранён!' 
+                            : '✅ Calendar saved!'
+                    );
                 }
-            });
+            }, 'image/png', 0.95);
         }
 
         function toggleMonth(habitId, month, event) {
