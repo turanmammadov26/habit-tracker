@@ -320,9 +320,9 @@
 
         .habit-section {
             background: var(--card-bg);
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 25px;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 18px;
             backdrop-filter: blur(10px);
             border: 1px solid var(--card-border);
         }
@@ -331,9 +331,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 15px;
+            margin-bottom: 15px;
+            gap: 12px;
             cursor: pointer;
             user-select: none;
         }
@@ -343,21 +342,75 @@
         }
 
         .habit-name {
-            font-size: 1.5em;
+            font-size: 1.3em;
             font-weight: 600;
             transition: color 0.2s;
+            flex: 0 1 auto;
+            min-width: 0;
         }
 
         .habit-name::before {
             content: '▼ ';
-            font-size: 0.7em;
-            margin-right: 8px;
+            font-size: 0.65em;
+            margin-right: 6px;
             transition: transform 0.3s;
             display: inline-block;
         }
 
         .habit-section.collapsed .habit-name::before {
             transform: rotate(-90deg);
+        }
+
+        .habit-buttons {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .mini-calendar {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            margin: 0 12px;
+        }
+
+        .mini-day {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            background: var(--day-cell-bg);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75em;
+            position: relative;
+        }
+
+        .mini-day:hover {
+            background: var(--day-cell-hover);
+            transform: scale(1.05);
+        }
+
+        .mini-day.completed {
+            background: linear-gradient(135deg, var(--accent-start) 0%, var(--accent-end) 100%);
+        }
+
+        .mini-day.today {
+            border: 2px solid #ffd700;
+        }
+
+        .mini-day-number {
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .mini-day-label {
+            font-size: 0.7em;
+            opacity: 0.7;
+            margin-top: -2px;
         }
 
         .calendar-container {
@@ -393,20 +446,20 @@
 
         .calendar {
             display: grid;
-            gap: 15px;
-            margin-top: 20px;
+            gap: 12px;
+            margin-top: 15px;
         }
 
         .month-section {
             background: var(--month-bg);
-            border-radius: 10px;
-            padding: 15px;
+            border-radius: 8px;
+            padding: 12px;
         }
 
         .month-name {
-            font-size: 1.1em;
+            font-size: 1em;
             font-weight: 600;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             color: var(--accent-start);
             cursor: pointer;
             user-select: none;
@@ -443,22 +496,22 @@
 
         .week-grid {
             display: grid;
-            grid-template-columns: 60px repeat(7, 1fr);
-            gap: 4px;
-            margin-bottom: 4px;
+            grid-template-columns: 50px repeat(7, 1fr);
+            gap: 3px;
+            margin-bottom: 3px;
         }
 
         .day-label {
-            font-size: 0.85em;
+            font-size: 0.75em;
             color: var(--text-secondary);
-            padding: 5px;
+            padding: 3px;
             text-align: center;
         }
 
         .day-cell {
             aspect-ratio: 1;
             background: var(--day-cell-bg);
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
             transition: all 0.2s;
             position: relative;
@@ -466,7 +519,7 @@
 
         .day-cell:hover {
             background: var(--day-cell-hover);
-            transform: scale(1.1);
+            transform: scale(1.05);
         }
 
         .day-cell.completed {
@@ -529,15 +582,16 @@
         }
 
         button {
-            padding: 12px 30px;
+            padding: 8px 16px;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             background: linear-gradient(135deg, var(--accent-start) 0%, var(--accent-end) 100%);
             color: white;
-            font-size: 1em;
+            font-size: 0.85em;
             font-weight: 600;
             cursor: pointer;
             transition: transform 0.2s;
+            white-space: nowrap;
         }
 
         button:hover {
@@ -550,15 +604,14 @@
 
         .delete-btn {
             background: linear-gradient(135deg, var(--delete-start) 0%, var(--delete-end) 100%);
-            padding: 8px 20px;
-            font-size: 0.9em;
+            padding: 8px 16px;
+            font-size: 0.85em;
         }
 
         .archive-habit-btn {
             background: linear-gradient(135deg, var(--archive-start) 0%, var(--archive-end) 100%);
-            padding: 8px 20px;
-            font-size: 0.9em;
-            margin-left: 10px;
+            padding: 8px 16px;
+            font-size: 0.85em;
         }
 
         .empty-state {
@@ -701,9 +754,7 @@
                 archive: 'Архив',
                 addPlaceholder: 'Название новой привычки...',
                 addButton: '➕ Добавить привычку',
-                streak: 'Серия',
                 thisMonth: 'В месяце',
-                percent: 'Процент',
                 total: 'Всего',
                 toArchive: '📦 В архив',
                 restore: '📤 Восстановить',
@@ -723,9 +774,7 @@
                 archive: 'Archive',
                 addPlaceholder: 'New habit name...',
                 addButton: '➕ Add Habit',
-                streak: 'Streak',
                 thisMonth: 'This Month',
-                percent: 'Percent',
                 total: 'Total',
                 toArchive: '📦 Archive',
                 restore: '📤 Restore',
@@ -971,8 +1020,43 @@
             renderHabits();
         }
 
+        function generateMiniCalendar(habit) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const days = currentLang === 'ru' ? DAYS : DAYS_EN;
+            
+            let html = '<div class="mini-calendar">';
+            
+            // Show 5 days: yesterday to 3 days ahead
+            for (let i = -1; i <= 3; i++) {
+                const date = new Date(today);
+                date.setDate(today.getDate() + i);
+                
+                const dateStr = getDateString(date);
+                const dayNumber = date.getDate();
+                const dayOfWeek = date.getDay();
+                const dayLabel = days[dayOfWeek === 0 ? 6 : dayOfWeek - 1]; // Convert to Monday-first
+                
+                const isCompleted = habit.completed.includes(dateStr);
+                const isToday = i === 0;
+                
+                html += `<div class="mini-day ${isCompleted ? 'completed' : ''} ${isToday ? 'today' : ''}" 
+                             onclick="event.stopPropagation(); toggleDay(${habit.id}, '${dateStr}')">
+                            <div class="mini-day-number">${dayNumber}</div>
+                            <div class="mini-day-label">${dayLabel}</div>
+                         </div>`;
+            }
+            
+            html += '</div>';
+            return html;
+        }
+
         function getDateString(date) {
-            return date.toISOString().split('T')[0];
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
         }
 
         function getDaysInMonth(year, month) {
@@ -980,8 +1064,11 @@
         }
 
         function getFirstDayOfMonth(year, month) {
+            // Get day of week: 0=Sunday, 1=Monday, ..., 6=Saturday
             let day = new Date(year, month, 1).getDay();
-            return day === 0 ? 6 : day - 1;
+            // Convert to Monday-based: 0=Monday, 1=Tuesday, ..., 6=Sunday
+            // Sunday (0) becomes 6, Monday (1) becomes 0, etc.
+            return (day + 6) % 7;
         }
 
         function toggleMonth(habitId, month, event) {
@@ -1084,34 +1171,16 @@
             const currentMonth = now.getMonth();
             const currentYear = now.getFullYear();
             
+            // Total completed days across all time
             const totalDays = habit.completed.length;
             
+            // Count completed days in current month only
             const thisMonthCompleted = habit.completed.filter(dateStr => {
-                const date = new Date(dateStr);
+                const date = new Date(dateStr + 'T00:00:00'); // Force local timezone
                 return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
             }).length;
             
-            const daysInCurrentMonth = getDaysInMonth(currentYear, currentMonth);
-            const currentDay = now.getDate();
-            const percentThisMonth = currentDay > 0 ? Math.round((thisMonthCompleted / currentDay) * 100) : 0;
-            
-            let streak = 0;
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            
-            for (let i = 0; i < 365; i++) {
-                const checkDate = new Date(today);
-                checkDate.setDate(today.getDate() - i);
-                const dateStr = getDateString(checkDate);
-                
-                if (habit.completed.includes(dateStr)) {
-                    streak++;
-                } else if (i > 0) {
-                    break;
-                }
-            }
-            
-            return { totalDays, thisMonthCompleted, percentThisMonth, streak };
+            return { totalDays, thisMonthCompleted };
         }
 
         function renderHabits() {
@@ -1156,25 +1225,8 @@
                     <div class="habit-section ${collapsedClass}">
                         <div class="habit-header" onclick="toggleCollapse(${habit.id}, event)">
                             <div class="habit-name">${habit.name}</div>
-                            <div class="habit-stats">
-                                <div class="stat-item">
-                                    <div class="stat-value">${stats.streak}</div>
-                                    <div>${t.streak}</div>
-                                </div>
-                                <div class="stat-item">
-                                    <div class="stat-value">${stats.thisMonthCompleted}</div>
-                                    <div>${t.thisMonth}</div>
-                                </div>
-                                <div class="stat-item">
-                                    <div class="stat-value">${stats.percentThisMonth}%</div>
-                                    <div>${t.percent}</div>
-                                </div>
-                                <div class="stat-item">
-                                    <div class="stat-value">${stats.totalDays}</div>
-                                    <div>${t.total}</div>
-                                </div>
-                            </div>
-                            <div>
+                            ${generateMiniCalendar(habit)}
+                            <div class="habit-buttons">
                                 <button class="archive-habit-btn" onclick="archiveHabit(${habit.id}, event)">${archiveButtonText}</button>
                                 <button class="delete-btn" onclick="deleteHabit(${habit.id}, event)">${t.delete}</button>
                             </div>
