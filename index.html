@@ -764,7 +764,7 @@
                 addButton: '➕ Добавить привычку',
                 thisMonth: 'В месяце',
                 total: 'Всего',
-                downloadMonth: '📥 Скачать месяц',
+                downloadMonth: '📤 Поделиться',
                 toArchive: '📦 В архив',
                 restore: '📤 Восстановить',
                 delete: '🗑️ Удалить',
@@ -785,7 +785,7 @@
                 addButton: '➕ Add Habit',
                 thisMonth: 'This Month',
                 total: 'Total',
-                downloadMonth: '📥 Download Month',
+                downloadMonth: '📤 Share',
                 toArchive: '📦 Archive',
                 restore: '📤 Restore',
                 delete: '🗑️ Delete',
@@ -1231,37 +1231,52 @@
             const subtitle = customSubtitle || translations[currentLang].defaultSubtitle;
             ctx.fillText(subtitle, size / 2, yOffset);
             
-            // Download - optimized for Telegram
+            // Share/Download image
             const habitName = habitsToExport[0]?.name || 'habit';
             const fileName = `${habitName.replace(/[^a-zA-Zа-яА-Я0-9]/g, '-')}-${months[month]}-${year}.png`;
             
-            // Convert to blob and download immediately
-            canvas.toBlob(blob => {
+            canvas.toBlob(async (blob) => {
                 if (!blob) return;
                 
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = fileName;
-                a.style.display = 'none';
-                document.body.appendChild(a);
-                
-                // Trigger download
-                a.click();
-                
-                // Cleanup after a short delay
-                setTimeout(() => {
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                }, 100);
-                
-                // Show notification in Telegram
-                if (window.Telegram?.WebApp) {
-                    window.Telegram.WebApp.showAlert(
-                        currentLang === 'ru' 
-                            ? '✅ Календарь сохранён!' 
-                            : '✅ Calendar saved!'
-                    );
+                // Check if we're in Telegram and Share API is available
+                if (window.Telegram?.WebApp && navigator.share) {
+                    try {
+                        const file = new File([blob], fileName, { type: 'image/png' });
+                        
+                        await navigator.share({
+                            files: [file],
+                            title: habitName,
+                            text: `${months[month]} ${year}`
+                        });
+                        
+                        console.log('Image shared successfully');
+                    } catch (err) {
+                        // If sharing fails or is cancelled, show the image in a new window
+                        if (err.name !== 'AbortError') {
+                            const url = URL.createObjectURL(blob);
+                            window.open(url, '_blank');
+                            
+                            window.Telegram.WebApp.showAlert(
+                                currentLang === 'ru'
+                                    ? 'Картинка открыта в новом окне. Нажмите и удерживайте для сохранения.'
+                                    : 'Image opened in new window. Tap and hold to save.'
+                            );
+                        }
+                    }
+                } else {
+                    // Regular browser download
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = fileName;
+                    a.style.display = 'none';
+                    document.body.appendChild(a);
+                    a.click();
+                    
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    }, 100);
                 }
             }, 'image/png', 0.95);
         }
