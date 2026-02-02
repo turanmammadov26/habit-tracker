@@ -237,65 +237,6 @@
             gap: 5px;
         }
 
-        .theme-selector {
-            position: absolute;
-            top: 56px;
-            right: 20px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .theme-label {
-            font-size: 0.8em;
-            color: var(--text-secondary);
-        }
-
-        .theme-buttons {
-            display: flex;
-            gap: 5px;
-        }
-
-        .theme-btn {
-            width: 24px;
-            height: 24px;
-            border: 2px solid transparent;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s;
-            position: relative;
-        }
-
-        .theme-btn:hover {
-            transform: scale(1.15);
-            border-color: var(--text-tertiary);
-        }
-
-        .theme-btn.active {
-            border-color: var(--accent-start);
-            box-shadow: 0 0 8px var(--accent-start);
-        }
-
-        .theme-btn[data-theme="default"] {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .theme-btn[data-theme="dark"] {
-            background: linear-gradient(135deg, #000000 0%, #333333 100%);
-        }
-
-        .theme-btn[data-theme="bw"] {
-            background: linear-gradient(135deg, #ffffff 0%, #888888 100%);
-        }
-
-        .theme-btn[data-theme="ocean"] {
-            background: linear-gradient(135deg, #2c7a9b 0%, #1f5e7a 100%);
-        }
-
-        .theme-btn[data-theme="forest"] {
-            background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
-        }
-
         .lang-btn {
             padding: 6px 14px;
             border: none;
@@ -537,6 +478,283 @@
             flex-wrap: wrap;
         }
 
+        .add-note {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .add-note input {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            background: var(--input-bg);
+            color: var(--text-primary);
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .add-note input:focus {
+            outline: none;
+            background: var(--input-focus);
+            box-shadow: 0 0 0 2px var(--accent-start);
+        }
+
+        .note-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .note-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .note-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .note-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .note-date {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+        }
+
+        .note-preview {
+            color: var(--text-secondary);
+            font-size: 0.95em;
+            line-height: 1.5;
+            margin-bottom: 12px;
+            max-height: 100px;
+            overflow: hidden;
+        }
+
+        .note-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .note-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .note-modal.active {
+            display: flex;
+        }
+
+        .note-modal-content {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .note-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .note-modal-title {
+            flex: 1;
+            font-size: 1.5em;
+            font-weight: 600;
+            padding: 8px 12px;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            background: var(--input-bg);
+            color: var(--text-primary);
+            margin-right: 12px;
+        }
+
+        .note-modal-title:focus {
+            outline: none;
+            border-color: var(--accent-start);
+        }
+
+        .note-close-btn {
+            background: var(--delete-start);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .note-textarea {
+            width: 100%;
+            min-height: 300px;
+            padding: 15px;
+            border: 2px solid var(--card-border);
+            border-radius: 8px;
+            background: var(--input-bg);
+            color: var(--text-primary);
+            font-size: 1em;
+            font-family: inherit;
+            line-height: 1.6;
+            resize: vertical;
+        }
+
+        .note-textarea:focus {
+            outline: none;
+            border-color: var(--accent-start);
+        }
+
+        .text-preview {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .text-preview h3 {
+            color: var(--accent-start);
+        }
+
+        .text-preview li {
+            list-style: none;
+        }
+
+        .note-section {
+            position: relative;
+        }
+
+        .note-toolbar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-btn {
+            padding: 8px 12px;
+            background: var(--input-bg);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .toolbar-btn:hover {
+            background: var(--accent-start);
+            color: white;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: var(--input-bg);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: all 0.2s;
+        }
+
+        .checklist-item:hover {
+            background: var(--input-focus);
+        }
+
+        .checklist-checkbox {
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            cursor: pointer;
+            border: 2px solid var(--accent-start);
+            border-radius: 4px;
+            background: transparent;
+            position: relative;
+        }
+
+        .checklist-checkbox.checked {
+            background: var(--accent-start);
+        }
+
+        .checklist-checkbox.checked::after {
+            content: '✓';
+            position: absolute;
+            color: white;
+            font-size: 14px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .checklist-text {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1em;
+            padding: 4px;
+            border-bottom: 1px solid transparent;
+        }
+
+        .checklist-text:focus {
+            outline: none;
+            border-bottom-color: var(--accent-start);
+        }
+
+        .checklist-text.completed {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        .checklist-delete {
+            color: var(--delete-start);
+            cursor: pointer;
+            font-size: 1.2em;
+            padding: 4px 8px;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+
+        .checklist-delete:hover {
+            opacity: 1;
+        }
+
+        .checklist-section {
+            border-top: 1px solid var(--card-border);
+            padding-top: 20px;
+        }
+
         .archive-toggle {
             display: flex;
             justify-content: center;
@@ -559,6 +777,28 @@
         .archive-btn.active {
             background: linear-gradient(135deg, var(--accent-start) 0%, var(--accent-end) 100%);
             border-color: var(--accent-start);
+        }
+
+        .archive-sub-btn {
+            background: var(--input-bg);
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            font-size: 0.9em;
+            color: var(--text-secondary);
+        }
+
+        .archive-sub-btn:hover {
+            background: var(--input-focus);
+            color: var(--text-primary);
+        }
+
+        .archive-sub-btn.active {
+            background: linear-gradient(135deg, var(--accent-start) 0%, var(--accent-end) 100%);
+            border-color: var(--accent-start);
+            color: white;
         }
 
         .add-habit input {
@@ -722,28 +962,25 @@
             <button class="lang-btn" onclick="setLanguage('en')">EN</button>
         </div>
 
-        <div class="theme-selector">
-            <div class="theme-label">Тема</div>
-            <div class="theme-buttons">
-                <div class="theme-btn active" data-theme="default" onclick="setTheme('default')" title="По умолчанию"></div>
-                <div class="theme-btn" data-theme="dark" onclick="setTheme('dark')" title="Темная"></div>
-                <div class="theme-btn" data-theme="bw" onclick="setTheme('bw')" title="Черно-белая"></div>
-                <div class="theme-btn" data-theme="ocean" onclick="setTheme('ocean')" title="Океан"></div>
-                <div class="theme-btn" data-theme="forest" onclick="setTheme('forest')" title="Лес"></div>
-            </div>
-        </div>
-
         <div class="archive-toggle">
             <button class="archive-btn active" id="activeBtn" onclick="showActive()">📋 Активные</button>
             <button class="archive-btn" id="archiveBtn" onclick="showArchived()" style="margin-left: 10px;">📦 Архив</button>
+            <button class="archive-btn" id="notesBtn" onclick="showNotes()" style="margin-left: 10px;">📝 Заметки</button>
         </div>
 
-        <div class="add-habit">
+        <div class="add-habit" id="addHabitSection">
             <input type="text" id="habitInput" placeholder="Название новой привычки..." maxlength="50">
             <button id="addBtn" onclick="addHabit()">➕ Добавить привычку</button>
         </div>
 
+        <div class="add-note" id="addNoteSection" style="display: none;">
+            <input type="text" id="noteTitleInput" placeholder="Заголовок заметки..." maxlength="100">
+            <button id="addNoteBtn" onclick="addNote()">➕ Добавить заметку</button>
+        </div>
+
         <div id="habitsContainer"></div>
+        <div id="notesContainer" style="display: none;"></div>
+        <div id="archiveContainer" style="display: none;"></div>
     </div>
 
     <script>
@@ -760,6 +997,7 @@
                 themeLabel: 'Тема',
                 active: 'Активные',
                 archive: 'Архив',
+                notes: 'Заметки',
                 addPlaceholder: 'Название новой привычки...',
                 addButton: '➕ Добавить привычку',
                 thisMonth: 'В месяце',
@@ -773,7 +1011,19 @@
                 noActiveHabitsDesc: 'Добавьте свою первую привычку, чтобы начать отслеживание!',
                 emptyArchive: 'Архив пуст',
                 emptyArchiveDesc: 'Здесь будут отображаться архивированные привычки',
-                week: 'Н'
+                week: 'Н',
+                // Notes translations
+                noteTitlePlaceholder: 'Заголовок заметки...',
+                addNoteButton: '➕ Добавить заметку',
+                noNotes: 'Заметок пока нет',
+                noNotesDesc: 'Добавьте свою первую заметку!',
+                untitledNote: 'Без названия',
+                deleteNote: '🗑️ Удалить',
+                deleteNoteConfirm: 'Удалить эту заметку?',
+                addTextSection: '📝 Добавить текст',
+                addChecklistSection: '☑️ Добавить чек-лист',
+                deleteSection: '✕ Удалить',
+                textPlaceholder: 'Пишите текст... Выделите текст и нажмите кнопки для форматирования'
             },
             en: {
                 title: 'Habit Tracker',
@@ -781,6 +1031,7 @@
                 themeLabel: 'Theme',
                 active: 'Active',
                 archive: 'Archive',
+                notes: 'Notes',
                 addPlaceholder: 'New habit name...',
                 addButton: '➕ Add Habit',
                 thisMonth: 'This Month',
@@ -794,15 +1045,30 @@
                 noActiveHabitsDesc: 'Add your first habit to start tracking!',
                 emptyArchive: 'Archive is empty',
                 emptyArchiveDesc: 'Archived habits will be displayed here',
-                week: 'W'
+                week: 'W',
+                // Notes translations
+                noteTitlePlaceholder: 'Note title...',
+                addNoteButton: '➕ Add Note',
+                noNotes: 'No notes yet',
+                noNotesDesc: 'Add your first note!',
+                untitledNote: 'Untitled',
+                deleteNote: '🗑️ Delete',
+                deleteNoteConfirm: 'Delete this note?',
+                addTextSection: '📝 Add Text',
+                addChecklistSection: '☑️ Add Checklist',
+                deleteSection: '✕ Delete',
+                textPlaceholder: 'Start writing... Select text and press buttons to format'
             }
         };
         
         let habits = [];
-        let currentView = 'active'; // 'active' or 'archived'
+        let notes = [];
+        let currentView = 'active'; // 'active', 'archived', or 'notes'
+        let archiveSubView = 'all'; // 'habits', 'notes', or 'all' - for archive sub-tabs
         let currentLang = 'ru';
         let customSubtitle = '';
         let currentTheme = 'default';
+        let currentNoteId = null;
 
         async function loadHabits() {
             try {
@@ -813,6 +1079,17 @@
             } catch (error) {
                 console.log('No saved habits found');
                 habits = [];
+            }
+
+            // Load notes
+            try {
+                const notesData = localStorage.getItem('notes');
+                if (notesData) {
+                    notes = JSON.parse(notesData);
+                }
+            } catch (error) {
+                console.log('No saved notes found');
+                notes = [];
             }
             
             try {
@@ -903,15 +1180,39 @@
             const displayText = customSubtitle || t.defaultSubtitle;
             subtitleElement.textContent = displayText;
             
-            document.querySelector('.theme-label').textContent = t.themeLabel;
             document.getElementById('activeBtn').textContent = '📋 ' + t.active;
             document.getElementById('archiveBtn').textContent = '📦 ' + t.archive;
+            document.getElementById('notesBtn').textContent = '📝 ' + t.notes;
             document.getElementById('habitInput').placeholder = t.addPlaceholder;
             document.getElementById('addBtn').textContent = t.addButton;
+            
+            // Notes translations
+            document.getElementById('noteTitleInput').placeholder = t.noteTitlePlaceholder;
+            document.getElementById('addNoteBtn').textContent = t.addNoteButton;
+            
+            // Note modal buttons
+            const addTextBtn = document.getElementById('addTextSectionBtn');
+            const addChecklistBtn = document.getElementById('addChecklistSectionBtn');
+            if (addTextBtn) addTextBtn.textContent = t.addTextSection;
+            if (addChecklistBtn) addChecklistBtn.textContent = t.addChecklistSection;
             
             const langButtons = document.querySelectorAll('.lang-btn');
             langButtons[0].classList.toggle('active', currentLang === 'ru');
             langButtons[1].classList.toggle('active', currentLang === 'en');
+            
+            // Re-render current view to update translations
+            if (currentView === 'active') {
+                renderHabits();
+            } else if (currentView === 'archived') {
+                renderArchived();
+            } else if (currentView === 'notes') {
+                renderNotes();
+            }
+            
+            // Update note modal if it's open
+            if (currentNoteId) {
+                renderNoteSections();
+            }
         }
 
         function editSubtitle() {
@@ -988,22 +1289,201 @@
             renderHabits();
         }
 
+        function restoreHabit(id) {
+            const habit = habits.find(h => h.id === id);
+            if (!habit) return;
+            
+            habit.archived = false;
+            saveHabits();
+            renderArchived();
+        }
+
         function showActive() {
             currentView = 'active';
             updateViewButtons();
             renderHabits();
+            document.getElementById('habitsContainer').style.display = 'block';
+            document.getElementById('notesContainer').style.display = 'none';
+            document.getElementById('archiveContainer').style.display = 'none';
+            document.getElementById('addHabitSection').style.display = 'flex';
+            document.getElementById('addNoteSection').style.display = 'none';
         }
 
         function showArchived() {
             currentView = 'archived';
+            archiveSubView = 'all'; // Reset to 'all' when entering archive
             updateViewButtons();
-            renderHabits();
+            renderArchived();
+            document.getElementById('habitsContainer').style.display = 'none';
+            document.getElementById('notesContainer').style.display = 'none';
+            document.getElementById('archiveContainer').style.display = 'block';
+            document.getElementById('addHabitSection').style.display = 'none';
+            document.getElementById('addNoteSection').style.display = 'none';
+        }
+
+        function showArchiveHabits() {
+            archiveSubView = 'habits';
+            updateArchiveButtons();
+            renderArchived();
+        }
+
+        function showArchiveNotes() {
+            archiveSubView = 'notes';
+            updateArchiveButtons();
+            renderArchived();
+        }
+
+        function showArchiveAll() {
+            archiveSubView = 'all';
+            updateArchiveButtons();
+            renderArchived();
+        }
+
+        function updateArchiveButtons() {
+            const buttons = document.querySelectorAll('.archive-sub-btn');
+            if (buttons.length > 0) {
+                buttons[0].classList.toggle('active', archiveSubView === 'habits');
+                buttons[1].classList.toggle('active', archiveSubView === 'notes');
+                buttons[2].classList.toggle('active', archiveSubView === 'all');
+            }
+        }
+
+        function renderArchived() {
+            const archiveContainer = document.getElementById('archiveContainer');
+            if (!archiveContainer) return;
+
+            const archivedHabits = habits.filter(h => h.archived);
+            const archivedNotes = notes.filter(n => n.archived);
+
+            // Add sub-navigation tabs
+            let html = `
+                <div class="archive-sub-nav" style="display: flex; justify-content: center; gap: 10px; margin-bottom: 25px;">
+                    <button class="archive-sub-btn ${archiveSubView === 'habits' ? 'active' : ''}" onclick="showArchiveHabits()">📋 Привычки (${archivedHabits.length})</button>
+                    <button class="archive-sub-btn ${archiveSubView === 'notes' ? 'active' : ''}" onclick="showArchiveNotes()">📝 Заметки (${archivedNotes.length})</button>
+                    <button class="archive-sub-btn ${archiveSubView === 'all' ? 'active' : ''}" onclick="showArchiveAll()">📦 Все (${archivedHabits.length + archivedNotes.length})</button>
+                </div>
+            `;
+
+            // Check if archive is empty
+            const showHabits = archiveSubView === 'all' || archiveSubView === 'habits';
+            const showNotes = archiveSubView === 'all' || archiveSubView === 'notes';
+            
+            const hasContent = (showHabits && archivedHabits.length > 0) || (showNotes && archivedNotes.length > 0);
+
+            if (!hasContent) {
+                const emptyMessage = archiveSubView === 'habits' 
+                    ? 'Нет архивных привычек'
+                    : archiveSubView === 'notes'
+                    ? 'Нет архивных заметок'
+                    : 'Архив пуст';
+                
+                html += `
+                    <div class="empty-state">
+                        <h2>${emptyMessage}</h2>
+                        <p>Архивированные элементы появятся здесь</p>
+                    </div>
+                `;
+                archiveContainer.innerHTML = html;
+                return;
+            }
+
+            // Render archived habits
+            if (showHabits && archivedHabits.length > 0) {
+                if (archiveSubView === 'all') {
+                    html += '<h2 style="margin: 20px 0 15px 0; color: var(--text-secondary);">📋 Привычки</h2>';
+                }
+                archivedHabits.forEach(habit => {
+                    html += `
+                        <div class="habit" style="margin-bottom: 20px;">
+                            <div class="habit-header">
+                                <div class="habit-name-container">
+                                    <span class="habit-name">${habit.name}</span>
+                                </div>
+                                <div class="habit-buttons">
+                                    <button class="restore-btn" onclick="restoreHabit(${habit.id})">📤 Восстановить</button>
+                                    <button class="delete-btn" onclick="deleteHabit(${habit.id})">🗑️ Удалить</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            // Render archived notes
+            if (showNotes && archivedNotes.length > 0) {
+                if (archiveSubView === 'all') {
+                    html += '<h2 style="margin: 30px 0 15px 0; color: var(--text-secondary);">📝 Заметки</h2>';
+                }
+                archivedNotes.forEach(note => {
+                    // Ensure sections exist
+                    if (!note.sections) {
+                        note.sections = [];
+                    }
+
+                    // Generate preview
+                    let preview = '';
+                    let checklistInfo = '';
+                    
+                    note.sections.forEach(section => {
+                        if (section.type === 'text' && section.data && preview.length < 150) {
+                            preview += section.data.substring(0, 150 - preview.length);
+                        }
+                    });
+
+                    // Count checklists
+                    const checklists = note.sections.filter(s => s.type === 'checklist');
+                    if (checklists.length > 0) {
+                        let totalItems = 0;
+                        let completedItems = 0;
+                        checklists.forEach(cl => {
+                            totalItems += cl.data.length;
+                            completedItems += cl.data.filter(i => i.completed).length;
+                        });
+                        if (totalItems > 0) {
+                            checklistInfo = `<div style="color: var(--text-secondary); font-size: 0.9em; margin-top: 8px;">
+                                 ☑️ Чек-лист: ${completedItems}/${totalItems} выполнено
+                               </div>`;
+                        }
+                    }
+
+                    const previewText = preview ? `<div class="note-preview">${preview}${preview.length >= 150 ? '...' : ''}</div>` : '';
+                    
+                    html += `
+                        <div class="note-card" onclick="openNoteModal(${note.id})">
+                            <div class="note-header">
+                                <div class="note-title">${note.title || 'Без названия'}</div>
+                                <div class="note-date">${formatDate(note.updatedAt)}</div>
+                            </div>
+                            ${previewText}
+                            ${checklistInfo}
+                            <div class="note-actions">
+                                <button class="restore-btn" onclick="event.stopPropagation(); restoreNote(${note.id})">📤 Восстановить</button>
+                                <button class="delete-btn" onclick="event.stopPropagation(); deleteNote(${note.id})">🗑️ Удалить</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            archiveContainer.innerHTML = html;
+        }
+
+        function showNotes() {
+            currentView = 'notes';
+            updateViewButtons();
+            renderNotes();
+            document.getElementById('habitsContainer').style.display = 'none';
+            document.getElementById('notesContainer').style.display = 'block';
+            document.getElementById('archiveContainer').style.display = 'none';
+            document.getElementById('addHabitSection').style.display = 'none';
+            document.getElementById('addNoteSection').style.display = 'flex';
         }
 
         function updateViewButtons() {
             const buttons = document.querySelectorAll('.archive-btn');
             buttons[0].classList.toggle('active', currentView === 'active');
             buttons[1].classList.toggle('active', currentView === 'archived');
+            buttons[2].classList.toggle('active', currentView === 'notes');
         }
 
         function toggleCollapse(habitId, event) {
@@ -1038,8 +1518,8 @@
             
             let html = '<div class="mini-calendar">';
             
-            // Show 5 days: yesterday to 3 days ahead
-            for (let i = -1; i <= 3; i++) {
+            // Show 10 days: 3 days back to 6 days ahead
+            for (let i = -3; i <= 6; i++) {
                 const date = new Date(today);
                 date.setDate(today.getDate() + i);
                 
@@ -1461,6 +1941,12 @@
             }
         });
 
+        document.getElementById('noteTitleInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addNote();
+            }
+        });
+
         // Telegram WebApp initialization
         let tg = window.Telegram?.WebApp;
 
@@ -1531,7 +2017,564 @@
             initTelegramApp();
         }
 
+        // Notes functions
+        let saveNotesTimeout = null;
+        
+        function saveNotes() {
+            try {
+                const notesJson = JSON.stringify(notes);
+                const sizeInMB = new Blob([notesJson]).size / (1024 * 1024);
+                
+                if (sizeInMB > 4.5) {
+                    alert('Предупреждение: заметки занимают много места. Удалите старые заметки.');
+                }
+                
+                localStorage.setItem('notes', notesJson);
+            } catch (error) {
+                if (error.name === 'QuotaExceededError') {
+                    alert('Ошибка: не хватает места для сохранения. Удалите старые заметки.');
+                }
+            }
+        }
+
+        function saveNotesDebounced() {
+            clearTimeout(saveNotesTimeout);
+            saveNotesTimeout = setTimeout(() => {
+                saveNotes();
+            }, 1000);
+        }
+
+        function addNote() {
+            const title = document.getElementById('noteTitleInput').value.trim();
+            if (!title) return;
+
+            const newNote = {
+                id: Date.now(),
+                title: title,
+                sections: [], // Array of {type: 'text'/'checklist', data: ...}
+                archived: false,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+
+            notes.unshift(newNote);
+            saveNotes();
+            renderNotes();
+            document.getElementById('noteTitleInput').value = '';
+            
+            // Open the note for editing
+            openNoteModal(newNote.id);
+        }
+
+        function archiveNote(noteId) {
+            const note = notes.find(n => n.id === noteId);
+            if (note) {
+                note.archived = true;
+                saveNotes();
+                renderNotes();
+            }
+        }
+
+        function restoreNote(noteId) {
+            const note = notes.find(n => n.id === noteId);
+            if (note) {
+                note.archived = false;
+                saveNotes();
+                renderArchived();
+            }
+        }
+
+        function deleteNote(noteId) {
+            const t = translations[currentLang];
+            if (confirm(t.deleteNoteConfirm)) {
+                notes = notes.filter(n => n.id !== noteId);
+                saveNotes();
+                renderNotes();
+                // If in archive view, update it too
+                if (currentView === 'archived') {
+                    renderArchived();
+                }
+            }
+        }
+
+        function openNoteModal(noteId) {
+            currentNoteId = noteId;
+            const note = notes.find(n => n.id === noteId);
+            if (!note) return;
+
+            // Migrate old format to new format
+            if (!note.sections) {
+                note.sections = [];
+                if (note.content) {
+                    note.sections.push({ type: 'text', id: Date.now(), data: note.content });
+                }
+                if (note.checklist && note.checklist.length > 0) {
+                    note.sections.push({ type: 'checklist', id: Date.now() + 1, data: note.checklist });
+                }
+                delete note.content;
+                delete note.checklist;
+            }
+
+            document.getElementById('noteModalTitle').value = note.title;
+            document.getElementById('noteModalDate').textContent = `Изменено: ${formatDate(note.updatedAt)}`;
+            document.getElementById('noteModal').classList.add('active');
+
+            // Render all sections
+            renderNoteSections();
+
+            // Auto-save on title input
+            document.getElementById('noteModalTitle').oninput = () => saveCurrentNote();
+        }
+
+        function closeNoteModal() {
+            if (currentNoteId) {
+                const note = notes.find(n => n.id === currentNoteId);
+                if (note) {
+                    note.title = document.getElementById('noteModalTitle').value;
+                    note.updatedAt = new Date().toISOString();
+                }
+            }
+            
+            clearTimeout(saveNotesTimeout); // Cancel any pending saves
+            saveNotes(); // Save immediately
+            renderNotes(); // Update the list
+            
+            document.getElementById('noteModal').classList.remove('active');
+            currentNoteId = null;
+        }
+
+        function saveCurrentNote() {
+            if (!currentNoteId) return;
+
+            const note = notes.find(n => n.id === currentNoteId);
+            if (!note) return;
+
+            note.title = document.getElementById('noteModalTitle').value;
+            note.updatedAt = new Date().toISOString();
+
+            saveNotesDebounced();
+            // Don't re-render on every keystroke, only save
+        }
+
+        function addTextSection() {
+            if (!currentNoteId) return;
+            
+            const note = notes.find(n => n.id === currentNoteId);
+            if (!note) return;
+
+            const newSection = {
+                type: 'text',
+                id: Date.now(),
+                data: ''
+            };
+
+            note.sections.push(newSection);
+            saveCurrentNote();
+            renderNoteSections();
+
+            // Focus on new textarea
+            setTimeout(() => {
+                const textarea = document.querySelector(`[data-section-id="${newSection.id}"]`);
+                if (textarea) textarea.focus();
+            }, 100);
+        }
+
+        function addChecklistSection() {
+            if (!currentNoteId) return;
+            
+            const note = notes.find(n => n.id === currentNoteId);
+            if (!note) return;
+
+            const newSection = {
+                type: 'checklist',
+                id: Date.now(),
+                data: []
+            };
+
+            note.sections.push(newSection);
+            saveCurrentNote();
+            renderNoteSections();
+        }
+
+        function deleteSection(sectionId) {
+            if (!currentNoteId) return;
+            
+            const note = notes.find(n => n.id === currentNoteId);
+            if (!note) return;
+
+            note.sections = note.sections.filter(s => s.id !== sectionId);
+            saveCurrentNote();
+            renderNoteSections();
+        }
+
+        function moveSectionUp(sectionId) {
+            if (!currentNoteId) return;
+            
+            const note = notes.find(n => n.id === currentNoteId);
+            if (!note) return;
+
+            const index = note.sections.findIndex(s => s.id === sectionId);
+            if (index > 0) {
+                [note.sections[index], note.sections[index - 1]] = [note.sections[index - 1], note.sections[index]];
+                saveCurrentNote();
+                renderNoteSections();
+            }
+        }
+
+        function moveSectionDown(sectionId) {
+            if (!currentNoteId) return;
+            
+            const note = notes.find(n => n.id === currentNoteId);
+            if (!note) return;
+
+            const index = note.sections.findIndex(s => s.id === sectionId);
+            if (index < note.sections.length - 1) {
+                [note.sections[index], note.sections[index + 1]] = [note.sections[index + 1], note.sections[index]];
+                saveCurrentNote();
+                renderNoteSections();
+            }
+        }
+
+        function updateTextSection(sectionId, text) {
+            if (!currentNoteId) return;
+            
+            // Limit text to 20,000 characters
+            if (text.length > 20000) {
+                alert('Максимум 20,000 символов в текстовой секции');
+                return;
+            }
+            
+            const note = notes.find(n => n.id === currentNoteId);
+            if (!note) return;
+
+            const section = note.sections.find(s => s.id === sectionId);
+            if (section) {
+                section.data = text;
+                note.updatedAt = new Date().toISOString();
+                saveNotesDebounced();
+            }
+        }
+
+        function renderNoteSections() {
+            if (!currentNoteId) return;
+            
+            const note = notes.find(n => n.id === currentNoteId);
+            if (!note) return;
+            
+            const t = translations[currentLang];
+
+            const container = document.getElementById('noteContentContainer');
+            
+            if (note.sections.length === 0) {
+                const emptyText = currentLang === 'ru' 
+                    ? 'Нажмите кнопку ниже, чтобы добавить текст или чек-лист'
+                    : 'Click the button below to add text or checklist';
+                container.innerHTML = `<div style="color: var(--text-secondary); text-align: center; padding: 40px;">${emptyText}</div>`;
+                return;
+            }
+
+            let html = '';
+            note.sections.forEach((section, index) => {
+                html += '<div class="note-section" style="margin-bottom: 20px; padding: 15px; background: var(--input-bg); border-radius: 8px;">';
+                
+                // Section controls
+                html += '<div style="display: flex; justify-content: space-between; margin-bottom: 10px;">';
+                html += `<div style="display: flex; gap: 5px;">`;
+                if (index > 0) {
+                    html += `<button class="toolbar-btn" onclick="moveSectionUp(${section.id})" style="padding: 4px 8px;">↑</button>`;
+                }
+                if (index < note.sections.length - 1) {
+                    html += `<button class="toolbar-btn" onclick="moveSectionDown(${section.id})" style="padding: 4px 8px;">↓</button>`;
+                }
+                html += `</div>`;
+                html += `<button class="toolbar-btn" onclick="deleteSection(${section.id})" style="padding: 4px 8px; background: var(--delete-start); color: white;">${t.deleteSection}</button>`;
+                html += '</div>';
+
+                if (section.type === 'text') {
+                    html += renderTextSection(section);
+                } else if (section.type === 'checklist') {
+                    html += renderChecklistSection(section);
+                }
+                
+                html += '</div>';
+            });
+
+            container.innerHTML = html;
+        }
+
+        function renderTextSection(section) {
+            const t = translations[currentLang];
+            return `
+                <div style="margin-bottom: 10px;">
+                    <div style="display: flex; gap: 5px; margin-bottom: 8px;">
+                        <button class="toolbar-btn" onclick="insertFormat(${section.id}, '**', '**')" style="padding: 4px 8px; font-size: 0.85em;">Ж</button>
+                        <button class="toolbar-btn" onclick="insertFormat(${section.id}, '*', '*')" style="padding: 4px 8px; font-size: 0.85em;">К</button>
+                        <button class="toolbar-btn" onclick="insertFormat(${section.id}, '## ', '')" style="padding: 4px 8px; font-size: 0.85em;">З</button>
+                        <button class="toolbar-btn" onclick="insertFormat(${section.id}, '• ', '')" style="padding: 4px 8px; font-size: 0.85em;">•</button>
+                        <span style="margin-left: auto; font-size: 0.85em; color: var(--text-secondary);">${section.data.length}/20000</span>
+                    </div>
+                    <textarea class="note-textarea" 
+                              id="textarea-${section.id}"
+                              data-section-id="${section.id}"
+                              oninput="updateTextSection(${section.id}, this.value)"
+                              maxlength="20000"
+                              placeholder="${t.textPlaceholder}"
+                              style="min-height: 150px;">${section.data}</textarea>
+                </div>
+            `;
+        }
+
+        function insertFormat(sectionId, before, after) {
+            const textarea = document.getElementById(`textarea-${sectionId}`);
+            if (!textarea) return;
+
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selectedText = textarea.value.substring(start, end);
+            
+            const newText = textarea.value.substring(0, start) + 
+                           before + selectedText + after + 
+                           textarea.value.substring(end);
+            
+            textarea.value = newText;
+            textarea.focus();
+            
+            // Set cursor position after inserted text
+            const newPos = start + before.length + selectedText.length + after.length;
+            textarea.setSelectionRange(newPos, newPos);
+            
+            updateTextSection(sectionId, newText);
+        }
+
+        function renderChecklistSection(section) {
+            let html = '<div class="checklist-container">';
+            
+            if (section.data.length === 0) {
+                html += '<div style="color: var(--text-secondary); text-align: center; padding: 10px;">Пусто</div>';
+            }
+
+            section.data.forEach(item => {
+                html += `
+                    <div class="checklist-item">
+                        <div class="checklist-checkbox ${item.completed ? 'checked' : ''}" 
+                             onclick="toggleChecklistItemInSection(${section.id}, ${item.id})"></div>
+                        <input type="text" 
+                               class="checklist-text ${item.completed ? 'completed' : ''}" 
+                               value="${item.text}"
+                               maxlength="300"
+                               onchange="updateChecklistItemInSection(${section.id}, ${item.id}, this.value)"
+                               onkeypress="if(event.key === 'Enter') { addChecklistItemToSection(${section.id}); event.preventDefault(); }"
+                               placeholder="Текст... (макс 300 символов)">
+                        <span class="checklist-delete" onclick="deleteChecklistItemFromSection(${section.id}, ${item.id})">×</span>
+                    </div>
+                `;
+            });
+
+            html += `<button class="toolbar-btn" onclick="addChecklistItemToSection(${section.id})" style="width: 100%; margin-top: 10px;">+ Добавить пункт</button>`;
+            html += '</div>';
+            
+            return html;
+        }
+
+        // Checklist item functions for sections
+        function addChecklistItemToSection(sectionId) {
+            if (!currentNoteId) return;
+            
+            const note = notes.find(n => n.id === currentNoteId);
+            if (!note) return;
+
+            const section = note.sections.find(s => s.id === sectionId);
+            if (!section || section.type !== 'checklist') return;
+
+            const newItem = {
+                id: Date.now(),
+                text: '',
+                completed: false
+            };
+
+            section.data.push(newItem);
+            saveCurrentNote();
+            renderNoteSections();
+
+            // Focus on new item
+            setTimeout(() => {
+                const inputs = document.querySelectorAll('.checklist-text');
+                const lastInput = inputs[inputs.length - 1];
+                if (lastInput) lastInput.focus();
+            }, 100);
+        }
+
+        function toggleChecklistItemInSection(sectionId, itemId) {
+            if (!currentNoteId) return;
+            
+            const note = notes.find(n => n.id === currentNoteId);
+            if (!note) return;
+
+            const section = note.sections.find(s => s.id === sectionId);
+            if (!section) return;
+
+            const item = section.data.find(i => i.id === itemId);
+            if (item) {
+                item.completed = !item.completed;
+                saveCurrentNote();
+                renderNoteSections();
+            }
+        }
+
+        function updateChecklistItemInSection(sectionId, itemId, text) {
+            if (!currentNoteId) return;
+            
+            // Limit to 300 characters
+            if (text.length > 300) {
+                alert('Максимум 300 символов в пункте');
+                return;
+            }
+            
+            const note = notes.find(n => n.id === currentNoteId);
+            if (!note) return;
+
+            const section = note.sections.find(s => s.id === sectionId);
+            if (!section) return;
+
+            const item = section.data.find(i => i.id === itemId);
+            if (item) {
+                item.text = text;
+                note.updatedAt = new Date().toISOString();
+                saveNotesDebounced();
+            }
+        }
+
+        function deleteChecklistItemFromSection(sectionId, itemId) {
+            if (!currentNoteId) return;
+            
+            const note = notes.find(n => n.id === currentNoteId);
+            if (!note) return;
+
+            const section = note.sections.find(s => s.id === sectionId);
+            if (!section) return;
+
+            section.data = section.data.filter(i => i.id !== itemId);
+            saveCurrentNote();
+            renderNoteSections();
+        }
+
+        function formatDate(isoString) {
+            const date = new Date(isoString);
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const year = date.getFullYear();
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            return `${day}.${month}.${year} ${hours}:${minutes}`;
+        }
+
+        function renderNotes() {
+            const container = document.getElementById('notesContainer');
+            const t = translations[currentLang];
+            
+            // Show only non-archived notes
+            const activeNotes = notes.filter(n => !n.archived);
+            
+            if (activeNotes.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h2>${t.noNotes}</h2>
+                        <p>${t.noNotesDesc}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            activeNotes.forEach(note => {
+                // Migrate old format
+                if (!note.sections) {
+                    note.sections = [];
+                    if (note.content) {
+                        note.sections.push({ type: 'text', id: Date.now(), data: note.content });
+                    }
+                    if (note.checklist && note.checklist.length > 0) {
+                        note.sections.push({ type: 'checklist', id: Date.now() + 1, data: note.checklist });
+                    }
+                }
+
+                // Generate preview
+                let preview = '';
+                let checklistInfo = '';
+                
+                note.sections.forEach(section => {
+                    if (section.type === 'text' && section.data && preview.length < 150) {
+                        preview += section.data.substring(0, 150 - preview.length);
+                    }
+                });
+
+                // Count checklists
+                const checklists = note.sections.filter(s => s.type === 'checklist');
+                if (checklists.length > 0) {
+                    let totalItems = 0;
+                    let completedItems = 0;
+                    checklists.forEach(cl => {
+                        totalItems += cl.data.length;
+                        completedItems += cl.data.filter(i => i.completed).length;
+                    });
+                    if (totalItems > 0) {
+                        const checklistText = currentLang === 'ru' ? 'Чек-лист' : 'Checklist';
+                        const completedText = currentLang === 'ru' ? 'выполнено' : 'completed';
+                        checklistInfo = `<div style="color: var(--text-secondary); font-size: 0.9em; margin-top: 8px;">
+                             ☑️ ${checklistText}: ${completedItems}/${totalItems} ${completedText}
+                           </div>`;
+                    }
+                }
+
+                const previewText = preview ? `<div class="note-preview">${preview}${preview.length >= 150 ? '...' : ''}</div>` : '';
+                
+                html += `
+                    <div class="note-card" onclick="openNoteModal(${note.id})">
+                        <div class="note-header">
+                            <div class="note-title">${note.title || t.untitledNote}</div>
+                            <div class="note-date">${formatDate(note.updatedAt)}</div>
+                        </div>
+                        ${previewText}
+                        ${checklistInfo}
+                        <div class="note-actions">
+                            <button class="archive-habit-btn" onclick="event.stopPropagation(); archiveNote(${note.id})">${t.toArchive}</button>
+                            <button class="delete-btn" onclick="event.stopPropagation(); deleteNote(${note.id})">${t.deleteNote}</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Close modal on background click
+        document.getElementById('noteModal').addEventListener('click', (e) => {
+            if (e.target.classList.contains('note-modal')) {
+                closeNoteModal();
+            }
+        });
+
         loadHabits();
     </script>
+    <!-- Note Modal -->
+    <div class="note-modal" id="noteModal">
+        <div class="note-modal-content">
+            <div class="note-modal-header">
+                <input type="text" class="note-modal-title" id="noteModalTitle" placeholder="Заголовок заметки...">
+                <button class="note-close-btn" onclick="closeNoteModal()">×</button>
+            </div>
+            
+            <div class="note-content-container" id="noteContentContainer">
+                <!-- Content will be rendered here dynamically -->
+            </div>
+            
+            <div style="display: flex; gap: 8px; margin-top: 12px;">
+                <button class="toolbar-btn" id="addTextSectionBtn" onclick="addTextSection()">📝 Добавить текст</button>
+                <button class="toolbar-btn" id="addChecklistSectionBtn" onclick="addChecklistSection()">☑️ Добавить чек-лист</button>
+            </div>
+            
+            <div class="note-date" id="noteModalDate" style="margin-top: 12px;"></div>
+        </div>
+    </div>
 </body>
 </html>
