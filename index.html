@@ -1,1537 +1,954 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Трекер привычек</title>
+    <title>Habit Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+
+        /* ═══════════════════════════════════════
+           5 THEMES — Telegram Diary-inspired
+           Ivory · Ash · Midnight · Sage · Dusk
+        ═══════════════════════════════════════ */
 
         :root {
-            /* Default theme */
-            --bg-gradient-start: #1a1a2e;
-            --bg-gradient-end: #16213e;
-            --card-bg: rgba(255, 255, 255, 0.05);
-            --card-border: rgba(255, 255, 255, 0.1);
-            --text-primary: #fff;
-            --text-secondary: #888;
-            --text-tertiary: #aaa;
-            --accent-start: #667eea;
-            --accent-end: #764ba2;
-            --stat-color: #667eea;
-            --month-bg: rgba(0, 0, 0, 0.2);
-            --day-cell-bg: rgba(255, 255, 255, 0.08);
-            --day-cell-hover: rgba(255, 255, 255, 0.15);
-            --input-bg: rgba(255, 255, 255, 0.1);
-            --input-focus: rgba(255, 255, 255, 0.15);
-            --delete-start: #f093fb;
-            --delete-end: #f5576c;
-            --archive-start: #ffa751;
-            --archive-end: #ffe259;
+            /* ── Ivory (warm cream paper) ── */
+            --bg:          #F7F4EF;
+            --bg2:         #EDE9E2;
+            --surface:     #FFFFFF;
+            --surface2:    #F2EFE9;
+            --border:      rgba(0,0,0,0.08);
+            --text:        #1C1916;
+            --text2:       #7A7470;
+            --text3:       #A89E98;
+            --accent:      #C8865A;
+            --accent2:     #B56F43;
+            --btn-fg:      #FFFFFF;
+            --done:        #C8865A;
+            --today-ring:  #C8865A;
+            --del:         #D4685C;
+            --arch:        #8F9F72;
+            --month-col:   #C8865A;
         }
 
-        /* Telegram theme integration */
-        body.telegram-theme {
-            --bg-gradient-start: var(--tg-theme-bg-color, #1a1a2e);
-            --bg-gradient-end: var(--tg-theme-bg-color, #16213e);
-            --card-bg: var(--tg-theme-secondary-bg-color, rgba(255, 255, 255, 0.05));
-            --text-primary: var(--tg-theme-text-color, #fff);
-            --text-secondary: var(--tg-theme-hint-color, #888);
-            --text-tertiary: var(--tg-theme-hint-color, #aaa);
-            --accent-start: var(--tg-theme-button-color, #667eea);
-            --accent-end: var(--tg-theme-button-color, #764ba2);
-            --stat-color: var(--tg-theme-button-color, #667eea);
+        [data-theme="ash"] {
+            /* ── Ash (cool slate light) ── */
+            --bg:          #F0F2F5;
+            --bg2:         #E4E7EC;
+            --surface:     #FFFFFF;
+            --surface2:    #EAEDF1;
+            --border:      rgba(0,0,0,0.07);
+            --text:        #1A1D23;
+            --text2:       #6B717D;
+            --text3:       #9BA3AF;
+            --accent:      #5B7CE6;
+            --accent2:     #4568D4;
+            --btn-fg:      #FFFFFF;
+            --done:        #5B7CE6;
+            --today-ring:  #5B7CE6;
+            --del:         #E05C6A;
+            --arch:        #7AB8D0;
+            --month-col:   #5B7CE6;
         }
 
-        [data-theme="dark"] {
-            --bg-gradient-start: #000000;
-            --bg-gradient-end: #0a0a0a;
-            --card-bg: rgba(255, 255, 255, 0.03);
-            --card-border: rgba(255, 255, 255, 0.08);
-            --text-primary: #fff;
-            --text-secondary: #666;
-            --text-tertiary: #999;
-            --accent-start: #ffffff;
-            --accent-end: #cccccc;
-            --stat-color: #ffffff;
-            --month-bg: rgba(255, 255, 255, 0.05);
-            --day-cell-bg: rgba(255, 255, 255, 0.05);
-            --day-cell-hover: rgba(255, 255, 255, 0.1);
-            --input-bg: rgba(255, 255, 255, 0.08);
-            --input-focus: rgba(255, 255, 255, 0.12);
-            --delete-start: #ff3333;
-            --delete-end: #cc0000;
-            --archive-start: #ffaa00;
-            --archive-end: #ff8800;
+        [data-theme="midnight"] {
+            /* ── Midnight (near-black refined) ── */
+            --bg:          #141414;
+            --bg2:         #1E1E1E;
+            --surface:     #242424;
+            --surface2:    #1A1A1A;
+            --border:      rgba(255,255,255,0.07);
+            --text:        #F0EDEA;
+            --text2:       #7A7875;
+            --text3:       #5A5855;
+            --accent:      #E8D5B0;
+            --accent2:     #D4BC90;
+            --btn-fg:      #1C1916;
+            --done:        #E8D5B0;
+            --today-ring:  #E8D5B0;
+            --del:         #C06060;
+            --arch:        #7A9A7A;
+            --month-col:   #E8D5B0;
         }
 
-        [data-theme="bw"] {
-            --bg-gradient-start: #1a1a1a;
-            --bg-gradient-end: #0d0d0d;
-            --card-bg: rgba(255, 255, 255, 0.04);
-            --card-border: rgba(255, 255, 255, 0.1);
-            --text-primary: #ffffff;
-            --text-secondary: #808080;
-            --text-tertiary: #a0a0a0;
-            --accent-start: #ffffff;
-            --accent-end: #e0e0e0;
-            --stat-color: #ffffff;
-            --month-bg: rgba(255, 255, 255, 0.06);
-            --day-cell-bg: rgba(255, 255, 255, 0.06);
-            --day-cell-hover: rgba(255, 255, 255, 0.12);
-            --input-bg: rgba(255, 255, 255, 0.08);
-            --input-focus: rgba(255, 255, 255, 0.12);
-            --delete-start: #ffffff;
-            --delete-end: #cccccc;
-            --archive-start: #bbbbbb;
-            --archive-end: #999999;
+        [data-theme="sage"] {
+            /* ── Sage (muted forest green) ── */
+            --bg:          #EEF2EC;
+            --bg2:         #E2E9DE;
+            --surface:     #F8FAF7;
+            --surface2:    #E8EDE5;
+            --border:      rgba(0,0,0,0.07);
+            --text:        #1A2018;
+            --text2:       #657060;
+            --text3:       #96A490;
+            --accent:      #5C8B52;
+            --accent2:     #487040;
+            --btn-fg:      #FFFFFF;
+            --done:        #5C8B52;
+            --today-ring:  #5C8B52;
+            --del:         #C25C50;
+            --arch:        #8899AA;
+            --month-col:   #5C8B52;
         }
 
-        [data-theme="ocean"] {
-            --bg-gradient-start: #0f2027;
-            --bg-gradient-end: #203a43;
-            --card-bg: rgba(255, 255, 255, 0.05);
-            --card-border: rgba(255, 255, 255, 0.1);
-            --text-primary: #fff;
-            --text-secondary: #7aa8b8;
-            --text-tertiary: #a0c4d0;
-            --accent-start: #2c7a9b;
-            --accent-end: #1f5e7a;
-            --stat-color: #4da8da;
-            --month-bg: rgba(0, 0, 0, 0.3);
-            --day-cell-bg: rgba(45, 120, 155, 0.2);
-            --day-cell-hover: rgba(45, 120, 155, 0.35);
-            --input-bg: rgba(255, 255, 255, 0.08);
-            --input-focus: rgba(255, 255, 255, 0.12);
-            --delete-start: #e63946;
-            --delete-end: #a4161a;
-            --archive-start: #f4a261;
-            --archive-end: #e76f51;
+        [data-theme="dusk"] {
+            /* ── Dusk (dark amber warm) ── */
+            --bg:          #1C1612;
+            --bg2:         #241E18;
+            --surface:     #2C2420;
+            --surface2:    #201A16;
+            --border:      rgba(255,255,255,0.08);
+            --text:        #F2EAE0;
+            --text2:       #8A7A6A;
+            --text3:       #6A5A4A;
+            --accent:      #E8A060;
+            --accent2:     #D08840;
+            --btn-fg:      #1C1612;
+            --done:        #E8A060;
+            --today-ring:  #E8A060;
+            --del:         #D05848;
+            --arch:        #80A090;
+            --month-col:   #E8A060;
         }
 
-        [data-theme="forest"] {
-            --bg-gradient-start: #1a2f1a;
-            --bg-gradient-end: #0d1f0d;
-            --card-bg: rgba(255, 255, 255, 0.04);
-            --card-border: rgba(144, 238, 144, 0.15);
-            --text-primary: #e8f5e9;
-            --text-secondary: #81c784;
-            --text-tertiary: #a5d6a7;
-            --accent-start: #4caf50;
-            --accent-end: #2e7d32;
-            --stat-color: #66bb6a;
-            --month-bg: rgba(0, 0, 0, 0.25);
-            --day-cell-bg: rgba(76, 175, 80, 0.15);
-            --day-cell-hover: rgba(76, 175, 80, 0.25);
-            --input-bg: rgba(255, 255, 255, 0.08);
-            --input-focus: rgba(255, 255, 255, 0.12);
-            --delete-start: #ef5350;
-            --delete-end: #c62828;
-            --archive-start: #ffb74d;
-            --archive-end: #ffa726;
-        }
-
+        /* ═══ BASE ═══ */
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
-            color: var(--text-primary);
+            font-family: 'DM Sans', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
             min-height: 100vh;
-            padding: 10px;
-            margin: 0;
+            padding: 16px;
             overflow-x: hidden;
-            /* Telegram specific */
             -webkit-user-select: none;
             user-select: none;
+            transition: background 0.3s, color 0.3s;
         }
+        input, .subtitle { -webkit-user-select: text; user-select: text; }
+        .container { max-width: 720px; margin: 0 auto; }
 
-        /* Allow text selection only in input fields */
-        input, .subtitle {
-            -webkit-user-select: text;
-            user-select: text;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 10px;
-            font-size: 2.5em;
-            background: linear-gradient(135deg, var(--accent-start) 0%, var(--accent-end) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .subtitle {
-            text-align: center;
-            font-size: 1.2em;
-            color: var(--text-secondary);
-            font-style: italic;
-            margin-bottom: 30px;
-            letter-spacing: 2px;
-            cursor: pointer;
-            transition: color 0.3s;
-            position: relative;
-            padding: 8px 40px;
-        }
-
-        .subtitle:hover {
-            color: var(--text-tertiary);
-        }
-
-        .subtitle::after {
-            content: '✏️';
-            font-size: 0.7em;
-            opacity: 0;
-            transition: opacity 0.3s;
-            margin-left: 10px;
-        }
-
-        .subtitle:hover::after {
-            opacity: 0.6;
-        }
-
-        .subtitle-input {
-            text-align: center;
-            font-size: 1.2em;
-            color: var(--text-primary);
-            font-style: italic;
-            letter-spacing: 2px;
-            background: var(--input-bg);
-            border: 2px solid var(--accent-start);
-            border-radius: 8px;
-            padding: 8px 20px;
-            margin: 0 auto 30px auto;
-            display: block;
-            max-width: 600px;
-            width: 90%;
-        }
-
-        .subtitle-input:focus {
-            outline: none;
-            background: var(--input-focus);
-        }
-
-        .header-section {
+        /* ═══ HEADER ═══ */
+        .app-header {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 15px;
+            padding: 28px 0 18px;
         }
+        h1 {
+            font-family: 'Lora', Georgia, serif;
+            font-size: 2em;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            color: var(--text);
+            text-align: center;
+            transition: color 0.3s;
+        }
+        .subtitle {
+            font-family: 'Lora', Georgia, serif;
+            font-style: italic;
+            font-size: 0.95em;
+            color: var(--text2);
+            text-align: center;
+            cursor: pointer;
+            padding: 5px 14px;
+            border-radius: 8px;
+            margin-top: 5px;
+            transition: background 0.2s, color 0.2s;
+        }
+        .subtitle:hover { background: var(--surface2); color: var(--text); }
+        .subtitle-input {
+            font-family: 'Lora', Georgia, serif;
+            font-style: italic;
+            font-size: 0.95em;
+            color: var(--text);
+            text-align: center;
+            background: var(--surface);
+            border: 1.5px solid var(--accent);
+            border-radius: 8px;
+            padding: 5px 16px;
+            width: 100%;
+            max-width: 340px;
+            display: block;
+            margin: 5px auto 0;
+        }
+        .subtitle-input:focus { outline: none; }
 
-        .language-switcher {
-            position: absolute;
-            top: 20px;
-            right: 20px;
+        /* ═══ THEME SWATCHES ═══ */
+        .controls-row {
             display: flex;
-            gap: 5px;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+        .theme-label {
+            font-size: 0.72em;
+            font-weight: 500;
+            color: var(--text3);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+        .swatches { display: flex; gap: 7px; align-items: center; }
+        .swatch {
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2.5px solid transparent;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .swatch:hover { transform: scale(1.18); }
+        .swatch.active {
+            box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+        }
+        .swatch[data-theme="default"]  { background: #C8865A; }
+        .swatch[data-theme="ash"]      { background: #5B7CE6; }
+        .swatch[data-theme="midnight"] { background: #242424; border-color: rgba(200,200,200,0.3); }
+        .swatch[data-theme="sage"]     { background: #5C8B52; }
+        .swatch[data-theme="dusk"]     { background: #E8A060; }
+
+        /* ═══ TABS ═══ */
+        .view-tabs {
+            display: flex;
+            background: var(--surface2);
+            border-radius: 12px;
+            padding: 3px;
+            gap: 3px;
+            margin-bottom: 16px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 9px;
+            border: none;
+            border-radius: 10px;
+            background: transparent;
+            color: var(--text2);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.88em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+        }
+        .tab-btn:hover { color: var(--text); transform: none; }
+        .tab-btn.active {
+            background: var(--surface);
+            color: var(--text);
+            box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+            transform: none;
         }
 
-        .theme-selector {
-            position: absolute;
-            top: 56px;
-            right: 20px;
+        /* ═══ ADD ROW ═══ */
+        .add-row { display: flex; gap: 8px; margin-bottom: 18px; }
+        .add-row input {
+            flex: 1;
+            padding: 11px 15px;
+            border: 1.5px solid var(--border);
+            border-radius: 11px;
+            background: var(--surface);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.92em;
+            transition: border-color 0.2s;
+        }
+        .add-row input::placeholder { color: var(--text3); }
+        .add-row input:focus { outline: none; border-color: var(--accent); }
+        .add-row .primary-btn {
+            padding: 11px 18px;
+            border: none;
+            border-radius: 11px;
+            background: var(--accent);
+            color: var(--btn-fg);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.88em;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.2s, transform 0.15s;
+        }
+        .add-row .primary-btn:hover  { background: var(--accent2); transform: translateY(-1px); }
+        .add-row .primary-btn:active { transform: translateY(0); }
+
+        /* ═══ HABIT CARD ═══ */
+        .habit-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            transition: box-shadow 0.25s;
+        }
+        .habit-card:hover { box-shadow: 0 3px 14px rgba(0,0,0,0.07); }
+
+        .habit-top {
             display: flex;
             align-items: center;
             gap: 8px;
-        }
-
-        .theme-label {
-            font-size: 0.8em;
-            color: var(--text-secondary);
-        }
-
-        .theme-buttons {
-            display: flex;
-            gap: 5px;
-        }
-
-        .theme-btn {
-            width: 24px;
-            height: 24px;
-            border: 2px solid transparent;
-            border-radius: 4px;
+            padding: 14px 16px 12px;
             cursor: pointer;
-            transition: all 0.3s;
-            position: relative;
         }
-
-        .theme-btn:hover {
-            transform: scale(1.15);
-            border-color: var(--text-tertiary);
+        .caret {
+            width: 18px; height: 18px;
+            color: var(--text3);
+            flex-shrink: 0;
+            transition: transform 0.3s;
         }
-
-        .theme-btn.active {
-            border-color: var(--accent-start);
-            box-shadow: 0 0 8px var(--accent-start);
-        }
-
-        .theme-btn[data-theme="default"] {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .theme-btn[data-theme="dark"] {
-            background: linear-gradient(135deg, #000000 0%, #333333 100%);
-        }
-
-        .theme-btn[data-theme="bw"] {
-            background: linear-gradient(135deg, #ffffff 0%, #888888 100%);
-        }
-
-        .theme-btn[data-theme="ocean"] {
-            background: linear-gradient(135deg, #2c7a9b 0%, #1f5e7a 100%);
-        }
-
-        .theme-btn[data-theme="forest"] {
-            background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
-        }
-
-        .lang-btn {
-            padding: 6px 14px;
-            border: none;
-            border-radius: 6px;
-            background: var(--day-cell-bg);
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 0.85em;
-            font-weight: 600;
-        }
-
-        .lang-btn:hover {
-            background: var(--day-cell-hover);
-            color: var(--text-primary);
-        }
-
-        .lang-btn.active {
-            background: linear-gradient(135deg, var(--accent-start) 0%, var(--accent-end) 100%);
-            color: var(--text-primary);
-        }
-
-        .habit-section {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 18px;
-            margin-bottom: 18px;
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--card-border);
-        }
-
-        .habit-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            gap: 12px;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .habit-header:hover .habit-name {
-            color: #667eea;
-        }
+        .habit-card.collapsed .caret { transform: rotate(-90deg); }
 
         .habit-name {
-            font-size: 1.3em;
-            font-weight: 600;
-            transition: color 0.2s;
-            flex: 0 1 auto;
-            min-width: 0;
-        }
-
-        .habit-name::before {
-            content: '▼ ';
-            font-size: 0.65em;
-            margin-right: 6px;
-            transition: transform 0.3s;
-            display: inline-block;
-        }
-
-        .habit-section.collapsed .habit-name::before {
-            transform: rotate(-90deg);
-        }
-
-        .habit-buttons {
-            display: flex;
-            gap: 8px;
-            flex-shrink: 0;
-        }
-
-        .mini-calendar {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-            margin: 0 12px;
-        }
-
-        .mini-day {
-            width: 32px;
-            height: 32px;
-            border-radius: 6px;
-            background: var(--day-cell-bg);
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75em;
-            position: relative;
-        }
-
-        .mini-day:hover {
-            background: var(--day-cell-hover);
-            transform: scale(1.05);
-        }
-
-        .mini-day.completed {
-            background: linear-gradient(135deg, var(--accent-start) 0%, var(--accent-end) 100%);
-        }
-
-        .mini-day.today {
-            border: 2px solid #ffd700;
-        }
-
-        .mini-day-number {
-            font-weight: 600;
-            font-size: 1.1em;
-        }
-
-        .mini-day-label {
-            font-size: 0.7em;
-            opacity: 0.7;
-            margin-top: -2px;
-        }
-
-        .calendar-container {
-            overflow: hidden;
-            transition: max-height 0.3s ease, opacity 0.3s ease;
-            max-height: 10000px;
-            opacity: 1;
-        }
-
-        .habit-section.collapsed .calendar-container {
-            max-height: 0;
-            opacity: 0;
-        }
-
-        .habit-stats {
-            display: flex;
-            gap: 20px;
-            font-size: 0.9em;
-            color: var(--text-secondary);
-        }
-
-        .stat-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .stat-value {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: var(--stat-color);
-        }
-
-        .calendar {
-            display: grid;
-            gap: 12px;
-            margin-top: 15px;
-        }
-
-        .month-section {
-            background: var(--month-bg);
-            border-radius: 8px;
-            padding: 12px;
-        }
-
-        .month-name {
-            font-size: 1em;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--accent-start);
-            cursor: pointer;
-            user-select: none;
-            transition: color 0.2s;
-        }
-
-        .month-name:hover {
-            color: var(--accent-end);
-        }
-
-        .month-name::before {
-            content: '▼ ';
-            font-size: 0.8em;
-            margin-right: 5px;
-            transition: transform 0.3s;
-            display: inline-block;
-        }
-
-        .month-section.collapsed .month-name::before {
-            transform: rotate(-90deg);
-        }
-
-        .month-content {
-            overflow: hidden;
-            transition: max-height 0.3s ease, opacity 0.3s ease;
-            max-height: 5000px;
-            opacity: 1;
-        }
-
-        .month-section.collapsed .month-content {
-            max-height: 0;
-            opacity: 0;
-        }
-
-        .week-grid {
-            display: grid;
-            grid-template-columns: 50px repeat(7, 1fr);
-            gap: 3px;
-            margin-bottom: 3px;
-        }
-
-        .day-label {
-            font-size: 0.75em;
-            color: var(--text-secondary);
-            padding: 3px;
-            text-align: center;
-        }
-
-        .day-cell {
-            aspect-ratio: 1;
-            background: var(--day-cell-bg);
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-            position: relative;
-        }
-
-        .day-cell:hover {
-            background: var(--day-cell-hover);
-            transform: scale(1.05);
-        }
-
-        .day-cell.completed {
-            background: linear-gradient(135deg, var(--accent-start) 0%, var(--accent-end) 100%);
-        }
-
-        .day-cell.today {
-            border: 2px solid #ffd700;
-        }
-
-        .add-habit {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-
-        .archive-toggle {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        .archive-btn {
-            background: var(--input-bg);
-            padding: 10px 25px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 2px solid transparent;
-        }
-
-        .archive-btn:hover {
-            background: var(--input-focus);
-        }
-
-        .archive-btn.active {
-            background: linear-gradient(135deg, var(--accent-start) 0%, var(--accent-end) 100%);
-            border-color: var(--accent-start);
-        }
-
-        .add-habit input {
             flex: 1;
-            min-width: 200px;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            background: var(--input-bg);
-            color: var(--text-primary);
-            font-size: 1em;
-        }
-
-        .add-habit input::placeholder {
-            color: var(--text-secondary);
-        }
-
-        .add-habit input:focus {
-            outline: none;
-            background: var(--input-focus);
-        }
-
-        button {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 6px;
-            background: linear-gradient(135deg, var(--accent-start) 0%, var(--accent-end) 100%);
-            color: white;
-            font-size: 0.85em;
+            font-size: 0.98em;
             font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s;
+            color: var(--text);
+            overflow: hidden;
+            text-overflow: ellipsis;
             white-space: nowrap;
         }
-
-        button:hover {
-            transform: translateY(-2px);
+        .card-btns { display: flex; gap: 5px; flex-shrink: 0; }
+        .card-btns button {
+            padding: 5px 11px;
+            border: none; border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.76em; font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.18s, transform 0.15s;
+            color: #fff;
         }
+        .card-btns button:hover  { opacity: 0.84; transform: translateY(-1px); }
+        .card-btns button:active { transform: translateY(0); }
+        .btn-arch { background: var(--arch); }
+        .btn-del  { background: var(--del); }
 
-        button:active {
-            transform: translateY(0);
+        /* ═══ MINI STRIP ═══ */
+        .mini-strip {
+            display: flex;
+            gap: 4px;
+            padding: 0 16px 12px;
         }
-
-        .delete-btn {
-            background: linear-gradient(135deg, var(--delete-start) 0%, var(--delete-end) 100%);
-            padding: 8px 16px;
-            font-size: 0.85em;
+        .mini-cell {
+            flex: 1;
+            max-width: 46px;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            background: var(--surface2);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1px;
+            border: 1.5px solid transparent;
+            transition: background 0.15s, transform 0.12s;
         }
+        .mini-cell:hover       { background: var(--bg2); transform: scale(1.06); }
+        .mini-cell.done        { background: var(--done); }
+        .mini-cell.done .mc-n,
+        .mini-cell.done .mc-d  { color: var(--btn-fg) !important; }
+        .mini-cell.today-c     { border-color: var(--today-ring); }
+        .mc-n { font-size: 0.95em; font-weight: 700; color: var(--text); line-height: 1; }
+        .mc-d { font-size: 0.62em; color: var(--text3); }
 
-        .archive-habit-btn {
-            background: linear-gradient(135deg, var(--archive-start) 0%, var(--archive-end) 100%);
-            padding: 8px 16px;
-            font-size: 0.85em;
+        /* ═══ CALENDAR ═══ */
+        .cal-wrap {
+            overflow: hidden;
+            max-height: 9999px; opacity: 1;
+            transition: max-height 0.35s ease, opacity 0.35s ease;
         }
+        .habit-card.collapsed .cal-wrap { max-height: 0; opacity: 0; }
+        .cal-body { padding: 0 14px 14px; display: flex; flex-direction: column; gap: 8px; }
 
-        .month-download-btn {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            padding: 6px 14px;
-            font-size: 0.8em;
-            margin-top: 10px;
-            width: 100%;
+        .month-block { border-radius: 10px; background: var(--surface2); overflow: hidden; }
+        .month-head {
+            display: flex; align-items: center; gap: 6px;
+            padding: 8px 12px; cursor: pointer; user-select: none;
         }
+        .m-arrow {
+            width: 13px; height: 13px; color: var(--text3); flex-shrink: 0;
+            transition: transform 0.28s;
+        }
+        .month-block.collapsed .m-arrow { transform: rotate(-90deg); }
+        .m-title {
+            font-size: 0.78em; font-weight: 600;
+            color: var(--month-col);
+            letter-spacing: 0.07em; text-transform: uppercase; flex: 1;
+        }
+        .m-count { font-size: 0.72em; color: var(--text3); font-weight: 500; }
 
+        .m-content {
+            overflow: hidden; max-height: 5000px; opacity: 1;
+            transition: max-height 0.28s ease, opacity 0.28s ease;
+        }
+        .month-block.collapsed .m-content { max-height: 0; opacity: 0; }
+        .m-grid { padding: 3px 10px 10px; }
+
+        .dh-row {
+            display: grid;
+            grid-template-columns: 28px repeat(7, 1fr);
+            gap: 2px; margin-bottom: 3px;
+        }
+        .dh-cell {
+            text-align: center; font-size: 0.65em;
+            font-weight: 600; color: var(--text3);
+            letter-spacing: 0.04em; padding: 2px 0;
+        }
+        .week-row {
+            display: grid;
+            grid-template-columns: 28px repeat(7, 1fr);
+            gap: 2px; margin-bottom: 2px;
+        }
+        .wn {
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.6em; color: var(--text3);
+        }
+        .day-cell {
+            aspect-ratio: 1;
+            border-radius: 5px;
+            background: var(--bg);
+            cursor: pointer;
+            position: relative;
+            transition: background 0.13s, transform 0.1s;
+        }
+        .day-cell:hover { background: var(--bg2); transform: scale(1.07); }
+        .day-cell.done  { background: var(--done); }
+        .day-cell.today { box-shadow: inset 0 0 0 2px var(--today-ring); }
+        .day-cell::after {
+            content: attr(data-d);
+            position: absolute; inset: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.68em; color: var(--text2); pointer-events: none;
+        }
+        .day-cell.done::after { color: var(--btn-fg); opacity: 0.9; }
+
+        .share-btn {
+            width: 100%; margin-top: 6px;
+            padding: 7px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: transparent;
+            color: var(--text2);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.77em; font-weight: 500;
+            cursor: pointer;
+            transition: background 0.18s, color 0.18s;
+        }
+        .share-btn:hover { background: var(--bg2); color: var(--text); transform: none; }
+
+        /* ═══ EMPTY ═══ */
         .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text-secondary);
+            text-align: center; padding: 60px 20px;
         }
+        .empty-icon { font-size: 2.8em; margin-bottom: 12px; }
+        .empty-state h3 { color: var(--text2); font-weight: 500; margin-bottom: 6px; }
+        .empty-state p  { color: var(--text3); font-size: 0.86em; }
 
-        .empty-state h2 {
-            margin-bottom: 10px;
-            color: var(--text-tertiary);
+        /* ═══ SYNC BADGE ═══ */
+        #syncStatus {
+            position: fixed; bottom: 18px; right: 14px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text2);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.74em;
+            padding: 5px 12px;
+            border-radius: 20px;
+            display: flex; align-items: center; gap: 6px;
+            z-index: 9999; opacity: 0;
+            transition: opacity 0.35s;
+            pointer-events: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
+        #syncStatus.visible { opacity: 1; }
+        .sync-dot { width:6px; height:6px; border-radius:50%; background: var(--text3); flex-shrink:0; }
+        #syncStatus.saving  .sync-dot { background:#E8A060; animation:blink .6s infinite; }
+        #syncStatus.saved   .sync-dot { background:#5C8B52; }
+        #syncStatus.error   .sync-dot { background:var(--del); }
+        #syncStatus.loading .sync-dot { background:var(--accent); animation:blink 1s infinite; }
+        @keyframes blink { 0%,100%{opacity:1}50%{opacity:.2} }
 
-        @media (max-width: 768px) {
-            body {
-                padding: 5px;
-            }
+        /* ═══ LOADING ═══ */
+        #loadingOverlay {
+            position:fixed; inset:0;
+            background: var(--bg);
+            display:flex; flex-direction:column;
+            align-items:center; justify-content:center;
+            z-index:10000; gap:14px;
+        }
+        .spinner {
+            width:30px; height:30px;
+            border: 2.5px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin .85s linear infinite;
+        }
+        @keyframes spin { to { transform:rotate(360deg); } }
+        #loadingOverlay p { color:var(--text3); font-size:.86em; }
 
-            .container {
-                padding: 0;
-            }
-
-            .week-grid {
-                grid-template-columns: 40px repeat(7, 1fr);
-                gap: 2px;
-            }
-
-            .day-label {
-                font-size: 0.7em;
-            }
-
-            h1 {
-                font-size: 1.8em;
-                margin-bottom: 5px;
-            }
-
-            .subtitle {
-                font-size: 1em;
-                margin-bottom: 20px;
-            }
-
-            .habit-name {
-                font-size: 1.1em;
-            }
-
-            .habit-section {
-                padding: 15px;
-                margin-bottom: 15px;
-            }
-
-            .language-switcher {
-                position: static;
-                margin: 0 auto 10px auto;
-            }
-
-            .theme-selector {
-                position: static;
-                margin: 0 auto 20px auto;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .theme-buttons {
-                justify-content: center;
-            }
-
-            .add-habit {
-                flex-direction: column;
-            }
-
-            .add-habit input {
-                width: 100%;
-                min-width: auto;
-            }
-
-            .add-habit button {
-                width: 100%;
-            }
-
-            .habit-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-
-            .habit-stats {
-                width: 100%;
-                justify-content: space-around;
-            }
+        /* ═══ RESPONSIVE ═══ */
+        @media (max-width:540px) {
+            body { padding:10px; }
+            h1 { font-size:1.55em; }
+            .habit-top { padding:12px 12px 10px; }
+            .mini-strip { padding:0 12px 10px; }
+            .cal-body { padding:0 10px 10px; }
+            .card-btns button { padding:4px 9px; font-size:.73em; }
+            .add-row { flex-direction:column; }
+            .add-row .primary-btn { width:100%; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1 id="mainTitle">Трекер привычек</h1>
+
+<div id="loadingOverlay">
+    <div class="spinner"></div>
+    <p id="loadingText">Loading…</p>
+</div>
+
+<div id="syncStatus">
+    <div class="sync-dot"></div>
+    <span id="syncText">Saving…</span>
+</div>
+
+<div class="container">
+
+    <div class="app-header">
+        <h1>Habit Tracker</h1>
         <div class="subtitle" id="subtitle" onclick="editSubtitle()">Just Do It</div>
-        
-        <div class="language-switcher">
-            <button class="lang-btn active" onclick="setLanguage('ru')">RU</button>
-            <button class="lang-btn" onclick="setLanguage('en')">EN</button>
-        </div>
-
-        <div class="theme-selector">
-            <div class="theme-label">Тема</div>
-            <div class="theme-buttons">
-                <div class="theme-btn active" data-theme="default" onclick="setTheme('default')" title="По умолчанию"></div>
-                <div class="theme-btn" data-theme="dark" onclick="setTheme('dark')" title="Темная"></div>
-                <div class="theme-btn" data-theme="bw" onclick="setTheme('bw')" title="Черно-белая"></div>
-                <div class="theme-btn" data-theme="ocean" onclick="setTheme('ocean')" title="Океан"></div>
-                <div class="theme-btn" data-theme="forest" onclick="setTheme('forest')" title="Лес"></div>
-            </div>
-        </div>
-
-        <div class="archive-toggle">
-            <button class="archive-btn active" id="activeBtn" onclick="showActive()">📋 Активные</button>
-            <button class="archive-btn" id="archiveBtn" onclick="showArchived()" style="margin-left: 10px;">📦 Архив</button>
-        </div>
-
-        <div class="add-habit">
-            <input type="text" id="habitInput" placeholder="Название новой привычки..." maxlength="50">
-            <button id="addBtn" onclick="addHabit()">➕ Добавить привычку</button>
-        </div>
-
-        <div id="habitsContainer"></div>
     </div>
 
-    <script>
-        const MONTHS = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
-        const DAYS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
-        
-        const MONTHS_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        const DAYS_EN = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-        
-        const translations = {
-            ru: {
-                title: 'Трекер привычек',
-                defaultSubtitle: 'Just Do It',
-                themeLabel: 'Тема',
-                active: 'Активные',
-                archive: 'Архив',
-                addPlaceholder: 'Название новой привычки...',
-                addButton: '➕ Добавить привычку',
-                thisMonth: 'В месяце',
-                total: 'Всего',
-                downloadMonth: '📤 Поделиться',
-                toArchive: '📦 В архив',
-                restore: '📤 Восстановить',
-                delete: '🗑️ Удалить',
-                deleteConfirm: 'Удалить эту привычку?',
-                noActiveHabits: 'У вас пока нет активных привычек',
-                noActiveHabitsDesc: 'Добавьте свою первую привычку, чтобы начать отслеживание!',
-                emptyArchive: 'Архив пуст',
-                emptyArchiveDesc: 'Здесь будут отображаться архивированные привычки',
-                week: 'Н'
-            },
-            en: {
-                title: 'Habit Tracker',
-                defaultSubtitle: 'Just Do It',
-                themeLabel: 'Theme',
-                active: 'Active',
-                archive: 'Archive',
-                addPlaceholder: 'New habit name...',
-                addButton: '➕ Add Habit',
-                thisMonth: 'This Month',
-                total: 'Total',
-                downloadMonth: '📤 Share',
-                toArchive: '📦 Archive',
-                restore: '📤 Restore',
-                delete: '🗑️ Delete',
-                deleteConfirm: 'Delete this habit?',
-                noActiveHabits: 'You have no active habits yet',
-                noActiveHabitsDesc: 'Add your first habit to start tracking!',
-                emptyArchive: 'Archive is empty',
-                emptyArchiveDesc: 'Archived habits will be displayed here',
-                week: 'W'
-            }
-        };
-        
-        let habits = [];
-        let currentView = 'active'; // 'active' or 'archived'
-        let currentLang = 'ru';
-        let customSubtitle = '';
-        let currentTheme = 'default';
+    <div class="controls-row">
+        <span class="theme-label">Theme</span>
+        <div class="swatches">
+            <div class="swatch active" data-theme="default"  onclick="setTheme('default')"  title="Ivory"></div>
+            <div class="swatch"        data-theme="ash"       onclick="setTheme('ash')"       title="Ash"></div>
+            <div class="swatch"        data-theme="midnight"  onclick="setTheme('midnight')"  title="Midnight"></div>
+            <div class="swatch"        data-theme="sage"      onclick="setTheme('sage')"      title="Sage"></div>
+            <div class="swatch"        data-theme="dusk"      onclick="setTheme('dusk')"      title="Dusk"></div>
+        </div>
+    </div>
 
-        async function loadHabits() {
-            try {
-                const habitsData = localStorage.getItem('habits');
-                if (habitsData) {
-                    habits = JSON.parse(habitsData);
-                }
-            } catch (error) {
-                console.log('No saved habits found');
-                habits = [];
-            }
-            
-            try {
-                const lang = localStorage.getItem('language');
-                if (lang) {
-                    currentLang = lang;
-                }
-            } catch (error) {
-                currentLang = 'ru';
-            }
-            
-            try {
-                const subtitle = localStorage.getItem('customSubtitle');
-                if (subtitle) {
-                    customSubtitle = subtitle;
-                }
-            } catch (error) {
-                customSubtitle = '';
-            }
-            
-            try {
-                const theme = localStorage.getItem('theme');
-                if (theme) {
-                    currentTheme = theme;
-                    document.documentElement.setAttribute('data-theme', currentTheme);
-                }
-            } catch (error) {
-                currentTheme = 'default';
-            }
-            
-            updateLanguageUI();
-            updateThemeUI();
-            renderHabits();
-        }
+    <div class="view-tabs">
+        <button class="tab-btn active" id="activeTab"  onclick="showActive()">📋 Active</button>
+        <button class="tab-btn"        id="archiveTab" onclick="showArchived()">📦 Archive</button>
+    </div>
 
-        async function saveSubtitle(text) {
-            customSubtitle = text;
-            try {
-                localStorage.setItem('customSubtitle', text);
-            } catch (error) {
-                console.error('Error saving subtitle:', error);
-            }
-        }
+    <div class="add-row">
+        <input type="text" id="habitInput" placeholder="New habit…" maxlength="50">
+        <button class="primary-btn" onclick="addHabit()">+ Add</button>
+    </div>
 
-        async function saveHabits() {
-            try {
-                localStorage.setItem('habits', JSON.stringify(habits));
-            } catch (error) {
-                console.error('Error saving habits:', error);
-            }
-        }
+    <div id="habitsContainer"></div>
+</div>
 
-        async function setLanguage(lang) {
-            currentLang = lang;
-            try {
-                localStorage.setItem('language', lang);
-            } catch (error) {
-                console.error('Error saving language:', error);
-            }
-            updateLanguageUI();
-            renderHabits();
-        }
+<script>
+// ─── CONSTANTS ───────────────────────────────
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DAYS   = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 
-        async function setTheme(theme) {
-            currentTheme = theme;
-            document.documentElement.setAttribute('data-theme', theme);
-            try {
-                localStorage.setItem('theme', theme);
-            } catch (error) {
-                console.error('Error saving theme:', error);
-            }
-            updateThemeUI();
-        }
+// ─── STATE ───────────────────────────────────
+let habits         = [];
+let currentView    = 'active';
+let customSubtitle = '';
+let currentTheme   = 'default';
+let saveTimer      = null;
+let isTelegramApp  = false;
+let pendingSave    = false;
+let savingCloud    = false;
 
-        function updateThemeUI() {
-            const themeButtons = document.querySelectorAll('.theme-btn');
-            themeButtons.forEach(btn => {
-                btn.classList.toggle('active', btn.getAttribute('data-theme') === currentTheme);
-            });
-        }
+const tg = window.Telegram?.WebApp;
 
-        function updateLanguageUI() {
-            const t = translations[currentLang];
-            
-            document.getElementById('mainTitle').textContent = t.title;
-            
-            const subtitleElement = document.getElementById('subtitle');
-            const displayText = customSubtitle || t.defaultSubtitle;
-            subtitleElement.textContent = displayText;
-            
-            document.querySelector('.theme-label').textContent = t.themeLabel;
-            document.getElementById('activeBtn').textContent = '📋 ' + t.active;
-            document.getElementById('archiveBtn').textContent = '📦 ' + t.archive;
-            document.getElementById('habitInput').placeholder = t.addPlaceholder;
-            document.getElementById('addBtn').textContent = t.addButton;
-            
-            const langButtons = document.querySelectorAll('.lang-btn');
-            langButtons[0].classList.toggle('active', currentLang === 'ru');
-            langButtons[1].classList.toggle('active', currentLang === 'en');
-        }
+// ─── SYNC UI ─────────────────────────────────
+let hideTimer = null;
+function showSync(state, text) {
+    const el = document.getElementById('syncStatus');
+    el.className = 'visible ' + state;
+    document.getElementById('syncText').textContent = text;
+    if (hideTimer) clearTimeout(hideTimer);
+    if (state === 'saved' || state === 'error')
+        hideTimer = setTimeout(() => el.classList.remove('visible'), 2500);
+}
 
-        function editSubtitle() {
-            const subtitleElement = document.getElementById('subtitle');
-            const currentText = subtitleElement.textContent;
-            
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.value = currentText;
-            input.className = 'subtitle-input';
-            input.maxLength = 100;
-            
-            subtitleElement.replaceWith(input);
-            input.focus();
-            input.select();
-            
-            function saveAndRestore() {
-                const newText = input.value.trim();
-                const newSubtitle = document.createElement('div');
-                newSubtitle.id = 'subtitle';
-                newSubtitle.className = 'subtitle';
-                newSubtitle.textContent = newText || translations[currentLang].defaultSubtitle;
-                newSubtitle.onclick = editSubtitle;
-                
-                input.replaceWith(newSubtitle);
-                saveSubtitle(newText);
-            }
-            
-            input.addEventListener('blur', saveAndRestore);
-            input.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    saveAndRestore();
-                }
-            });
-        }
+// ─── CLOUD STORAGE ───────────────────────────
+const CK_HABITS   = 'habits_v2';
+const CK_SETTINGS = 'settings_v2';
+const CHUNK = 3900;
 
-        function addHabit() {
-            const input = document.getElementById('habitInput');
-            const name = input.value.trim();
-            
-            if (!name) return;
-            
-            const habit = {
-                id: Date.now(),
-                name: name,
-                completed: [],
-                collapsed: false,
-                archived: false
-            };
-            
-            habits.push(habit);
-            input.value = '';
-            saveHabits();
-            renderHabits();
-        }
-
-        function deleteHabit(id, event) {
-            event.stopPropagation();
-            const t = translations[currentLang];
-            if (confirm(t.deleteConfirm)) {
-                habits = habits.filter(h => h.id !== id);
-                saveHabits();
-                renderHabits();
-            }
-        }
-
-        function archiveHabit(id, event) {
-            event.stopPropagation();
-            const habit = habits.find(h => h.id === id);
-            if (!habit) return;
-            
-            habit.archived = !habit.archived;
-            saveHabits();
-            renderHabits();
-        }
-
-        function showActive() {
-            currentView = 'active';
-            updateViewButtons();
-            renderHabits();
-        }
-
-        function showArchived() {
-            currentView = 'archived';
-            updateViewButtons();
-            renderHabits();
-        }
-
-        function updateViewButtons() {
-            const buttons = document.querySelectorAll('.archive-btn');
-            buttons[0].classList.toggle('active', currentView === 'active');
-            buttons[1].classList.toggle('active', currentView === 'archived');
-        }
-
-        function toggleCollapse(habitId, event) {
-            const habit = habits.find(h => h.id === habitId);
-            if (!habit) return;
-            
-            habit.collapsed = !habit.collapsed;
-            saveHabits();
-            renderHabits();
-        }
-
-        function toggleDay(habitId, dateStr) {
-            const habit = habits.find(h => h.id === habitId);
-            if (!habit) return;
-            
-            const index = habit.completed.indexOf(dateStr);
-            if (index > -1) {
-                habit.completed.splice(index, 1);
-            } else {
-                habit.completed.push(dateStr);
-            }
-            
-            saveHabits();
-            renderHabits();
-        }
-
-        function generateMiniCalendar(habit) {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            
-            const days = currentLang === 'ru' ? DAYS : DAYS_EN;
-            
-            let html = '<div class="mini-calendar">';
-            
-            // Show 5 days: yesterday to 3 days ahead
-            for (let i = -1; i <= 3; i++) {
-                const date = new Date(today);
-                date.setDate(today.getDate() + i);
-                
-                const dateStr = getDateString(date);
-                const dayNumber = date.getDate();
-                const dayOfWeek = date.getDay();
-                const dayLabel = days[dayOfWeek === 0 ? 6 : dayOfWeek - 1]; // Convert to Monday-first
-                
-                const isCompleted = habit.completed.includes(dateStr);
-                const isToday = i === 0;
-                
-                html += `<div class="mini-day ${isCompleted ? 'completed' : ''} ${isToday ? 'today' : ''}" 
-                             onclick="event.stopPropagation(); toggleDay(${habit.id}, '${dateStr}')">
-                            <div class="mini-day-number">${dayNumber}</div>
-                            <div class="mini-day-label">${dayLabel}</div>
-                         </div>`;
-            }
-            
-            html += '</div>';
-            return html;
-        }
-
-        function getDateString(date) {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        }
-
-        function getDaysInMonth(year, month) {
-            return new Date(year, month + 1, 0).getDate();
-        }
-
-        function getFirstDayOfMonth(year, month) {
-            // Get day of week: 0=Sunday, 1=Monday, ..., 6=Saturday
-            let day = new Date(year, month, 1).getDay();
-            // Convert to Monday-based: 0=Monday, 1=Tuesday, ..., 6=Sunday
-            // Sunday (0) becomes 6, Monday (1) becomes 0, etc.
-            return (day + 6) % 7;
-        }
-
-        function downloadHabitMonth(habitId, month, year, event) {
-            event.stopPropagation();
-            const habit = habits.find(h => h.id === habitId);
-            if (!habit) return;
-            
-            generateCalendarImage([habit], month, year);
-        }
-
-        function generateCalendarImage(habitsToExport, month, year) {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            
-            const months = currentLang === 'ru' ? MONTHS : MONTHS_EN;
-            const days = currentLang === 'ru' ? DAYS : DAYS_EN;
-            
-            // Square format 1:1
-            const size = 1080;
-            canvas.width = size;
-            canvas.height = size;
-            
-            const padding = 60;
-            const contentWidth = size - (padding * 2);
-            
-            // Background gradient
-            const bgGradient = ctx.createLinearGradient(0, 0, size, size);
-            bgGradient.addColorStop(0, '#1a1a2e');
-            bgGradient.addColorStop(1, '#16213e');
-            ctx.fillStyle = bgGradient;
-            ctx.fillRect(0, 0, size, size);
-            
-            // Calculate calendar dimensions first to center everything
-            const cellSize = 70;
-            const cellGap = 8;
-            const daysInMonth = getDaysInMonth(year, month);
-            const firstDay = getFirstDayOfMonth(year, month);
-            const weeks = Math.ceil((daysInMonth + firstDay) / 7);
-            
-            const calendarHeight = (weeks * (cellSize + cellGap)) - cellGap;
-            const totalContentHeight = 100 + 70 + 80 + 40 + calendarHeight + 60;
-            
-            let yOffset = (size - totalContentHeight) / 2;
-            
-            // Title
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 42px -apple-system, sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText(`📊 ${translations[currentLang].title}`, size / 2, yOffset + 35);
-            yOffset += 70;
-            
-            // Month and year
-            ctx.font = 'bold 36px -apple-system, sans-serif';
-            ctx.fillStyle = '#667eea';
-            ctx.fillText(`${months[month]} ${year}`, size / 2, yOffset + 30);
-            yOffset += 70;
-            
-            habitsToExport.forEach((habit, habitIndex) => {
-                const stats = calculateStats(habit);
-                
-                // Habit name and stats on same line
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 32px -apple-system, sans-serif';
-                ctx.textAlign = 'left';
-                ctx.fillText(habit.name, padding, yOffset);
-                
-                ctx.font = '24px -apple-system, sans-serif';
-                ctx.fillStyle = '#aaaaaa';
-                ctx.textAlign = 'right';
-                const statsText = `${stats.thisMonthCompleted} ${currentLang === 'ru' ? 'дней' : 'days'}`;
-                ctx.fillText(statsText, size - padding, yOffset);
-                
-                yOffset += 50;
-                
-                // Draw calendar grid
-                const gridWidth = (cellSize * 7) + (cellGap * 6);
-                const startX = (size - gridWidth) / 2;
-                
-                // Day labels
-                ctx.font = 'bold 18px -apple-system, sans-serif';
-                ctx.fillStyle = '#aaaaaa';
-                ctx.textAlign = 'center';
-                
-                for (let d = 0; d < 7; d++) {
-                    const x = startX + (d * (cellSize + cellGap)) + cellSize / 2;
-                    ctx.fillText(days[d], x, yOffset + 20);
-                }
-                
-                yOffset += 40;
-                
-                // Draw days
-                let dayNum = 1;
-                
-                for (let week = 0; week < weeks; week++) {
-                    for (let day = 0; day < 7; day++) {
-                        if ((week === 0 && day < firstDay) || dayNum > daysInMonth) {
-                            continue;
-                        }
-                        
-                        const x = startX + (day * (cellSize + cellGap));
-                        const y = yOffset + (week * (cellSize + cellGap));
-                        
-                        const date = new Date(year, month, dayNum);
-                        const dateStr = getDateString(date);
-                        const isCompleted = habit.completed.includes(dateStr);
-                        
-                        // Cell background with rounded corners
-                        ctx.save();
-                        const radius = 10;
-                        ctx.beginPath();
-                        ctx.moveTo(x + radius, y);
-                        ctx.lineTo(x + cellSize - radius, y);
-                        ctx.quadraticCurveTo(x + cellSize, y, x + cellSize, y + radius);
-                        ctx.lineTo(x + cellSize, y + cellSize - radius);
-                        ctx.quadraticCurveTo(x + cellSize, y + cellSize, x + cellSize - radius, y + cellSize);
-                        ctx.lineTo(x + radius, y + cellSize);
-                        ctx.quadraticCurveTo(x, y + cellSize, x, y + cellSize - radius);
-                        ctx.lineTo(x, y + radius);
-                        ctx.quadraticCurveTo(x, y, x + radius, y);
-                        ctx.closePath();
-                        
-                        if (isCompleted) {
-                            const gradient = ctx.createLinearGradient(x, y, x + cellSize, y + cellSize);
-                            gradient.addColorStop(0, '#667eea');
-                            gradient.addColorStop(1, '#764ba2');
-                            ctx.fillStyle = gradient;
-                        } else {
-                            ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
-                        }
-                        ctx.fill();
-                        ctx.restore();
-                        
-                        // Day number
-                        ctx.fillStyle = isCompleted ? '#ffffff' : '#888888';
-                        ctx.font = 'bold 24px -apple-system, sans-serif';
-                        ctx.textAlign = 'center';
-                        ctx.fillText(dayNum, x + cellSize / 2, y + cellSize / 2 + 8);
-                        
-                        dayNum++;
-                    }
-                }
-                
-                yOffset += calendarHeight + 50;
-            });
-            
-            // Footer
-            ctx.fillStyle = '#666666';
-            ctx.font = '20px -apple-system, sans-serif';
-            ctx.textAlign = 'center';
-            const subtitle = customSubtitle || translations[currentLang].defaultSubtitle;
-            ctx.fillText(subtitle, size / 2, yOffset);
-            
-            // Share/Download image
-            const habitName = habitsToExport[0]?.name || 'habit';
-            const fileName = `${habitName.replace(/[^a-zA-Zа-яА-Я0-9]/g, '-')}-${months[month]}-${year}.png`;
-            
-            canvas.toBlob(async (blob) => {
-                if (!blob) return;
-                
-                // Check if we're in Telegram and Share API is available
-                if (window.Telegram?.WebApp && navigator.share) {
-                    try {
-                        const file = new File([blob], fileName, { type: 'image/png' });
-                        
-                        await navigator.share({
-                            files: [file],
-                            title: habitName,
-                            text: `${months[month]} ${year}`
-                        });
-                        
-                        console.log('Image shared successfully');
-                    } catch (err) {
-                        // If sharing fails or is cancelled, show the image in a new window
-                        if (err.name !== 'AbortError') {
-                            const url = URL.createObjectURL(blob);
-                            window.open(url, '_blank');
-                            
-                            window.Telegram.WebApp.showAlert(
-                                currentLang === 'ru'
-                                    ? 'Картинка открыта в новом окне. Нажмите и удерживайте для сохранения.'
-                                    : 'Image opened in new window. Tap and hold to save.'
-                            );
-                        }
-                    }
-                } else {
-                    // Regular browser download
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = fileName;
-                    a.style.display = 'none';
-                    document.body.appendChild(a);
-                    a.click();
-                    
-                    setTimeout(() => {
-                        document.body.removeChild(a);
-                        URL.revokeObjectURL(url);
-                    }, 100);
-                }
-            }, 'image/png', 0.95);
-        }
-
-        function toggleMonth(habitId, month, event) {
-            event.stopPropagation();
-            const habit = habits.find(h => h.id === habitId);
-            if (!habit) return;
-            
-            if (!habit.collapsedMonths) {
-                habit.collapsedMonths = [];
-            }
-            
-            const index = habit.collapsedMonths.indexOf(month);
-            if (index > -1) {
-                habit.collapsedMonths.splice(index, 1);
-            } else {
-                habit.collapsedMonths.push(month);
-            }
-            
-            saveHabits();
-            renderHabits();
-        }
-
-        function generateCalendar(habit) {
-            const now = new Date();
-            const currentYear = now.getFullYear();
-            const currentMonth = now.getMonth();
-            const today = getDateString(now);
-            
-            const months = currentLang === 'ru' ? MONTHS : MONTHS_EN;
-            const days = currentLang === 'ru' ? DAYS : DAYS_EN;
-            const weekLabel = translations[currentLang].week;
-            
-            // Initialize collapsedMonths if not exists
-            if (!habit.collapsedMonths) {
-                habit.collapsedMonths = [];
-                // Auto-collapse past months
-                for (let m = 0; m < currentMonth; m++) {
-                    habit.collapsedMonths.push(m);
-                }
-                // Auto-collapse future months
-                for (let m = currentMonth + 1; m < 12; m++) {
-                    habit.collapsedMonths.push(m);
-                }
-            }
-            
-            let html = '<div class="calendar">';
-            
-            for (let month = 0; month < 12; month++) {
-                const daysInMonth = getDaysInMonth(currentYear, month);
-                const firstDay = getFirstDayOfMonth(currentYear, month);
-                const isCollapsed = habit.collapsedMonths.includes(month);
-                
-                html += `<div class="month-section ${isCollapsed ? 'collapsed' : ''}">`;
-                html += `<div class="month-name" onclick="toggleMonth(${habit.id}, ${month}, event)">${months[month]}</div>`;
-                html += '<div class="month-content">';
-                
-                html += '<div class="week-grid">';
-                html += '<div class="day-label"></div>';
-                days.forEach(day => {
-                    html += `<div class="day-label">${day}</div>`;
-                });
-                html += '</div>';
-                
-                let dayCount = 1;
-                let weeks = Math.ceil((daysInMonth + firstDay) / 7);
-                
-                for (let week = 0; week < weeks; week++) {
-                    html += '<div class="week-grid">';
-                    html += `<div class="day-label">${weekLabel}${week + 1}</div>`;
-                    
-                    for (let day = 0; day < 7; day++) {
-                        if ((week === 0 && day < firstDay) || dayCount > daysInMonth) {
-                            html += '<div></div>';
-                        } else {
-                            const date = new Date(currentYear, month, dayCount);
-                            const dateStr = getDateString(date);
-                            const isCompleted = habit.completed.includes(dateStr);
-                            const isToday = dateStr === today;
-                            
-                            html += `<div class="day-cell ${isCompleted ? 'completed' : ''} ${isToday ? 'today' : ''}" 
-                                         onclick="toggleDay(${habit.id}, '${dateStr}')"
-                                         title="${dayCount} ${months[month]}"
-                                    ></div>`;
-                            dayCount++;
-                        }
-                    }
-                    html += '</div>';
-                }
-                
-                // Add download button for this month
-                const t = translations[currentLang];
-                html += `<button class="month-download-btn" onclick="downloadHabitMonth(${habit.id}, ${month}, ${currentYear}, event)">${t.downloadMonth}</button>`;
-                
-                html += '</div>'; // month-content
-                html += '</div>'; // month-section
-            }
-            
-            html += '</div>';
-            return html;
-        }
-
-        function calculateStats(habit) {
-            const now = new Date();
-            const currentMonth = now.getMonth();
-            const currentYear = now.getFullYear();
-            
-            // Total completed days across all time
-            const totalDays = habit.completed.length;
-            
-            // Count completed days in current month only
-            const thisMonthCompleted = habit.completed.filter(dateStr => {
-                const date = new Date(dateStr + 'T00:00:00'); // Force local timezone
-                return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
-            }).length;
-            
-            return { totalDays, thisMonthCompleted };
-        }
-
-        function renderHabits() {
-            const container = document.getElementById('habitsContainer');
-            const t = translations[currentLang];
-            
-            const filteredHabits = habits.filter(h => {
-                if (currentView === 'active') {
-                    return !h.archived;
-                } else {
-                    return h.archived;
-                }
-            });
-            
-            if (filteredHabits.length === 0) {
-                if (currentView === 'active') {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <h2>${t.noActiveHabits}</h2>
-                            <p>${t.noActiveHabitsDesc}</p>
-                        </div>
-                    `;
-                } else {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <h2>${t.emptyArchive}</h2>
-                            <p>${t.emptyArchiveDesc}</p>
-                        </div>
-                    `;
-                }
-                return;
-            }
-            
-            let html = '';
-            
-            filteredHabits.forEach(habit => {
-                const stats = calculateStats(habit);
-                const collapsedClass = habit.collapsed ? 'collapsed' : '';
-                const archiveButtonText = habit.archived ? t.restore : t.toArchive;
-                
-                html += `
-                    <div class="habit-section ${collapsedClass}">
-                        <div class="habit-header" onclick="toggleCollapse(${habit.id}, event)">
-                            <div class="habit-name">${habit.name}</div>
-                            ${generateMiniCalendar(habit)}
-                            <div class="habit-buttons">
-                                <button class="archive-habit-btn" onclick="archiveHabit(${habit.id}, event)">${archiveButtonText}</button>
-                                <button class="delete-btn" onclick="deleteHabit(${habit.id}, event)">${t.delete}</button>
-                            </div>
-                        </div>
-                        <div class="calendar-container">
-                            ${generateCalendar(habit)}
-                        </div>
-                    </div>
-                `;
-            });
-            
-            container.innerHTML = html;
-        }
-
-        document.getElementById('habitInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                addHabit();
-            }
+function chunkStr(s) {
+    const r = [];
+    for (let i=0;i<s.length;i+=CHUNK) r.push(s.slice(i,i+CHUNK));
+    return r;
+}
+function cloudSet(base, val) {
+    return new Promise((res,rej) => {
+        if (!tg?.CloudStorage) { rej(new Error('no cloud')); return; }
+        const chunks = chunkStr(val);
+        tg.CloudStorage.setItem(base+'_meta', JSON.stringify({chunks:chunks.length}), err => {
+            if (err) { rej(err); return; }
+            if (!chunks.length) { res(); return; }
+            let left = chunks.length;
+            chunks.forEach((c,i) => tg.CloudStorage.setItem(base+'_'+i, c, e2 => {
+                if (e2) { rej(e2); return; }
+                if (--left===0) res();
+            }));
         });
+    });
+}
+function cloudGet(base) {
+    return new Promise((res,rej) => {
+        if (!tg?.CloudStorage) { rej(new Error('no cloud')); return; }
+        tg.CloudStorage.getItem(base+'_meta', (err,raw) => {
+            if (err||!raw) { res(null); return; }
+            let meta; try{meta=JSON.parse(raw);}catch{res(null);return;}
+            const n = meta.chunks||0;
+            if (!n) { res(''); return; }
+            const keys = Array.from({length:n},(_,i)=>base+'_'+i);
+            tg.CloudStorage.getItems(keys,(e2,vals)=>{
+                if(e2){rej(e2);return;}
+                res(keys.map(k=>vals[k]||'').join(''));
+            });
+        });
+    });
+}
 
-        // Telegram WebApp initialization
-        let tg = window.Telegram?.WebApp;
+// ─── SAVE ────────────────────────────────────
+async function saveHabits() {
+    const p = JSON.stringify(habits);
+    try { localStorage.setItem('habits', p); } catch {}
+    if (!isTelegramApp) return;
+    pendingSave = true;
+    if (saveTimer) clearTimeout(saveTimer);
+    saveTimer = setTimeout(flushToCloud, 800);
+}
+async function flushToCloud() {
+    if (!pendingSave||savingCloud) return;
+    pendingSave=false; savingCloud=true;
+    showSync('saving','Saving…');
+    try {
+        await Promise.all([
+            cloudSet(CK_HABITS,   JSON.stringify(habits)),
+            cloudSet(CK_SETTINGS, JSON.stringify({subtitle:customSubtitle, theme:currentTheme}))
+        ]);
+        showSync('saved','Saved ☁️');
+    } catch(e) {
+        console.error(e); showSync('error','Save error');
+    } finally {
+        savingCloud=false;
+        if (pendingSave) flushToCloud();
+    }
+}
 
-        function initTelegramApp() {
-            if (tg) {
-                // Expand the app to full height
-                tg.expand();
-                
-                // Enable closing confirmation
-                tg.enableClosingConfirmation();
-                
-                // Set header color
-                tg.setHeaderColor('secondary_bg_color');
-                
-                // Apply Telegram theme if available
-                if (tg.themeParams) {
-                    document.body.classList.add('telegram-theme');
-                    
-                    // Set CSS variables from Telegram theme
-                    const root = document.documentElement;
-                    if (tg.themeParams.bg_color) {
-                        root.style.setProperty('--tg-theme-bg-color', tg.themeParams.bg_color);
-                    }
-                    if (tg.themeParams.text_color) {
-                        root.style.setProperty('--tg-theme-text-color', tg.themeParams.text_color);
-                    }
-                    if (tg.themeParams.hint_color) {
-                        root.style.setProperty('--tg-theme-hint-color', tg.themeParams.hint_color);
-                    }
-                    if (tg.themeParams.button_color) {
-                        root.style.setProperty('--tg-theme-button-color', tg.themeParams.button_color);
-                    }
-                    if (tg.themeParams.button_text_color) {
-                        root.style.setProperty('--tg-theme-button-text-color', tg.themeParams.button_text_color);
-                    }
-                    if (tg.themeParams.secondary_bg_color) {
-                        root.style.setProperty('--tg-theme-secondary-bg-color', tg.themeParams.secondary_bg_color);
-                    }
-                }
-                
-                // Handle back button
-                tg.BackButton.onClick(() => {
-                    if (confirm('Выйти из приложения?')) {
-                        tg.close();
-                    }
-                });
-                
-                // Show back button when needed
-                window.addEventListener('scroll', () => {
-                    if (window.scrollY > 100) {
-                        tg.BackButton.show();
-                    } else {
-                        tg.BackButton.hide();
-                    }
-                });
-                
-                // Notify Telegram that app is ready
-                tg.ready();
-                
-                console.log('Telegram WebApp initialized');
+// ─── LOAD ────────────────────────────────────
+async function loadHabits() {
+    let fromCloud = false;
+    if (tg?.CloudStorage) {
+        try {
+            const [hR,sR] = await Promise.all([cloudGet(CK_HABITS),cloudGet(CK_SETTINGS)]);
+            if (hR) { habits=JSON.parse(hR); fromCloud=true; try{localStorage.setItem('habits',hR);}catch{} }
+            if (sR) {
+                const s=JSON.parse(sR);
+                if (s.subtitle!==undefined) customSubtitle=s.subtitle;
+                if (s.theme) currentTheme=s.theme;
             }
+        } catch(e) { console.warn(e); }
+    }
+    if (!fromCloud) {
+        try{const h=localStorage.getItem('habits');if(h)habits=JSON.parse(h);}catch{}
+        try{const sub=localStorage.getItem('customSubtitle');if(sub)customSubtitle=sub;}catch{}
+        try{const th=localStorage.getItem('theme');if(th)currentTheme=th;}catch{}
+    }
+    applyTheme(currentTheme);
+    updateSubtitleEl();
+    renderHabits();
+    document.getElementById('loadingOverlay').style.display='none';
+}
+
+async function saveSettings() {
+    try{localStorage.setItem('customSubtitle',customSubtitle);}catch{}
+    try{localStorage.setItem('theme',currentTheme);}catch{}
+    if (isTelegramApp) {
+        try{await cloudSet(CK_SETTINGS,JSON.stringify({subtitle:customSubtitle,theme:currentTheme}));}catch{}
+    }
+}
+
+// ─── THEME ───────────────────────────────────
+function applyTheme(theme) {
+    currentTheme = theme;
+    if (theme==='default') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', theme);
+    document.querySelectorAll('.swatch').forEach(s =>
+        s.classList.toggle('active', s.dataset.theme===theme)
+    );
+}
+function setTheme(theme) { applyTheme(theme); saveSettings(); }
+
+// ─── SUBTITLE ────────────────────────────────
+function updateSubtitleEl() {
+    const el=document.getElementById('subtitle');
+    if(el) el.textContent=customSubtitle||'Just Do It';
+}
+function editSubtitle() {
+    const el=document.getElementById('subtitle');
+    const inp=document.createElement('input');
+    inp.type='text'; inp.value=el.textContent;
+    inp.className='subtitle-input'; inp.maxLength=100;
+    el.replaceWith(inp); inp.focus(); inp.select();
+    function done() {
+        const v=inp.value.trim();
+        const nd=document.createElement('div');
+        nd.id='subtitle'; nd.className='subtitle';
+        nd.textContent=v||'Just Do It'; nd.onclick=editSubtitle;
+        inp.replaceWith(nd);
+        customSubtitle=v; saveSettings();
+    }
+    inp.addEventListener('blur',done);
+    inp.addEventListener('keypress',e=>{if(e.key==='Enter')done();});
+}
+
+// ─── HABITS ──────────────────────────────────
+function addHabit() {
+    const inp=document.getElementById('habitInput');
+    const name=inp.value.trim(); if(!name) return;
+    habits.push({id:Date.now(),name,completed:[],collapsed:false,archived:false});
+    inp.value=''; saveHabits(); renderHabits();
+}
+function deleteHabit(id,e) {
+    e.stopPropagation();
+    if(confirm('Delete this habit?')) {
+        habits=habits.filter(h=>h.id!==id); saveHabits(); renderHabits();
+    }
+}
+function archiveHabit(id,e) {
+    e.stopPropagation();
+    const h=habits.find(h=>h.id===id); if(!h) return;
+    h.archived=!h.archived; saveHabits(); renderHabits();
+}
+function toggleCollapse(id) {
+    const h=habits.find(h=>h.id===id); if(!h) return;
+    h.collapsed=!h.collapsed; saveHabits(); renderHabits();
+}
+function toggleDay(id,str) {
+    const h=habits.find(h=>h.id===id); if(!h) return;
+    const i=h.completed.indexOf(str);
+    if(i>-1) h.completed.splice(i,1); else h.completed.push(str);
+    saveHabits(); renderHabits();
+}
+function toggleMonth(id,m,e) {
+    e.stopPropagation();
+    const h=habits.find(h=>h.id===id); if(!h) return;
+    if(!h.collapsedMonths) h.collapsedMonths=[];
+    const i=h.collapsedMonths.indexOf(m);
+    if(i>-1) h.collapsedMonths.splice(i,1); else h.collapsedMonths.push(m);
+    saveHabits(); renderHabits();
+}
+function showActive()   {currentView='active';  updateTabs();renderHabits();}
+function showArchived() {currentView='archived';updateTabs();renderHabits();}
+function updateTabs() {
+    document.getElementById('activeTab').classList.toggle('active',  currentView==='active');
+    document.getElementById('archiveTab').classList.toggle('active', currentView==='archived');
+}
+
+// ─── DATE ────────────────────────────────────
+function ds(date) {
+    return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+}
+function dIM(y,m)  { return new Date(y,m+1,0).getDate(); }
+function f1st(y,m) { return (new Date(y,m,1).getDay()+6)%7; }
+
+// ─── MINI STRIP ──────────────────────────────
+function buildMini(habit) {
+    const today=new Date(); today.setHours(0,0,0,0);
+    let html='<div class="mini-strip">';
+    for(let i=-1;i<=3;i++){
+        const d=new Date(today); d.setDate(today.getDate()+i);
+        const str=ds(d), dow=d.getDay();
+        const lab=DAYS[dow===0?6:dow-1];
+        const done=habit.completed.includes(str);
+        html+=`<div class="mini-cell ${done?'done':''} ${i===0?'today-c':''}"
+                    onclick="event.stopPropagation();toggleDay(${habit.id},'${str}')">
+                 <div class="mc-n">${d.getDate()}</div>
+                 <div class="mc-d">${lab}</div>
+               </div>`;
+    }
+    return html+'</div>';
+}
+
+// ─── FULL CALENDAR ───────────────────────────
+function buildCal(habit) {
+    const now=new Date(), y=now.getFullYear(), curM=now.getMonth(), todayStr=ds(now);
+    if(!habit.collapsedMonths){
+        habit.collapsedMonths=[];
+        for(let m=0;m<12;m++) if(m!==curM) habit.collapsedMonths.push(m);
+    }
+    let html='<div class="cal-body">';
+    for(let m=0;m<12;m++){
+        const dim=dIM(y,m), first=f1st(y,m), weeks=Math.ceil((dim+first)/7);
+        const collapsed=habit.collapsedMonths.includes(m);
+        const cnt=habit.completed.filter(s=>{
+            const d=new Date(s+'T00:00:00');
+            return d.getMonth()===m&&d.getFullYear()===y;
+        }).length;
+
+        html+=`<div class="month-block ${collapsed?'collapsed':''}">
+               <div class="month-head" onclick="toggleMonth(${habit.id},${m},event)">
+                 <svg class="m-arrow" viewBox="0 0 16 16" fill="none">
+                   <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                 </svg>
+                 <span class="m-title">${MONTHS[m]}</span>
+                 ${cnt>0?`<span class="m-count">${cnt} ✓</span>`:''}
+               </div>
+               <div class="m-content"><div class="m-grid">`;
+
+        html+='<div class="dh-row"><div class="dh-cell"></div>';
+        DAYS.forEach(d=>html+=`<div class="dh-cell">${d.slice(0,2)}</div>`);
+        html+='</div>';
+
+        let day=1;
+        for(let w=0;w<weeks;w++){
+            html+=`<div class="week-row"><div class="wn">W${w+1}</div>`;
+            for(let d=0;d<7;d++){
+                if((w===0&&d<first)||day>dim) html+='<div></div>';
+                else {
+                    const str=ds(new Date(y,m,day));
+                    const done=habit.completed.includes(str);
+                    const isToday=str===todayStr;
+                    html+=`<div class="day-cell ${done?'done':''} ${isToday?'today':''}" data-d="${day}" onclick="toggleDay(${habit.id},'${str}')"></div>`;
+                    day++;
+                }
+            }
+            html+='</div>';
         }
 
-        // Initialize on load
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initTelegramApp);
+        html+=`<button class="share-btn" onclick="shareMonth(${habit.id},${m},${y},event)">↑ Share ${MONTHS[m]}</button>`;
+        html+='</div></div></div>';
+    }
+    return html+'</div>';
+}
+
+// ─── RENDER ──────────────────────────────────
+function renderHabits() {
+    const c=document.getElementById('habitsContainer');
+    const filtered=habits.filter(h=>currentView==='active'?!h.archived:h.archived);
+    if(!filtered.length){
+        const [icon,title,desc]=currentView==='active'
+            ?['📝','No active habits','Add your first habit above to start tracking!']
+            :['📦','Archive is empty','Archived habits will appear here'];
+        c.innerHTML=`<div class="empty-state"><div class="empty-icon">${icon}</div><h3>${title}</h3><p>${desc}</p></div>`;
+        return;
+    }
+    c.innerHTML=filtered.map(h=>`
+        <div class="habit-card ${h.collapsed?'collapsed':''}" >
+          <div class="habit-top" onclick="toggleCollapse(${h.id})">
+            <svg class="caret" viewBox="0 0 16 16" fill="none">
+              <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div class="habit-name">${h.name}</div>
+            <div class="card-btns">
+              <button class="btn-arch" onclick="archiveHabit(${h.id},event)">${h.archived?'↩ Restore':'↓ Archive'}</button>
+              <button class="btn-del"  onclick="deleteHabit(${h.id},event)">Delete</button>
+            </div>
+          </div>
+          ${buildMini(h)}
+          <div class="cal-wrap">${buildCal(h)}</div>
+        </div>`).join('');
+}
+
+// ─── SHARE IMAGE ─────────────────────────────
+function shareMonth(habitId,month,year,e) {
+    e.stopPropagation();
+    const h=habits.find(h=>h.id===habitId);
+    if(h) genImage(h,month,year);
+}
+
+function genImage(habit,month,year) {
+    const canvas=document.createElement('canvas');
+    const ctx=canvas.getContext('2d');
+    const S=1080; canvas.width=canvas.height=S;
+    const pad=64;
+
+    const st=getComputedStyle(document.documentElement);
+    const get=v=>st.getPropertyValue(v).trim();
+    const bgC=get('--bg')||'#F7F4EF', sfC=get('--surface2')||'#F2EFE9';
+    const txC=get('--text')||'#1C1916', tx2=get('--text2')||'#7A7470';
+    const acC=get('--accent')||'#C8865A', doneC=get('--done')||'#C8865A';
+    const btnFg=get('--btn-fg')||'#FFFFFF';
+
+    ctx.fillStyle=bgC; ctx.fillRect(0,0,S,S);
+
+    const dim=dIM(year,month), first=f1st(year,month), weeks=Math.ceil((dim+first)/7);
+    const cS=72, cG=5, calH=(weeks*(cS+cG))-cG;
+    const totalH=55+46+40+36+30+calH+44;
+    let y=(S-totalH)/2;
+
+    ctx.font=`600 36px Georgia, serif`; ctx.fillStyle=txC; ctx.textAlign='center';
+    ctx.fillText('Habit Tracker', S/2, y+28); y+=50;
+    ctx.font=`italic 400 28px Georgia, serif`; ctx.fillStyle=acC;
+    ctx.fillText(`${MONTHS[month]} ${year}`, S/2, y+22); y+=42;
+    ctx.font=`600 26px sans-serif`; ctx.fillStyle=txC; ctx.textAlign='left';
+    ctx.fillText(habit.name, pad, y); y+=34;
+
+    const cnt=habit.completed.filter(s=>{const d=new Date(s+'T00:00:00');return d.getMonth()===month&&d.getFullYear()===year;}).length;
+    ctx.font=`400 18px sans-serif`; ctx.fillStyle=tx2;
+    ctx.fillText(`${cnt} day${cnt!==1?'s':''} completed`, pad, y); y+=36;
+
+    const gW=(cS*7)+(cG*6), sX=(S-gW)/2;
+    ctx.font=`600 15px sans-serif`; ctx.fillStyle=tx2; ctx.textAlign='center';
+    DAYS.forEach((d,i)=>ctx.fillText(d.slice(0,2),sX+i*(cS+cG)+cS/2,y+14)); y+=26;
+
+    const rr=(x,y,w,h,r)=>{
+        ctx.beginPath();
+        ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+        ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+        ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+        ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
+    };
+
+    let day=1;
+    for(let w=0;w<weeks;w++){
+        for(let d=0;d<7;d++){
+            if((w===0&&d<first)||day>dim) continue;
+            const cx=sX+d*(cS+cG), cy=y+w*(cS+cG);
+            const done=habit.completed.includes(ds(new Date(year,month,day)));
+            ctx.save(); rr(cx,cy,cS,cS,7);
+            ctx.fillStyle=done?doneC:sfC; ctx.fill(); ctx.restore();
+            ctx.font=`${done?600:400} 19px sans-serif`;
+            ctx.fillStyle=done?btnFg:tx2; ctx.textAlign='center';
+            ctx.fillText(day,cx+cS/2,cy+cS/2+6); day++;
+        }
+    }
+    y+=calH+26;
+
+    ctx.font=`italic 400 17px Georgia, serif`; ctx.fillStyle=tx2; ctx.textAlign='center';
+    ctx.fillText(customSubtitle||'Just Do It', S/2, y);
+
+    const name=`${habit.name.replace(/[^a-zA-Z0-9]/g,'-')}-${MONTHS[month]}-${year}.png`;
+    canvas.toBlob(async blob=>{
+        if(!blob) return;
+        if(window.Telegram?.WebApp&&navigator.share){
+            try{await navigator.share({files:[new File([blob],name,{type:'image/png'})],title:habit.name});}
+            catch(err){if(err.name!=='AbortError'){window.open(URL.createObjectURL(blob),'_blank');}}
         } else {
-            initTelegramApp();
+            const url=URL.createObjectURL(blob), a=document.createElement('a');
+            a.href=url;a.download=name;a.style.display='none';
+            document.body.appendChild(a);a.click();
+            setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},100);
         }
+    },'image/png',0.95);
+}
 
-        loadHabits();
-    </script>
+// ─── TELEGRAM INIT ───────────────────────────
+function initTelegram() {
+    if(!tg) return;
+    isTelegramApp=true;
+    tg.expand();
+    tg.enableClosingConfirmation();
+    tg.setHeaderColor('secondary_bg_color');
+    tg.ready();
+}
+
+document.getElementById('habitInput').addEventListener('keypress',e=>{if(e.key==='Enter')addHabit();});
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',initTelegram);
+else initTelegram();
+loadHabits();
+</script>
 </body>
 </html>
