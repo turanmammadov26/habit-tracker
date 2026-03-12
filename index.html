@@ -542,7 +542,7 @@
 
 <script>
 // ─── CONSTANTS ───────────────────────────────
-const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const DAYS   = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 
 // ─── STATE ───────────────────────────────────
@@ -863,61 +863,123 @@ function genImage(habit,month,year) {
     const canvas=document.createElement('canvas');
     const ctx=canvas.getContext('2d');
     const S=1080; canvas.width=canvas.height=S;
-    const pad=64;
+    const pad=72;
 
     const st=getComputedStyle(document.documentElement);
     const get=v=>st.getPropertyValue(v).trim();
-    const bgC=get('--bg')||'#F7F4EF', sfC=get('--surface2')||'#F2EFE9';
-    const txC=get('--text')||'#1C1916', tx2=get('--text2')||'#7A7470';
-    const acC=get('--accent')||'#C8865A', doneC=get('--done')||'#C8865A';
+    const bgC =get('--bg') ||'#F7F4EF';
+    const sfC =get('--surface2')||'#F2EFE9';
+    const txC =get('--text')||'#1C1916';
+    const tx2 =get('--text2')||'#7A7470';
+    const acC =get('--accent')||'#C8865A';
+    const doneC=get('--done')||'#C8865A';
     const btnFg=get('--btn-fg')||'#FFFFFF';
 
     ctx.fillStyle=bgC; ctx.fillRect(0,0,S,S);
 
-    const dim=dIM(year,month), first=f1st(year,month), weeks=Math.ceil((dim+first)/7);
-    const cS=72, cG=5, calH=(weeks*(cS+cG))-cG;
-    const totalH=55+46+40+36+30+calH+44;
-    let y=(S-totalH)/2;
+    const dim  = dIM(year,month);
+    const first= f1st(year,month);           // 0=Mon … 6=Sun
+    const weeks= Math.ceil((dim+first)/7);
 
-    ctx.font=`600 36px Georgia, serif`; ctx.fillStyle=txC; ctx.textAlign='center';
-    ctx.fillText('Habit Tracker', S/2, y+28); y+=50;
-    ctx.font=`italic 400 28px Georgia, serif`; ctx.fillStyle=acC;
-    ctx.fillText(`${MONTHS[month]} ${year}`, S/2, y+22); y+=42;
-    ctx.font=`600 26px sans-serif`; ctx.fillStyle=txC; ctx.textAlign='left';
-    ctx.fillText(habit.name, pad, y); y+=34;
+    // Cell size: fit 7 cells with gaps inside (S - 2*pad)
+    const availW = S - pad*2;
+    const cG = 6;
+    const cS = Math.floor((availW - cG*6) / 7);  // exact fit
+    const gridW = cS*7 + cG*6;
+    const sX = (S - gridW) / 2;                  // always centred
+    const calH = weeks*(cS+cG) - cG;
 
-    const cnt=habit.completed.filter(s=>{const d=new Date(s+'T00:00:00');return d.getMonth()===month&&d.getFullYear()===year;}).length;
-    ctx.font=`400 18px sans-serif`; ctx.fillStyle=tx2;
-    ctx.fillText(`${cnt} day${cnt!==1?'s':''} completed`, pad, y); y+=36;
+    // Header heights
+    const H_TITLE  = 56;
+    const H_MONTH  = 46;
+    const H_NAME   = 38;
+    const H_STAT   = 32;
+    const H_DAYHDR = 30;
+    const H_FOOTER = 44;
+    const totalH = H_TITLE+H_MONTH+H_NAME+H_STAT+H_DAYHDR+calH+H_FOOTER;
+    let y = Math.max(60, (S-totalH)/2);
 
-    const gW=(cS*7)+(cG*6), sX=(S-gW)/2;
-    ctx.font=`600 15px sans-serif`; ctx.fillStyle=tx2; ctx.textAlign='center';
-    DAYS.forEach((d,i)=>ctx.fillText(d.slice(0,2),sX+i*(cS+cG)+cS/2,y+14)); y+=26;
+    // Title
+    ctx.font=`600 38px Georgia, serif`;
+    ctx.fillStyle=txC; ctx.textAlign='center';
+    ctx.fillText('Habit Tracker', S/2, y+30); y+=H_TITLE;
 
-    const rr=(x,y,w,h,r)=>{
+    // Month / year
+    ctx.font=`italic 400 30px Georgia, serif`;
+    ctx.fillStyle=acC;
+    ctx.fillText(`${MONTHS[month]} ${year}`, S/2, y+24); y+=H_MONTH;
+
+    // Habit name
+    ctx.font=`600 26px sans-serif`;
+    ctx.fillStyle=txC; ctx.textAlign='left';
+    ctx.fillText(habit.name, pad, y+2); y+=H_NAME;
+
+    // Stat
+    const cnt=habit.completed.filter(s=>{
+        const d=new Date(s+'T00:00:00');
+        return d.getMonth()===month && d.getFullYear()===year;
+    }).length;
+    ctx.font=`400 17px sans-serif`;
+    ctx.fillStyle=tx2;
+    ctx.fillText(`${cnt} day${cnt!==1?'s':''} completed`, pad, y); y+=H_STAT;
+
+    // Day-of-week headers — centred over each column
+    ctx.font=`600 14px sans-serif`;
+    ctx.fillStyle=tx2; ctx.textAlign='center';
+    DAYS.forEach((d,i)=>{
+        const cx = sX + i*(cS+cG) + cS/2;
+        ctx.fillText(d.slice(0,2).toUpperCase(), cx, y+14);
+    });
+    y += H_DAYHDR;
+
+    // Rounded-rect helper
+    const rr=(rx,ry,rw,rh,r)=>{
         ctx.beginPath();
-        ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
-        ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
-        ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
-        ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
+        ctx.moveTo(rx+r,ry); ctx.lineTo(rx+rw-r,ry);
+        ctx.quadraticCurveTo(rx+rw,ry,rx+rw,ry+r);
+        ctx.lineTo(rx+rw,ry+rh-r);
+        ctx.quadraticCurveTo(rx+rw,ry+rh,rx+rw-r,ry+rh);
+        ctx.lineTo(rx+r,ry+rh);
+        ctx.quadraticCurveTo(rx,ry+rh,rx,ry+rh-r);
+        ctx.lineTo(rx,ry+r);
+        ctx.quadraticCurveTo(rx,ry,rx+r,ry);
+        ctx.closePath();
     };
 
-    let day=1;
-    for(let w=0;w<weeks;w++){
-        for(let d=0;d<7;d++){
-            if((w===0&&d<first)||day>dim) continue;
-            const cx=sX+d*(cS+cG), cy=y+w*(cS+cG);
-            const done=habit.completed.includes(ds(new Date(year,month,day)));
-            ctx.save(); rr(cx,cy,cS,cS,7);
-            ctx.fillStyle=done?doneC:sfC; ctx.fill(); ctx.restore();
-            ctx.font=`${done?600:400} 19px sans-serif`;
-            ctx.fillStyle=done?btnFg:tx2; ctx.textAlign='center';
-            ctx.fillText(day,cx+cS/2,cy+cS/2+6); day++;
-        }
-    }
-    y+=calH+26;
+    // Draw ALL cells in a flat index loop — guarantees correct column placement
+    const totalCells = weeks*7;
+    for(let idx=0; idx<totalCells; idx++){
+        const col = idx % 7;
+        const row = Math.floor(idx / 7);
+        const dayNum = idx - first + 1;        // actual day number (can be <=0 or >dim)
 
-    ctx.font=`italic 400 17px Georgia, serif`; ctx.fillStyle=tx2; ctx.textAlign='center';
+        const cx = sX + col*(cS+cG);
+        const cy = y  + row*(cS+cG);
+
+        if(dayNum < 1 || dayNum > dim) {
+            // empty slot — draw faint placeholder
+            ctx.save(); rr(cx,cy,cS,cS,7);
+            ctx.fillStyle='rgba(128,128,128,0.06)'; ctx.fill(); ctx.restore();
+            continue;
+        }
+
+        const dateStr = ds(new Date(year,month,dayNum));
+        const done    = habit.completed.includes(dateStr);
+
+        ctx.save(); rr(cx,cy,cS,cS,7);
+        ctx.fillStyle = done ? doneC : sfC;
+        ctx.fill(); ctx.restore();
+
+        ctx.font      = `${done?600:400} ${Math.round(cS*0.26)}px sans-serif`;
+        ctx.fillStyle = done ? btnFg : tx2;
+        ctx.textAlign = 'center';
+        ctx.fillText(dayNum, cx+cS/2, cy+cS/2+cS*0.09);
+    }
+    y += calH + 28;
+
+    // Footer subtitle
+    ctx.font=`italic 400 17px Georgia, serif`;
+    ctx.fillStyle=tx2; ctx.textAlign='center';
     ctx.fillText(customSubtitle||'Just Do It', S/2, y);
 
     const name=`${habit.name.replace(/[^a-zA-Z0-9]/g,'-')}-${MONTHS[month]}-${year}.png`;
