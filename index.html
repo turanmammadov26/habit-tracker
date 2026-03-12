@@ -881,12 +881,10 @@ function genImage(habit,month,year) {
     const first= f1st(year,month);           // 0=Mon … 6=Sun
     const weeks= Math.ceil((dim+first)/7);
 
-    // Cell size: fit 7 cells with gaps inside (S - 2*pad)
-    const availW = S - pad*2;
-    const cG = 6;
-    const cS = Math.floor((availW - cG*6) / 7);  // exact fit
+    // Original cell size
+    const cS = 72, cG = 5;
     const gridW = cS*7 + cG*6;
-    const sX = (S - gridW) / 2;                  // always centred
+    const sX = (S - gridW) / 2;
     const calH = weeks*(cS+cG) - cG;
 
     // Header heights
@@ -970,10 +968,10 @@ function genImage(habit,month,year) {
         ctx.fillStyle = done ? doneC : sfC;
         ctx.fill(); ctx.restore();
 
-        ctx.font      = `${done?600:400} ${Math.round(cS*0.26)}px sans-serif`;
+        ctx.font      = `${done?600:400} 19px sans-serif`;
         ctx.fillStyle = done ? btnFg : tx2;
         ctx.textAlign = 'center';
-        ctx.fillText(dayNum, cx+cS/2, cy+cS/2+cS*0.09);
+        ctx.fillText(dayNum, cx+cS/2, cy+cS/2+6);
     }
     y += calH + 28;
 
