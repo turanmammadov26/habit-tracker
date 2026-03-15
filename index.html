@@ -59,12 +59,78 @@
 #storageIndicator{font-family:var(--font-mono);font-size:9px;letter-spacing:0.12em;opacity:0.45;}
 .theme-row{display:flex;align-items:center;gap:6px;}
 
-/* ════ TABLET LAYOUT (≥768px) ════ */
+/* ════ TABLET / LANDSCAPE LAYOUT ════ */
 @media(min-width:768px){
-  body{background:var(--bg2);}
-  .app-header{border-radius:20px 20px 0 0;}
-  .sections-wrap{box-shadow:0 4px 30px rgba(0,0,0,0.15);}
-  .bottom-nav{border-radius:0 0 20px 20px;border-left:1px solid var(--glass-border);border-right:1px solid var(--glass-border);}
+
+  /* body becomes a centered stage */
+  body{
+    background:var(--bg);
+    justify-content:center;
+    align-items:center;
+  }
+
+  /* app lives in a floating card */
+  .app-frame{
+    display:flex;
+    flex-direction:column;
+    width:min(560px,88vw);
+    height:min(780px,88vh);
+    border-radius:24px;
+    overflow:hidden;
+    box-shadow:0 24px 64px rgba(0,0,0,0.25),0 0 0 1px var(--glass-border);
+    background:var(--bg);
+    position:relative;
+  }
+
+  /* header inside card */
+  .app-header{
+    border-radius:0;
+    padding-top:12px !important;
+  }
+
+  /* sections fill remaining space */
+  .sections-wrap{
+    flex:1;
+    min-height:0;
+    border-radius:0;
+  }
+
+  /* nav at bottom of card */
+  .bottom-nav{
+    height:52px;
+    border-radius:0;
+    padding-bottom:0 !important;
+    height:52px !important;
+  }
+
+  /* gear/theme btn fix — always visible */
+  .gear-btn,.theme-toggle-btn{
+    position:relative;
+    z-index:100;
+  }
+
+  /* side-by-side for diary month cal */
+  #section-diary{max-width:100%;}
+  #section-tracker{max-width:100%;}
+  #section-notes{max-width:100%;}
+}
+
+/* ════ LANDSCAPE PHONE ════ */
+@media(max-height:500px) and (orientation:landscape){
+  .app-header{padding-top:6px !important;padding-bottom:4px;}
+  .bottom-nav{height:44px !important;}
+  .hdr-title{font-size:clamp(22px,6vw,36px);}
+  .big-num{font-size:56px;}
+}
+
+/* ════ APP FRAME ════ */
+.app-frame{
+  display:flex;
+  flex-direction:column;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  position:relative;
 }
 
 /* ════ BASE ════ */
@@ -73,7 +139,7 @@ body{
   font-family:var(--font-mono);
   background:var(--bg);color:var(--text);
   height:100%;overflow:hidden;
-  display:flex;flex-direction:column;
+  display:flex;align-items:stretch;justify-content:stretch;
   -webkit-user-select:none;user-select:none;
   transition:background var(--T),color var(--T);
   position:relative;
@@ -879,6 +945,8 @@ textarea:focus{border-bottom-color:var(--accent);}
 <div id="syncStatus"><div class="sync-dot"></div><span id="syncText">Saving…</span></div>
 
 <!-- ══ THEME BAR (shared, always visible) ══ -->
+<!-- ══════════ APP FRAME ══════════ -->
+<div class="app-frame">
 <!-- ══════════ HEADER ══════════ -->
 <div class="app-header">
   <span id="storageIndicator"></span>
@@ -1167,6 +1235,7 @@ textarea:focus{border-bottom-color:var(--accent);}
     <span class="nav-label">notes</span>
   </button>
 </nav>
+</div><!-- /app-frame -->
 
 <script>
 /* ════ TG ════ */
