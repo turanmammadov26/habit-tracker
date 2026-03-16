@@ -32,6 +32,76 @@
 [data-theme="cyber"]   {--bg:#040a06;--bg2:#001a0a;--surface:rgba(255,255,255,0.03);--surface2:rgba(0,255,136,0.05);--border:rgba(0,255,136,0.08);--text:#efefef;--text2:#00cc55;--text3:#007a30;--accent:#00ff88;--accent2:#00cc55;--btn-fg:#000;--done:#00ff88;--today-ring:#00ff88;--del:#f55;--arch:#00cc55;--month-col:#00ff88;--muted:#444;--glow:rgba(0,255,136,0.10);--glass:rgba(4,10,6,0.6);--glass-border:rgba(0,255,136,0.1);}
 [data-theme="nothing"] {--bg:#000;--bg2:#0d0000;--surface:rgba(255,255,255,0.02);--surface2:rgba(255,30,30,0.04);--border:rgba(255,0,0,0.12);--text:#f0f0f0;--text2:#888;--text3:#555;--accent:#ff3333;--accent2:#cc0000;--btn-fg:#fff;--done:#ff3333;--today-ring:#ff3333;--del:#ff3333;--arch:#888;--month-col:#ff3333;--muted:#3a3a3a;--glow:rgba(255,30,30,0.08);--glass:rgba(0,0,0,0.6);--glass-border:rgba(255,0,0,0.1);}
 
+/* ── Cowboy Bebop: космос, джаз, одиночество ── */
+[data-theme="swordfish"]{
+  --bg:#0D0E1A;--bg2:#13152A;--surface:#1A1D35;--surface2:#141628;
+  --border:rgba(255,255,255,0.07);
+  --text:#E8E0D0;--text2:#8A8090;--text3:#554E60;
+  --accent:#F5A623;--accent2:#D4881A;
+  --btn-fg:#0D0E1A;
+  --done:#F5A623;--today-ring:#F5A623;--del:#E05555;--arch:#7A8FA0;--month-col:#F5A623;
+  --muted:#554E60;
+  --glow:rgba(245,166,35,0.08);
+  --glass:rgba(13,14,26,0.7);--glass-border:rgba(245,166,35,0.12);
+  --glass-blur:16px;
+}
+
+
+/* ── Stamford 2: официальные цвета Челси — #034694 синий, #DBA111 золото ── */
+[data-theme="stamford2"]{
+  --bg:#011028;--bg2:#021540;--surface:#032060;--surface2:#021848;
+  --border:rgba(219,161,17,0.25);
+  --text:#FFFFFF;--text2:#DBA111;--text3:#8A6A10;
+  --accent:#DBA111;--accent2:#C08A0A;
+  --btn-fg:#011028;
+  --done:#DBA111;--today-ring:#DBA111;--del:#EE242C;--arch:#6A7AB5;--month-col:#DBA111;
+  --muted:#4A5A30;
+  --glow:rgba(219,161,17,0.10);
+  --glass:rgba(3,20,60,0.75);--glass-border:rgba(219,161,17,0.28);
+  --glass-blur:16px;
+}
+/* ── Ghost Light: прозрачная светлая ── */
+[data-theme="ghost-light"]{
+  --bg:rgba(255,255,255,0.0);--bg2:rgba(255,255,255,0.0);
+  --surface:rgba(255,255,255,0.08);--surface2:rgba(255,255,255,0.12);
+  --border:rgba(0,0,0,0.1);
+  --text:#111111;--text2:#444444;--text3:#888888;
+  --accent:#111111;--accent2:#333333;
+  --btn-fg:#ffffff;
+  --done:#111111;--today-ring:#111111;--del:#CC3333;--arch:#666666;--month-col:#111111;
+  --muted:#999999;
+  --glow:transparent;
+  --glass:rgba(255,255,255,0.1);--glass-border:rgba(0,0,0,0.1);
+  --glass-blur:20px;
+}
+
+/* ── Noir: тёмный графит с фиолетовым туманом ── */
+[data-theme="ghost-dark"]{
+  --bg:#0e0e12;--bg2:#13131a;--surface:#1a1a24;--surface2:#15151e;
+  --border:rgba(160,150,200,0.08);
+  --text:#e8e6f0;--text2:#7a7890;--text3:#4a4860;
+  --accent:#a09ad0;--accent2:#8880b8;
+  --btn-fg:#0e0e12;
+  --done:#a09ad0;--today-ring:#a09ad0;--del:#c05060;--arch:#6a7888;--month-col:#a09ad0;
+  --muted:#3a3850;
+  --glow:rgba(160,150,200,0.06);
+  --glass:rgba(14,14,18,0.65);--glass-border:rgba(160,150,200,0.1);
+  --glass-blur:20px;
+}
+/* ── Stamford Bridge: дождь, синева, сталь ── */
+[data-theme="stamford"]{
+  --bg:#051428;--bg2:#0A1E3A;--surface:#0E2244;--surface2:#0A1C38;
+  --border:rgba(255,255,255,0.08);
+  --text:#EEF2FF;--text2:#7A90B8;--text3:#4A5E80;
+  --accent:#EEF2FF;--accent2:#C8D8F8;
+  --btn-fg:#051428;
+  --done:#EEF2FF;--today-ring:#EEF2FF;--del:#E05555;--arch:#5A9EC8;--month-col:#EEF2FF;
+  --muted:#4A5E80;
+  --glow:rgba(238,242,255,0.06);
+  --glass:rgba(5,20,40,0.75);--glass-border:rgba(238,242,255,0.1);
+  --glass-blur:16px;
+}
+
 /* ════ SAFE AREA (fullscreen support) ════ */
 /* ════ SAFE AREA ════ */
 .app-header{
@@ -46,18 +116,182 @@
 /* ════ APP HEADER ════ */
 .app-header{
   flex-shrink:0;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:8px 16px 6px;
-  padding-top:calc(8px + env(safe-area-inset-top,0px));
+  display:flex;align-items:center;justify-content:flex-start;
+  padding:6px 16px;
+  padding-top:calc(6px + env(safe-area-inset-top,0px));
   background:var(--glass);
   backdrop-filter:blur(var(--glass-blur));
   -webkit-backdrop-filter:blur(var(--glass-blur));
   border-bottom:1px solid var(--glass-border);
   transition:background var(--T);
-  z-index:50;position:relative;
+  z-index:50;position:relative;min-height:0;
 }
-#storageIndicator{font-family:var(--font-mono);font-size:9px;letter-spacing:0.12em;opacity:0.45;}
-.theme-row{display:flex;align-items:center;gap:6px;}
+#storageIndicator{font-family:var(--font-mono);font-size:9px;letter-spacing:0.12em;opacity:0.3;}
+
+/* ════ SIDE PANEL TOGGLE ════ */
+.side-panel-btn{
+  width:32px;height:32px;border-radius:50%;
+  background:var(--glass);border:1px solid var(--glass-border);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:background 0.2s,transform 0.3s;
+  margin-left:auto;
+}
+.side-panel-btn:hover{background:var(--surface2);}
+.side-panel-arrow{
+  font-size:16px;color:var(--text2);line-height:1;
+  transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  display:block;margin-top:-1px;
+}
+.side-panel-open .side-panel-arrow{transform:rotate(180deg);}
+
+/* ════ SIDE PANEL ════ */
+.side-panel{
+  position:absolute;right:0;top:0;bottom:0;
+  width:200px;
+  background:var(--glass);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-left:1px solid var(--glass-border);
+  z-index:200;
+  transform:translateX(100%);
+  transition:transform 0.32s cubic-bezier(0.4,0,0.2,1);
+  display:flex;flex-direction:column;
+  overflow-y:auto;
+  padding-top:calc(8px + env(safe-area-inset-top,0px));
+  padding-bottom:calc(8px + env(safe-area-inset-bottom,0px));
+}
+.side-panel.open{transform:translateX(0);}
+.side-panel-inner{display:flex;flex-direction:column;gap:2px;padding:8px 10px;}
+.side-panel-label{
+  font-family:var(--font-mono);font-size:9px;letter-spacing:0.2em;
+  text-transform:uppercase;color:var(--text3);margin-bottom:6px;padding:0 4px;
+}
+.side-panel-themes{display:flex;flex-direction:column;gap:2px;}
+.sp-theme-btn{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 10px;border-radius:10px;border:none;
+  background:none;cursor:pointer;text-align:left;
+  font-family:var(--font-mono);font-size:11px;letter-spacing:0.1em;
+  color:var(--text2);transition:background 0.15s,color 0.15s;
+}
+.sp-theme-btn:hover{background:var(--surface2);color:var(--text);}
+.sp-theme-btn.active{background:var(--surface2);color:var(--text);}
+.sp-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;border:1px solid rgba(255,255,255,0.15);}
+.side-panel-divider{height:1px;background:var(--glass-border);margin:8px 0;}
+.sp-nav-btn{
+  display:flex;align-items:center;
+  padding:8px 10px;border-radius:10px;border:none;
+  background:none;cursor:pointer;text-align:left;
+  font-family:var(--font-mono);font-size:11px;letter-spacing:0.1em;
+  color:var(--text2);transition:background 0.15s,color 0.15s;width:100%;
+}
+.sp-nav-btn:hover{background:var(--surface2);color:var(--text);}
+.sp-toggle-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:6px 4px;
+}
+.sp-toggle-name{
+  font-family:var(--font-mono);font-size:11px;letter-spacing:0.1em;
+  text-transform:uppercase;color:var(--text2);
+}
+.sp-font-list{
+  display:flex;flex-direction:column;gap:3px;margin-top:4px;
+}
+.sp-font-btn{
+  display:flex;align-items:baseline;gap:12px;
+  padding:9px 10px;border-radius:10px;
+  border:none;background:none;cursor:pointer;width:100%;
+  transition:background 0.15s;position:relative;
+}
+.sp-font-btn:hover{background:var(--surface2);}
+.sp-font-btn.active{background:var(--surface2);}
+.sp-font-btn.active::before{
+  content:'';position:absolute;left:0;top:20%;bottom:20%;
+  width:2px;border-radius:2px;background:var(--accent);
+}
+.sp-font-sample{
+  font-size:20px;color:var(--text);line-height:1;
+  flex:1;text-align:left;
+}
+.sp-font-label{
+  font-family:var(--font-mono);font-size:8px;
+  letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--text3);flex-shrink:0;
+}
+.side-panel-overlay{
+  display:none;position:absolute;inset:0;z-index:199;
+}
+.side-panel-overlay.visible{display:block;}
+
+.bottom-nav{
+  flex-shrink:0;
+  display:flex;align-items:stretch;
+  z-index:100;
+  background:var(--glass);
+  backdrop-filter:blur(var(--glass-blur));
+  -webkit-backdrop-filter:blur(var(--glass-blur));
+  border-top:1px solid var(--glass-border);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  transition:background var(--T);
+}
+.nav-pill{display:contents;}
+.nav-btn{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:none;border:none;cursor:pointer;
+  padding:12px 8px;position:relative;
+  transition:color 0.2s;
+}
+.nav-btn::before{
+  content:'';position:absolute;top:0;left:30%;width:40%;height:2px;
+  border-radius:0 0 3px 3px;background:var(--accent);
+  transform:scaleX(0);transition:transform 0.25s,background var(--T);
+}
+.nav-btn.active::before{transform:scaleX(1);}
+.nav-label{
+  font-family:var(--font-mono);font-size:10px;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--text3);transition:color 0.25s;
+}
+.nav-btn.active .nav-label{color:var(--accent);}
+
+.d-tabs,.n-tabs{
+  display:flex;
+  position:sticky;top:0;z-index:10;
+  background:var(--glass);
+  backdrop-filter:blur(var(--glass-blur));
+  -webkit-backdrop-filter:blur(var(--glass-blur));
+  border-bottom:1px solid var(--glass-border);
+  padding:0 8px;
+  transition:background var(--T);
+}
+.d-tabs-pill,.n-tabs-pill{display:contents;}
+.d-tab,.n-tab{
+  flex:1;padding:14px 8px;
+  font-family:var(--font-mono);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;
+  color:var(--text3);background:none;border:none;cursor:pointer;
+  border-radius:0;transition:color 0.2s;
+  text-align:center;white-space:nowrap;position:relative;
+}
+.d-tab::after,.n-tab::after{
+  content:'';position:absolute;bottom:0;left:20%;width:60%;height:2px;
+  background:var(--accent);border-radius:2px 2px 0 0;
+  transform:scaleX(0);transition:transform 0.25s,background var(--T);
+}
+.d-tab.active,.n-tab.active{color:var(--text);}
+.d-tab.active::after,.n-tab.active::after{transform:scaleX(1);}
+.tab-btn{
+  flex:1;padding:14px 8px;
+  font-family:var(--font-mono);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;
+  color:var(--text3);background:none;border:none;cursor:pointer;
+  text-align:center;position:relative;border-radius:0;transition:color 0.2s;
+}
+.tab-btn::after{
+  content:'';position:absolute;bottom:0;left:20%;width:60%;height:2px;
+  background:var(--accent);border-radius:2px 2px 0 0;
+  transform:scaleX(0);transition:transform 0.25s;
+}
+.tab-btn.active{color:var(--text);}
+.tab-btn.active::after{transform:scaleX(1);}
+
 
 /* ════ TABLET / LANDSCAPE LAYOUT ════ */
 @media(min-width:768px){
@@ -131,7 +365,14 @@
   height:100%;
   overflow:hidden;
   position:relative;
+  background:var(--bg);
+  transition:background var(--T);
 }
+
+/* ── Ghost themes: transparent background ── */
+[data-theme="ghost-light"] .app-frame{background:transparent;}
+[data-theme="ghost-light"] body{background:transparent;}
+[data-theme="ghost-light"] html{background:transparent;}
 
 /* ════ BASE ════ */
 html{height:100%;overflow:hidden;}
@@ -689,7 +930,7 @@ textarea:focus{border-bottom-color:var(--accent);}
   background:var(--glass);
   border:1px solid var(--glass-border);
   backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  border-radius:16px;padding:14px 16px;cursor:pointer;
+  border-radius:16px;padding:20px 16px;cursor:pointer;
   transition:box-shadow 0.2s,background var(--T);
   animation:fadeUp 0.2s ease;
 }
@@ -818,7 +1059,7 @@ textarea:focus{border-bottom-color:var(--accent);}
   background:var(--glass);
   border:1px solid var(--glass-border);
   backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  border-radius:16px;padding:14px 16px;cursor:pointer;
+  border-radius:16px;padding:20px 16px;cursor:pointer;
   display:flex;align-items:center;gap:12px;
   transition:box-shadow 0.2s,background var(--T);
   animation:fadeUp 0.18s ease;touch-action:manipulation;
@@ -950,33 +1191,61 @@ textarea:focus{border-bottom-color:var(--accent);}
 <!-- ══════════ HEADER ══════════ -->
 <div class="app-header">
   <span id="storageIndicator"></span>
-  <div class="theme-row">
-    <div class="theme-dots" id="themeDots">
-      <div class="theme-dots-inner">
-        <button class="th-btn active" data-theme="default"  onclick="setTheme('default')">ivory</button>
-        <button class="th-btn"        data-theme="ash"       onclick="setTheme('ash')">ash</button>
-        <button class="th-btn"        data-theme="sage"      onclick="setTheme('sage')">sage</button>
-        <button class="th-btn"        data-theme="midnight"  onclick="setTheme('midnight')">midnight</button>
-        <button class="th-btn"        data-theme="dusk"      onclick="setTheme('dusk')">dusk</button>
-        <button class="th-btn"        data-theme="bw"        onclick="setTheme('bw')">bw</button>
-        <button class="th-btn"        data-theme="indigo"    onclick="setTheme('indigo')">indigo</button>
-        <button class="th-btn"        data-theme="cyber"     onclick="setTheme('cyber')">cyber</button>
-        <button class="th-btn"        data-theme="nothing"   onclick="setTheme('nothing')">nothing</button>
-      </div>
+</div>
+
+<!-- ══════════ SIDE PANEL ══════════ -->
+<div class="side-panel" id="sidePanel">
+  <div class="side-panel-inner">
+
+    <div class="side-panel-label">theme</div>
+    <div class="side-panel-themes">
+      <button class="sp-theme-btn active" data-theme="default"  onclick="setTheme('default')"><span class="sp-dot" style="background:#C8865A"></span>ivory</button>
+      <button class="sp-theme-btn"        data-theme="ash"      onclick="setTheme('ash')"><span class="sp-dot" style="background:#5B7CE6"></span>ash</button>
+      <button class="sp-theme-btn"        data-theme="sage"     onclick="setTheme('sage')"><span class="sp-dot" style="background:#5C8B52"></span>sage</button>
+      <button class="sp-theme-btn"        data-theme="midnight" onclick="setTheme('midnight')"><span class="sp-dot" style="background:#E8D5B0"></span>midnight</button>
+      <button class="sp-theme-btn"        data-theme="dusk"     onclick="setTheme('dusk')"><span class="sp-dot" style="background:#E8A060"></span>dusk</button>
+      <button class="sp-theme-btn"        data-theme="bw"       onclick="setTheme('bw')"><span class="sp-dot" style="background:#fff"></span>bw</button>
+      <button class="sp-theme-btn"        data-theme="indigo"   onclick="setTheme('indigo')"><span class="sp-dot" style="background:#7c6ff7"></span>indigo</button>
+      <button class="sp-theme-btn"        data-theme="cyber"    onclick="setTheme('cyber')"><span class="sp-dot" style="background:#00ff88"></span>cyber</button>
+      <button class="sp-theme-btn"        data-theme="nothing"  onclick="setTheme('nothing')"><span class="sp-dot" style="background:#ff3333"></span>nothing</button>
+      <button class="sp-theme-btn"        data-theme="swordfish" onclick="setTheme('swordfish')"><span class="sp-dot" style="background:#F5A623"></span>swordfish</button>
+      <button class="sp-theme-btn"        data-theme="stamford"  onclick="setTheme('stamford')"><span class="sp-dot" style="background:#EEF2FF"></span>stamford</button>
+      <button class="sp-theme-btn"        data-theme="stamford2" onclick="setTheme('stamford2')"><span class="sp-dot" style="background:#DBA111;border:1px solid #034694"></span>stamford 2</button>
+      <button class="sp-theme-btn"        data-theme="ghost-light" onclick="setTheme('ghost-light')"><span class="sp-dot" style="background:#fff;border:1px solid #ccc"></span>ghost light</button>
+      <button class="sp-theme-btn"        data-theme="ghost-dark"  onclick="setTheme('ghost-dark')"><span class="sp-dot" style="background:#a09ad0"></span>noir</button>
     </div>
-    <button class="theme-toggle-btn" onclick="toggleThemePanel()">
-      <span class="t-dot"></span>theme
-    </button>
-    <button class="gear-btn" onclick="switchSection('settings')">settings</button>
+
+    <div class="side-panel-divider"></div>
+    <div class="side-panel-label">modules</div>
+    <div class="sp-toggle-row">
+      <span class="sp-toggle-name">diary</span>
+      <button class="toggle on" id="sp-tog-diary" onclick="toggleModule('diary')"></button>
+    </div>
+    <div class="sp-toggle-row">
+      <span class="sp-toggle-name">habits</span>
+      <button class="toggle on" id="sp-tog-tracker" onclick="toggleModule('tracker')"></button>
+    </div>
+    <div class="sp-toggle-row">
+      <span class="sp-toggle-name">notes</span>
+      <button class="toggle on" id="sp-tog-notes" onclick="toggleModule('notes')"></button>
+    </div>
+
+    <div class="side-panel-divider"></div>
+    <div class="side-panel-label">font</div>
+    <div class="sp-font-list" id="spFontList"></div>
+
   </div>
 </div>
+<div class="side-panel-overlay" id="sidePanelOverlay" onclick="closeSidePanel()"></div>
 
 <!-- ══════════ DIARY ══════════ -->
 <div class="sections-wrap">
 <div class="app-section active" id="section-diary">
   <nav class="d-tabs">
-    <button class="d-tab active" data-dtab="today" onclick="dTab('today')">today</button>
-    <button class="d-tab"        data-dtab="month" onclick="dTab('month')">month</button>
+    <div class="d-tabs-pill">
+      <button class="d-tab active" data-dtab="today" onclick="dTab('today')">today</button>
+      <button class="d-tab"        data-dtab="month" onclick="dTab('month')">month</button>
+    </div>
   </nav>
   <div class="d-page active" id="dtab-today">
     <div class="hdr">
@@ -1025,8 +1294,10 @@ textarea:focus{border-bottom-color:var(--accent);}
 <!-- ══════════ TRACKER ══════════ -->
 <div class="app-section" id="section-tracker">
   <nav class="d-tabs">
-    <button class="tab-btn active" id="activeTab"  onclick="showActive()">active</button>
-    <button class="tab-btn"        id="archiveTab" onclick="showArchived()">archive</button>
+    <div class="d-tabs-pill">
+      <button class="tab-btn active" id="activeTab"  onclick="showActive()">active</button>
+      <button class="tab-btn"        id="archiveTab" onclick="showArchived()">archive</button>
+    </div>
   </nav>
   <div class="tracker-top">
     <div class="hdr">
@@ -1225,15 +1496,20 @@ textarea:focus{border-bottom-color:var(--accent);}
 <!-- ══════════ BOTTOM NAV ══════════ -->
 </div><!-- /sections-wrap -->
 <nav class="bottom-nav">
-  <button class="nav-btn active" id="nav-diary"    onclick="switchSection('diary')">
-    <span class="nav-label">diary</span>
-  </button>
-  <button class="nav-btn"        id="nav-tracker"  onclick="switchSection('tracker')">
-    <span class="nav-label">habits</span>
-  </button>
-  <button class="nav-btn"        id="nav-notes"    onclick="switchSection('notes')">
-    <span class="nav-label">notes</span>
-  </button>
+  <div class="nav-pill">
+    <button class="nav-btn active" id="nav-diary"    onclick="switchSection('diary')">
+      <span class="nav-label">diary</span>
+    </button>
+    <button class="nav-btn"        id="nav-tracker"  onclick="switchSection('tracker')">
+      <span class="nav-label">habits</span>
+    </button>
+    <button class="nav-btn"        id="nav-notes"    onclick="switchSection('notes')">
+      <span class="nav-label">notes</span>
+    </button>
+    <button class="nav-btn"        id="nav-settings" onclick="toggleSidePanel()">
+      <span class="nav-label">•••</span>
+    </button>
+  </div>
 </nav>
 </div><!-- /app-frame -->
 
@@ -1297,22 +1573,47 @@ const Storage={
 /* ════ THEME ════ */
 let currentTheme='default', currentSection='diary';
 
-function toggleThemePanel(){
-  document.getElementById('themeDots').classList.toggle('open');
+/* ════ SIDE PANEL ════ */
+function toggleSidePanel(){
+  const panel=document.getElementById('sidePanel');
+  const overlay=document.getElementById('sidePanelOverlay');
+  const isOpen=panel.classList.contains('open');
+  if(isOpen){
+    panel.classList.remove('open');
+    overlay.classList.remove('visible');
+    document.getElementById('nav-settings')?.classList.remove('active');
+  } else {
+    // sync module toggles
+    ['diary','tracker','notes'].forEach(n=>{
+      const t=document.getElementById('sp-tog-'+n);
+      if(t) t.className='toggle'+(modules[n]?' on':'');
+    });
+    // render font list
+    const fl=document.getElementById('spFontList');
+    if(fl) fl.innerHTML=FONTS.map(f=>`
+      <button class="sp-font-btn${f.id===currentFont?' active':''}" onclick="applyFont('${f.id}')">
+        <span class="sp-font-sample" style="font-family:${f.font}">My Day</span>
+        <span class="sp-font-label">${f.label}</span>
+      </button>`).join('');
+    panel.classList.add('open');
+    overlay.classList.add('visible');
+    document.getElementById('nav-settings')?.classList.add('active');
+  }
 }
-function closeThemePanel(){
-  document.getElementById('themeDots').classList.remove('open');
+function closeSidePanel(){
+  document.getElementById('sidePanel').classList.remove('open');
+  document.getElementById('sidePanelOverlay').classList.remove('visible');
+  document.getElementById('nav-settings')?.classList.remove('active');
 }
-document.addEventListener('click',e=>{
-  if(!e.target.closest('.theme-row'))closeThemePanel();
-});
+function toggleThemePanel(){} // legacy no-op
+function closeThemePanel(){}  // legacy no-op
 
 function setTheme(t,save=true){
   currentTheme=t;
   if(t==='default')document.documentElement.removeAttribute('data-theme');
   else document.documentElement.setAttribute('data-theme',t);
-  document.querySelectorAll('.th-btn').forEach(b=>b.classList.toggle('active',b.dataset.theme===t));
-  closeThemePanel();  if(save)persistSettings();
+  document.querySelectorAll('.th-btn,.sp-theme-btn').forEach(b=>b.classList.toggle('active',b.dataset.theme===t));
+  if(save)persistSettings();
   applyDiaryColor(parseFloat(document.getElementById('ratingSlider').value));
 }
 
@@ -1353,7 +1654,6 @@ function renderFontGrid(){
 
 function applyModules(save=true){
   const names=['diary','tracker','notes'];
-  // ensure at least one on
   if(!names.some(n=>modules[n])) modules[names[0]]=true;
 
   names.forEach(name=>{
@@ -1361,9 +1661,11 @@ function applyModules(save=true){
     if(btn) btn.style.display=modules[name]?'':'none';
     const tog=document.getElementById('tog-'+name);
     if(tog) tog.classList.toggle('on',modules[name]);
+    // sync side panel toggles too
+    const spTog=document.getElementById('sp-tog-'+name);
+    if(spTog) spTog.classList.toggle('on',modules[name]);
   });
 
-  // only switch section if current one got disabled — and stay silent (no save loop)
   if(currentSection!=='settings' && !modules[currentSection]){
     const first=names.find(n=>modules[n]);
     if(first) switchSection(first,false);
@@ -1379,6 +1681,7 @@ function toggleModule(name){
   applyModules(true);
 }
 function switchSection(name, save=true){
+  closeSidePanel();
   // if leaving notes while editor is open — close it cleanly
   if(currentSection==='notes' && name!=='notes'){
     document.getElementById('editorView').style.display='none';
@@ -1388,12 +1691,9 @@ function switchSection(name, save=true){
   currentSection=name;
   document.querySelectorAll('.app-section').forEach(s=>s.classList.toggle('active',s.id==='section-'+name));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.id==='nav-'+name));
-  const gear=document.querySelector('.gear-btn');
-  if(gear) gear.style.color = name==='settings' ? 'var(--accent)' : '';
   if(name==='diary'&&document.getElementById('dtab-month').classList.contains('active'))renderCal();
   if(name==='tracker')renderHabits();
   if(name==='notes'){
-    // always show list when entering notes
     document.getElementById('editorView').style.display='none';
     document.getElementById('notesListView').style.display='';
     renderNotesList();
@@ -1436,6 +1736,11 @@ const DIARY_THEMES={
   indigo: {scale:['#1a0a2e','#231245','#2e1a60','#3b2580','#5040a8','#6655c8','#7c6ff7','#9b8eff','#b8aeff','#d4cfff'],cellTxt:i=>i<4?'#a090ff':'#fff',uiScale:['#2e1060','#3b1a7a','#4a2898','#5c3ab8','#6e50cc','#7c6ff7','#8e80ff','#a89eff','#c0b8ff','#d4cfff'],glow:c=>`rgba(${hxRgb(c)},0.14)`},
   cyber:  {scale:['#001a0a','#002a10','#003d18','#005522','#007a30','#00a840','#00cc55','#00ee66','#00ff88','#aaffdd'],cellTxt:i=>i<3?'#00cc55':'#000',uiScale:['#004418','#005a20','#007a30','#009940','#00bb50','#00cc55','#00dd66','#00ee77','#00ff88','#aaffdd'],glow:c=>`rgba(${hxRgb(c)},0.12)`},
   nothing:{scale:['#0d0000','#1a0000','#280000','#3d0000','#550000','#7a0000','#aa0000','#cc1111','#ee2222','#ff3333'],cellTxt:i=>i<5?'#ff3333':'#fff',uiScale:['#3a0000','#4d0000','#660000','#880000','#aa0000','#bb0000','#cc1111','#dd1111','#ee2222','#ff3333'],glow:c=>`rgba(${hxRgb(c)},0.15)`},
+  swordfish:{scale:['#13152A','#1a1d35','#22264a','#2c3060','#3a3c78','#4a4890','#6058a8','#a07828','#d09030','#F5A623'],cellTxt:i=>i<6?'#8880cc':'#0D0E1A',uiScale:['#6058a8','#7068b8','#8878c8','#a08830','#b09830','#c0a828','#d0b020','#e0b820','#f0a820','#F5A623'],glow:c=>`rgba(${hxRgb(c)},0.14)`},
+  'ghost-light':{scale:['#f0f0f0','#e0e0e0','#cccccc','#b0b0b0','#909090','#707070','#505050','#303030','#181818','#111111'],cellTxt:i=>i<5?'#555':'#fff',uiScale:['#888','#777','#666','#555','#444','#333','#222','#181818','#141414','#111111'],glow:()=>'transparent',light:true},
+  'ghost-dark':{scale:['#13131a','#1a1a24','#22222e','#2a2a3a','#343448','#404060','#585878','#7070a0','#9090c0','#a09ad0'],cellTxt:i=>i<5?'#7a7890':'#0e0e12',uiScale:['#585878','#606080','#6868a0','#7878b0','#8888c0','#9090c8','#9898d0','#a0a0d8','#a09ad0','#b0aadc'],glow:()=>'transparent'},
+  stamford2:{scale:['#011028','#021540','#032060','#053080','#0346a0','#034694','#1a5ab0','#3a78c8','#6a9ad8','#DBA111'],cellTxt:i=>i<6?'#6A7AB5':'#011028',uiScale:['#034694','#0a50a8','#1060b8','#2070c8','#3080d8','#4090e0','#50a0e8','#90b8f0','#c0a020','#DBA111'],glow:c=>`rgba(${hxRgb(c)},0.12)`},
+  stamford:{scale:['#051428','#0a1e3a','#0e2244','#122858','#163070','#1a3888','#1e40a0','#3060c0','#5080e0','#EEF2FF'],cellTxt:i=>i<7?'#7A90B8':'#051428',uiScale:['#1e40a0','#2850b0','#3060c0','#4070d0','#5080e0','#6090e8','#70a0f0','#90b8f4','#b0ccf8','#EEF2FF'],glow:c=>`rgba(${hxRgb(c)},0.1)`},
 };
 function hxRgb(h){const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);return`${r},${g},${b}`;}
 const LABELS={1:'terrible',1.5:'terrible',2:'very bad',2.5:'very bad',3:'bad',3.5:'bad',4:'meh',4.5:'meh',5:'okay',5.5:'okay',6:'not bad',6.5:'not bad',7:'good',7.5:'good',8:'great',8.5:'great',9:'amazing',9.5:'amazing',10:'incredible'};
