@@ -3097,10 +3097,14 @@ function pomAdjust(type, delta){
   if(type==='focus'){pomFocus=Math.max(1,Math.min(90,pomFocus+delta));document.getElementById('pomFocusVal').textContent=pomFocus;}
   else{pomBreak=Math.max(1,Math.min(30,pomBreak+delta));document.getElementById('pomBreakVal').textContent=pomBreak;}
 }
+let pomStartedAt=0, pomPausedAt=0, pomPausedMs=0;
+
 function pomStart(){
   pomPhase='focus';
   pomSecondsLeft=pomFocus*60;
   pomTotalSeconds=pomFocus*60;
+  pomStartedAt=Date.now();
+  pomPausedMs=0;
   document.getElementById('pomSetup').style.display='none';
   document.getElementById('pomTimer').style.display='flex';
   pomSetClockStyle(pomClockStyle);
@@ -3108,32 +3112,41 @@ function pomStart(){
   pomSetFont(pomFont);
   pomUpdateDisplay();
   pomRunning=true;
-  pomInterval=setInterval(pomTick,1000);
+  pomInterval=setInterval(pomTick,500);
   document.getElementById('pomToggleBtn').textContent='pause';
 }
+
 function pomTick(){
-  if(!pomRunning)return;
-  pomSecondsLeft--;
+  if(!pomRunning) return;
+  // calculate from real time — survives screen lock/freeze
+  const elapsed=Math.floor((Date.now()-pomStartedAt-pomPausedMs)/1000);
+  pomSecondsLeft=Math.max(0, pomTotalSeconds-elapsed);
   pomUpdateDisplay();
   if(pomSecondsLeft<=0){
     clearInterval(pomInterval);
+    if(navigator.vibrate) navigator.vibrate([200,100,200]);
     if(pomPhase==='focus'){
       pomPhase='break';
-      pomSecondsLeft=pomBreak*60;
       pomTotalSeconds=pomBreak*60;
     } else {
       pomPhase='focus';
-      pomSecondsLeft=pomFocus*60;
       pomTotalSeconds=pomFocus*60;
     }
+    pomSecondsLeft=pomTotalSeconds;
+    pomStartedAt=Date.now();
+    pomPausedMs=0;
     pomUpdateDisplay();
-    if(navigator.vibrate) navigator.vibrate([200,100,200]);
-    pomRunning=true;
-    pomInterval=setInterval(pomTick,1000);
+    pomInterval=setInterval(pomTick,500);
   }
 }
+
 function pomToggle(){
   pomRunning=!pomRunning;
+  if(!pomRunning){
+    pomPausedAt=Date.now();
+  } else {
+    pomPausedMs+=Date.now()-pomPausedAt;
+  }
   document.getElementById('pomToggleBtn').textContent=pomRunning?'pause':'resume';
 }
 function pomStop(){
