@@ -223,6 +223,7 @@
 }
 .side-panel-overlay.visible{display:block;}
 
+/* ════ NAV LAYOUT ════ */
 .bottom-nav{
   flex-shrink:0;
   display:flex;align-items:stretch;
@@ -233,6 +234,7 @@
   border-top:1px solid var(--glass-border);
   padding-bottom:env(safe-area-inset-bottom,0px);
   transition:background var(--T);
+  position:relative;
 }
 .nav-pill{display:contents;}
 .nav-btn{
@@ -252,6 +254,18 @@
   color:var(--text3);transition:color 0.25s;
 }
 .nav-btn.active .nav-label{color:var(--accent);}
+
+/* ════ SIDE NAV (left) ════ */
+
+
+/* ════ ANDROID NAV BAR PADDING ════ */
+:root{--tg-bottom:0px;}
+.bottom-nav{
+  padding-bottom:var(--tg-bottom);
+}
+body.android-padding .bottom-nav{
+  padding-bottom:calc(var(--tg-bottom) + 36px);
+}
 
 .d-tabs,.n-tabs{
   display:flex;
@@ -783,7 +797,16 @@ textarea:focus{border-bottom-color:var(--accent);}
 ════════════════════════ */
 #section-tracker{max-width:720px;margin:0 auto;padding:0 0 20px;}/* tracker controls */
 #section-tracker{max-width:720px;margin:0 auto;padding:0 0 20px;}
-.tracker-top{padding:32px 24px 20px;}
+.focus-fab{
+  background:none;border:none;
+  font-size:16px;color:var(--text3);
+  cursor:pointer;padding:4px;
+  line-height:1;
+  transition:color 0.2s,transform 0.2s;
+  margin-left:auto;
+}
+.focus-fab:hover{color:var(--accent);transform:scale(1.15);}
+.pomodoro-btn{display:none;}
 .tracker-note-wrap{margin-top:4px;}
 .tracker-note{
   width:100%;background:transparent;border:none;
@@ -1191,6 +1214,7 @@ textarea:focus{border-bottom-color:var(--accent);}
 <!-- ══════════ HEADER ══════════ -->
 <div class="app-header">
   <span id="storageIndicator"></span>
+  <button class="focus-fab" onclick="openPomodoro()" title="focus timer">◎</button>
 </div>
 
 <!-- ══════════ SIDE PANEL ══════════ -->
@@ -1213,6 +1237,13 @@ textarea:focus{border-bottom-color:var(--accent);}
       <button class="sp-theme-btn"        data-theme="stamford2" onclick="setTheme('stamford2')"><span class="sp-dot" style="background:#DBA111;border:1px solid #034694"></span>stamford 2</button>
       <button class="sp-theme-btn"        data-theme="ghost-light" onclick="setTheme('ghost-light')"><span class="sp-dot" style="background:#fff;border:1px solid #ccc"></span>ghost light</button>
       <button class="sp-theme-btn"        data-theme="ghost-dark"  onclick="setTheme('ghost-dark')"><span class="sp-dot" style="background:#a09ad0"></span>noir</button>
+    </div>
+
+    <div class="side-panel-divider"></div>
+    <div class="side-panel-label">navigation</div>
+    <div class="sp-toggle-row">
+      <span class="sp-toggle-name">android pad</span>
+      <button class="toggle" id="sp-tog-androidpad" onclick="toggleAndroidPad()"></button>
     </div>
 
     <div class="side-panel-divider"></div>
@@ -1511,19 +1542,171 @@ textarea:focus{border-bottom-color:var(--accent);}
     </button>
   </div>
 </nav>
-</div><!-- /app-frame -->
+<!-- ══════════ POMODORO ══════════ -->
+<div id="pomodoroOverlay" style="display:none;position:fixed;inset:0;background:#000;z-index:9000;flex-direction:column;align-items:center;justify-content:center;gap:0;">
+  <!-- setup screen -->
+  <div id="pomSetup" style="display:flex;flex-direction:column;align-items:center;gap:28px;padding:40px 24px;width:100%;max-width:360px;">
+    <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:0.3em;text-transform:uppercase;color:#444;">focus timer</div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;">
+      <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:#555;margin-bottom:4px;">focus</div>
+      <div style="display:flex;align-items:center;gap:16px;">
+        <button onclick="pomAdjust('focus',-5)" style="background:none;border:1px solid #333;border-radius:50%;width:36px;height:36px;color:#888;font-size:18px;cursor:pointer;">−</button>
+        <div id="pomFocusVal" style="font-family:'Courier New',monospace;font-size:52px;font-weight:300;color:#fff;min-width:80px;text-align:center;letter-spacing:-2px;">25</div>
+        <button onclick="pomAdjust('focus',5)" style="background:none;border:1px solid #333;border-radius:50%;width:36px;height:36px;color:#888;font-size:18px;cursor:pointer;">+</button>
+      </div>
+      <div style="font-family:var(--font-mono);font-size:9px;color:#444;">min</div>
+    </div>
+    <div style="width:100%;height:1px;background:#111;"></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;">
+      <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:#555;margin-bottom:4px;">break</div>
+      <div style="display:flex;align-items:center;gap:16px;">
+        <button onclick="pomAdjust('break',-5)" style="background:none;border:1px solid #333;border-radius:50%;width:36px;height:36px;color:#888;font-size:18px;cursor:pointer;">−</button>
+        <div id="pomBreakVal" style="font-family:'Courier New',monospace;font-size:52px;font-weight:300;color:#fff;min-width:80px;text-align:center;letter-spacing:-2px;">5</div>
+        <button onclick="pomAdjust('break',5)" style="background:none;border:1px solid #333;border-radius:50%;width:36px;height:36px;color:#888;font-size:18px;cursor:pointer;">+</button>
+      </div>
+      <div style="font-family:var(--font-mono);font-size:9px;color:#444;">min</div>
+    </div>
+    <button onclick="pomStart()" style="margin-top:8px;padding:14px 48px;background:none;border:1px solid #333;border-radius:100px;font-family:var(--font-mono);font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#888;cursor:pointer;transition:border-color 0.2s,color 0.2s;">start</button>
+    <button onclick="closePomodoro()" style="background:none;border:none;font-family:var(--font-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#333;cursor:pointer;">close</button>
+  </div>
+
+  <!-- timer screen -->
+  <!-- timer screen -->
+  <div id="pomTimer" style="display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px;width:100%;height:100%;position:relative;" ondblclick="if(pomHidden)pomShow()" ontouchend="pomDoubleTap()">
+    <div id="pomPhaseLabel" style="font-family:var(--font-mono);font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:#333;">focus</div>
+
+    <!-- style 1: simple -->
+    <div id="pomClockSimple" style="font-family:'Courier New',monospace;font-size:clamp(72px,22vw,120px);font-weight:200;color:#fff;letter-spacing:-4px;line-height:1;">25:00</div>
+
+    <!-- style 2: digital -->
+    <div id="pomClockDigital" style="display:none;font-family:'Courier New',monospace;font-size:clamp(64px,20vw,108px);font-weight:700;color:#ff2200;letter-spacing:4px;line-height:1;text-shadow:0 0 24px rgba(255,34,0,0.8),0 0 48px rgba(255,34,0,0.4);">25:00</div>
+
+    <!-- style 3: circle -->
+    <div id="pomClockCircle" style="display:none;position:relative;width:220px;height:220px;align-items:center;justify-content:center;flex-direction:column;">
+      <svg viewBox="0 0 220 220" style="position:absolute;inset:0;transform:rotate(-90deg);"><defs><filter id="redGlow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+        <circle cx="110" cy="110" r="100" fill="none" stroke="#111" stroke-width="6"/>
+        <circle id="pomProgressArc" cx="110" cy="110" r="100" fill="none" stroke="#fff" stroke-width="6"
+          stroke-linecap="round" stroke-dasharray="628" stroke-dashoffset="0" style="transition:stroke-dashoffset 1s linear;"/>
+      </svg>
+      <div style="position:relative;text-align:center;">
+        <div id="pomClockCircleTime" style="font-family:'Courier New',monospace;font-size:48px;font-weight:200;color:#fff;letter-spacing:-2px;line-height:1;">25:00</div>
+        <div id="pomClockCirclePhase" style="font-family:var(--font-mono);font-size:9px;letter-spacing:0.24em;text-transform:uppercase;color:#444;margin-top:8px;">focus</div>
+      </div>
+    </div>
+
+    <div id="pomControls" style="display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:16px;">
+      <div style="display:flex;gap:24px;">
+        <button onclick="pomToggle()" id="pomToggleBtn" style="background:none;border:1px solid #333;border-radius:100px;padding:11px 32px;font-family:var(--font-mono);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:#666;cursor:pointer;">pause</button>
+        <button onclick="pomStop()" style="background:none;border:none;font-family:var(--font-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#333;cursor:pointer;">stop</button>
+      </div>
+      <button onclick="pomHide()" style="background:none;border:none;font-family:var(--font-mono);font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:#2a2a2a;cursor:pointer;padding:4px;">hide</button>
+    </div>
+
+    <!-- single settings button -->
+    <button id="pomSettingsBtn" onclick="pomOpenSettings()" style="background:none;border:none;cursor:pointer;margin-top:8px;padding:8px;opacity:0.3;"><svg width="20" height="2" viewBox="0 0 20 2"><rect width="20" height="2" rx="1" fill="#fff"/></svg></button>
+
+    <!-- settings panel (hidden by default) -->
+    <div id="pomSettingsPanel" style="display:none;position:absolute;bottom:60px;left:50%;transform:translateX(-50%);background:#0d0d0d;border:1px solid #222;border-radius:20px;padding:20px 24px;min-width:260px;flex-direction:column;gap:16px;z-index:10;">
+      <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:#333;margin-bottom:4px;">appearance</div>
+
+      <!-- clock style -->
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="font-family:var(--font-mono);font-size:8px;letter-spacing:0.16em;text-transform:uppercase;color:#2a2a2a;">style</div>
+        <div style="display:flex;gap:8px;">
+          <button onclick="pomSetClockStyle('simple')"  id="pomStyleSimple"  style="flex:1;padding:7px 4px;background:none;border:1px solid #222;border-radius:8px;font-family:var(--font-mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:#555;cursor:pointer;">simple</button>
+          <button onclick="pomSetClockStyle('digital')" id="pomStyleDigital" style="flex:1;padding:7px 4px;background:none;border:1px solid #222;border-radius:8px;font-family:var(--font-mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:#555;cursor:pointer;">digital</button>
+          <button onclick="pomSetClockStyle('circle')"  id="pomStyleCircle"  style="flex:1;padding:7px 4px;background:none;border:1px solid #222;border-radius:8px;font-family:var(--font-mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:#555;cursor:pointer;">circle</button>
+        </div>
+      </div>
+
+      <!-- color -->
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="font-family:var(--font-mono);font-size:8px;letter-spacing:0.16em;text-transform:uppercase;color:#2a2a2a;">color</div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <button onclick="pomSetColor('white')"  id="pomColorWhite"  style="width:22px;height:22px;border-radius:50%;background:#fff;border:2px solid #555;cursor:pointer;padding:0;flex-shrink:0;"></button>
+          <button onclick="pomSetColor('red')"    id="pomColorRed"    style="width:22px;height:22px;border-radius:50%;background:#ff2200;border:2px solid transparent;cursor:pointer;padding:0;flex-shrink:0;"></button>
+          <button onclick="pomSetColor('green')"  id="pomColorGreen"  style="width:22px;height:22px;border-radius:50%;background:#00ff88;border:2px solid transparent;cursor:pointer;padding:0;flex-shrink:0;"></button>
+          <button onclick="pomSetColor('blue')"   id="pomColorBlue"   style="width:22px;height:22px;border-radius:50%;background:#4488ff;border:2px solid transparent;cursor:pointer;padding:0;flex-shrink:0;"></button>
+        </div>
+      </div>
+
+      <!-- font -->
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="font-family:var(--font-mono);font-size:8px;letter-spacing:0.16em;text-transform:uppercase;color:#2a2a2a;">font</div>
+        <div style="display:flex;gap:8px;">
+          <button onclick="pomSetFont('mono')"  id="pomFontMono"  style="flex:1;padding:7px 4px;background:none;border:1px solid #333;border-radius:8px;font-family:'Courier New',monospace;font-size:11px;color:#555;cursor:pointer;">00:00</button>
+          <button onclick="pomSetFont('thin')"  id="pomFontThin"  style="flex:1;padding:7px 4px;background:none;border:1px solid #222;border-radius:8px;font-family:'Courier New',monospace;font-size:11px;font-weight:100;color:#555;cursor:pointer;">00:00</button>
+          <button onclick="pomSetFont('serif')" id="pomFontSerif" style="flex:1;padding:7px 4px;background:none;border:1px solid #222;border-radius:8px;font-family:'Georgia',serif;font-size:11px;color:#555;cursor:pointer;">00:00</button>
+        </div>
+      </div>
+
+      <button onclick="pomOpenSettings()" style="background:none;border:none;font-family:var(--font-mono);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:#2a2a2a;cursor:pointer;margin-top:4px;text-align:center;width:100%;">close</button>
+    </div>
+  </div>
+</div>
 
 <script>
+
+/* ════ CONFIRM SHEET (replaces confirm()) ════ */
+function showConfirm(message, onConfirm){
+  const existing=document.getElementById('confirmSheet');
+  if(existing) existing.remove();
+  const overlay=document.createElement('div');
+  overlay.id='confirmSheet';
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:2000;display:flex;align-items:flex-end;justify-content:center;';
+  overlay.innerHTML=`
+    <div style="background:var(--glass);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--glass-border);border-bottom:none;border-radius:24px 24px 0 0;padding:24px 20px 32px;width:100%;max-width:560px;">
+      <div style="font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--text);margin-bottom:20px;text-align:center;">${message}</div>
+      <div style="display:flex;gap:10px;">
+        <button onclick="document.getElementById('confirmSheet').remove()"
+          style="flex:1;padding:13px;border-radius:14px;border:1px solid var(--glass-border);background:none;font-family:var(--font-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text2);cursor:pointer;">
+          cancel
+        </button>
+        <button id="confirmOkBtn"
+          style="flex:1;padding:13px;border-radius:14px;border:none;background:var(--del);font-family:var(--font-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#fff;cursor:pointer;">
+          delete
+        </button>
+      </div>
+    </div>`;
+  overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.remove();});
+  document.body.appendChild(overlay);
+  document.getElementById('confirmOkBtn').addEventListener('click',()=>{
+    overlay.remove();
+    onConfirm();
+  });
+}
 /* ════ TG ════ */
 const TG = window.Telegram?.WebApp;
 if(TG){
   TG.expand();
   TG.enableClosingConfirmation();
-  // request fullscreen if supported (Telegram 8.0+)
   if(typeof TG.requestFullscreen === 'function') TG.requestFullscreen();
   TG.ready();
 }
 const isTG = !!(TG?.CloudStorage);
+
+/* ════ APPLY TG SAFE AREA ════ */
+function applyTGSafeArea(){
+  if(!TG) return;
+  const ct = TG.contentSafeAreaInset || {};
+  const sa = TG.safeAreaInset || {};
+  const top = (ct.top || 0) + (sa.top || 0);
+  const bottom = (ct.bottom || 0) + (sa.bottom || 0);
+  // push header below Telegram buttons (Close, ⋮)
+  if(top > 0){
+    const header = document.querySelector('.app-header');
+    if(header) header.style.paddingTop = (top + 6) + 'px';
+  }
+  // bottom inset as CSS var — android-padding adds on top
+  document.documentElement.style.setProperty('--tg-bottom', bottom + 'px');
+}
+
+applyTGSafeArea();
+if(TG){
+  TG.onEvent('viewportChanged', applyTGSafeArea);
+  TG.onEvent('safeAreaChanged', applyTGSafeArea);
+  TG.onEvent('contentSafeAreaChanged', applyTGSafeArea);
+}
 
 /* ════ STORAGE KEYS ════ */
 const CK_HABITS  = 'habits_v2';
@@ -1574,6 +1757,12 @@ const Storage={
 let currentTheme='default', currentSection='diary';
 
 /* ════ SIDE PANEL ════ */
+function toggleAndroidPad(){
+  const on=document.body.classList.toggle('android-padding');
+  document.getElementById('sp-tog-androidpad')?.classList.toggle('on',on);
+  persistSettings();
+}
+
 function toggleSidePanel(){
   const panel=document.getElementById('sidePanel');
   const overlay=document.getElementById('sidePanelOverlay');
@@ -1588,10 +1777,15 @@ function toggleSidePanel(){
       const t=document.getElementById('sp-tog-'+n);
       if(t) t.className='toggle'+(modules[n]?' on':'');
     });
+    // sync nav toggles
+    const leftTog=document.getElementById('sp-tog-leftnav');
+    if(leftTog) leftTog.className='toggle'+(document.body.classList.contains('nav-left')?' on':'');
+    const padTog=document.getElementById('sp-tog-androidpad');
+    if(padTog) padTog.className='toggle'+(document.body.classList.contains('android-padding')?' on':'');
     // render font list
     const fl=document.getElementById('spFontList');
     if(fl) fl.innerHTML=FONTS.map(f=>`
-      <button class="sp-font-btn${f.id===currentFont?' active':''}" onclick="applyFont('${f.id}')">
+      <button class="sp-font-btn${f.id===currentFont?' active':''}" data-font="${f.id}" onclick="applyFont('${f.id}')">
         <span class="sp-font-sample" style="font-family:${f.font}">My Day</span>
         <span class="sp-font-label">${f.label}</span>
       </button>`).join('');
@@ -1637,6 +1831,7 @@ function applyFont(id, save=true){
   document.documentElement.style.setProperty('--font-display', f.font);
   document.documentElement.style.setProperty('--font-mono', f.font);
   document.querySelectorAll('.font-card').forEach(c=>c.classList.toggle('active', c.dataset.font===id));
+  document.querySelectorAll('.sp-font-btn').forEach(b=>b.classList.toggle('active', b.dataset.font===id));
   if(save) persistSettings();
 }
 
@@ -1715,7 +1910,8 @@ function showToast(msg){const t=document.getElementById('toast');t.textContent=m
 
 /* ════ PERSIST SETTINGS ════ */
 function persistSettings(){
-  const s=JSON.stringify({theme:currentTheme,section:currentSection,trackerNote,modules,font:currentFont});
+  const androidPad=document.body.classList.contains('android-padding');
+  const s=JSON.stringify({theme:currentTheme,section:currentSection,trackerNote,modules,font:currentFont,androidPad});
   LS.set(CK_SETT,s);
   if(!isTG)return;
   clearTimeout(settTimer);
@@ -1882,7 +2078,7 @@ async function flushHabits(){
   finally{savingCloud=false;if(pendingSave)flushHabits();}
 }
 function addHabit(){const inp=document.getElementById('habitInput'),name=inp.value.trim();if(!name)return;habits.push({id:Date.now(),name,completed:[],collapsed:false,archived:false});inp.value='';saveHabits();renderHabits();}
-function deleteHabit(id,e){e.stopPropagation();if(confirm('Delete this habit?')){habits=habits.filter(h=>h.id!==id);saveHabits();renderHabits();}}
+function deleteHabit(id,e){e.stopPropagation();showConfirm('Delete this habit?',()=>{habits=habits.filter(h=>h.id!==id);saveHabits();renderHabits();});}
 function archiveHabit(id,e){e.stopPropagation();const h=habits.find(h=>h.id===id);if(!h)return;h.archived=!h.archived;saveHabits();renderHabits();}
 function toggleCollapse(id){const h=habits.find(h=>h.id===id);if(!h)return;h.collapsed=!h.collapsed;saveHabits();renderHabits();}
 function toggleDay(id,str){const h=habits.find(h=>h.id===id);if(!h)return;const i=h.completed.indexOf(str);if(i>-1)h.completed.splice(i,1);else h.completed.push(str);saveHabits();renderHabits();}
@@ -2310,9 +2506,7 @@ function saveCurrentNote(){
 
 function deleteCurrentNote(){
   if(!editingNoteId||editingNoteId.startsWith('new_')){closeEditor();return;}
-  if(!confirm('Delete this note?'))return;
-  notes=notes.filter(n=>n.id!==editingNoteId);
-  persistNotes();closeEditor();
+  showConfirm('Delete this note?',()=>{notes=notes.filter(n=>n.id!==editingNoteId);persistNotes();closeEditor();});
 }
 
 function archiveCurrentNote(){
@@ -2411,13 +2605,10 @@ function closeListDetail(){
 function renameCurrentList(){const l=lists.find(l=>l.id===currentListId);if(!l)return;const v=document.getElementById('listDetailName').value.trim();if(v){l.name=v;persistLists();}}
 function deleteCurrentList(){
   if(!currentListId)return;
-  if(!confirm('Delete this list?'))return;
-  lists=lists.filter(l=>l.id!==currentListId);
-  persistLists();
-  closeListDetail();
+  showConfirm('Delete this list?',()=>{lists=lists.filter(l=>l.id!==currentListId);persistLists();closeListDetail();});
 }
 
-function deleteList(id){if(!confirm('Delete this list?'))return;lists=lists.filter(l=>l.id!==id);persistLists();renderLists();}
+function deleteList(id){showConfirm('Delete this list?',()=>{lists=lists.filter(l=>l.id!==id);persistLists();renderLists();});}
 function openNewListModal(){document.getElementById('newListName').value='';document.getElementById('newListModal').classList.add('show');setTimeout(()=>document.getElementById('newListName').focus(),200);}
 function closeModal(){document.getElementById('newListModal').classList.remove('show');}
 function closeModalOutside(e){if(e.target===document.getElementById('newListModal'))closeModal();}
@@ -2778,7 +2969,202 @@ function todoDragEnd(e){
 
 
 
-/* ════ UTILS ════ */
+/* ════ POMODORO ════ */
+let pomFocus=25, pomBreak=5;
+let pomInterval=null, pomSecondsLeft=0, pomRunning=false, pomPhase='focus';
+let pomTotalSeconds=0, pomClockStyle='simple', pomColor='white', pomFont='mono';
+
+const POM_COLORS={
+  white:{c:'#ffffff',glow:'rgba(255,255,255,0.3)',arc:'#ffffff'},
+  red:  {c:'#ff2200',glow:'rgba(255,34,0,0.8)',  arc:'#ff2200'},
+  green:{c:'#00ff88',glow:'rgba(0,255,136,0.7)', arc:'#00ff88'},
+  blue: {c:'#4488ff',glow:'rgba(68,136,255,0.7)',arc:'#4488ff'},
+
+};
+const POM_FONTS={
+  mono: {f:"'Courier New',monospace", w:'700'},
+  thin: {f:"'Courier New',monospace", w:'100'},
+  serif:{f:"'Georgia',serif",         w:'400'},
+};
+
+function pomOpenSettings(){
+  const p=document.getElementById('pomSettingsPanel');
+  p.style.display=p.style.display==='flex'?'none':'flex';
+}
+
+let pomHidden=false, pomLastTap=0;
+
+function pomHide(){
+  pomHidden=true;
+  const controls=document.getElementById('pomControls');
+  const label=document.getElementById('pomPhaseLabel');
+  const panel=document.getElementById('pomSettingsPanel');
+  const settBtn=document.getElementById('pomSettingsBtn');
+  if(controls) controls.style.opacity='0';
+  if(controls) controls.style.pointerEvents='none';
+  if(label) label.style.opacity='0';
+  if(panel) panel.style.display='none';
+  if(settBtn) settBtn.style.opacity='0';
+}
+
+function pomShow(){
+  pomHidden=false;
+  const controls=document.getElementById('pomControls');
+  const label=document.getElementById('pomPhaseLabel');
+  const settBtn=document.getElementById('pomSettingsBtn');
+  if(controls){controls.style.opacity='1';controls.style.pointerEvents='';}
+  if(label) label.style.opacity='1';
+  if(settBtn) settBtn.style.opacity='0.3';
+}
+
+function pomDoubleTap(){
+  const now=Date.now();
+  if(now-pomLastTap<350){
+    if(pomHidden) pomShow(); else pomHide();
+  }
+  pomLastTap=now;
+}
+
+function pomSetFont(font){
+  pomFont=font;
+  const {f,w}=POM_FONTS[font];
+  [document.getElementById('pomClockSimple'),
+   document.getElementById('pomClockDigital'),
+   document.getElementById('pomClockCircleTime')].forEach(el=>{
+    if(el){el.style.fontFamily=f;el.style.fontWeight=w;}
+  });
+  ['mono','thin','serif'].forEach(fn=>{
+    const btn=document.getElementById('pomFont'+fn.charAt(0).toUpperCase()+fn.slice(1));
+    if(btn) btn.style.borderColor=fn===font?'#555':'#222';
+  });
+}
+
+function pomSetColor(color){
+  pomColor=color;
+  const col=POM_COLORS[color];
+  const isNeon=color==='neon';
+  const glow2=col.glow2||col.glow;
+
+  const simple=document.getElementById('pomClockSimple');
+  if(simple){
+    simple.style.color=col.c;
+    simple.style.textShadow=color==='white'?'none':`0 0 20px ${col.glow},0 0 40px ${glow2}`;
+  }
+  const digital=document.getElementById('pomClockDigital');
+  if(digital){
+    digital.style.color=col.c;
+    digital.style.textShadow=`0 0 24px ${col.glow},0 0 48px ${glow2}`;
+  }
+  const circleTime=document.getElementById('pomClockCircleTime');
+  if(circleTime){
+    circleTime.style.color=col.c;
+    circleTime.style.textShadow=color==='white'?'none':`0 0 16px ${col.glow}`;
+  }
+  const arc=document.getElementById('pomProgressArc');
+  if(arc) arc.style.stroke=col.arc;
+
+  ['white','red','green','blue'].forEach(cn=>{
+    const btn=document.getElementById('pomColor'+cn.charAt(0).toUpperCase()+cn.slice(1));
+    if(!btn) return;
+    if(cn==='white') btn.style.border=cn===color?'2px solid #888':'2px solid #333';
+    else btn.style.border=cn===color?'2px solid #888':'2px solid transparent';
+  });
+}
+
+function pomSetClockStyle(style){
+  pomClockStyle=style;
+  ['simple','digital','circle'].forEach(s=>{
+    const el=document.getElementById('pomClock'+s.charAt(0).toUpperCase()+s.slice(1));
+    if(el) el.style.display=s===style?(s==='circle'?'flex':'block'):'none';
+    const btn=document.getElementById('pomStyle'+s.charAt(0).toUpperCase()+s.slice(1));
+    if(btn) btn.style.color=s===style?'#aaa':'#333';
+    if(btn) btn.style.borderColor=s===style?'#333':'#1a1a1a';
+  });
+}
+
+function openPomodoro(){
+  document.getElementById('pomodoroOverlay').style.display='flex';
+  document.getElementById('pomSetup').style.display='flex';
+  document.getElementById('pomTimer').style.display='none';
+  document.getElementById('pomFocusVal').textContent=pomFocus;
+  document.getElementById('pomBreakVal').textContent=pomBreak;
+}
+function closePomodoro(){
+  pomStop();
+  document.getElementById('pomodoroOverlay').style.display='none';
+}
+function pomAdjust(type, delta){
+  if(type==='focus'){pomFocus=Math.max(1,Math.min(90,pomFocus+delta));document.getElementById('pomFocusVal').textContent=pomFocus;}
+  else{pomBreak=Math.max(1,Math.min(30,pomBreak+delta));document.getElementById('pomBreakVal').textContent=pomBreak;}
+}
+function pomStart(){
+  pomPhase='focus';
+  pomSecondsLeft=pomFocus*60;
+  pomTotalSeconds=pomFocus*60;
+  document.getElementById('pomSetup').style.display='none';
+  document.getElementById('pomTimer').style.display='flex';
+  pomSetClockStyle(pomClockStyle);
+  pomSetColor(pomColor);
+  pomSetFont(pomFont);
+  pomUpdateDisplay();
+  pomRunning=true;
+  pomInterval=setInterval(pomTick,1000);
+  document.getElementById('pomToggleBtn').textContent='pause';
+}
+function pomTick(){
+  if(!pomRunning)return;
+  pomSecondsLeft--;
+  pomUpdateDisplay();
+  if(pomSecondsLeft<=0){
+    clearInterval(pomInterval);
+    if(pomPhase==='focus'){
+      pomPhase='break';
+      pomSecondsLeft=pomBreak*60;
+      pomTotalSeconds=pomBreak*60;
+    } else {
+      pomPhase='focus';
+      pomSecondsLeft=pomFocus*60;
+      pomTotalSeconds=pomFocus*60;
+    }
+    pomUpdateDisplay();
+    if(navigator.vibrate) navigator.vibrate([200,100,200]);
+    pomRunning=true;
+    pomInterval=setInterval(pomTick,1000);
+  }
+}
+function pomToggle(){
+  pomRunning=!pomRunning;
+  document.getElementById('pomToggleBtn').textContent=pomRunning?'pause':'resume';
+}
+function pomStop(){
+  clearInterval(pomInterval);
+  pomRunning=false;
+  pomInterval=null;
+  document.getElementById('pomSetup').style.display='flex';
+  document.getElementById('pomTimer').style.display='none';
+}
+function pomUpdateDisplay(){
+  const m=String(Math.floor(pomSecondsLeft/60)).padStart(2,'0');
+  const s=String(pomSecondsLeft%60).padStart(2,'0');
+  const timeStr=m+':'+s;
+  // update all clocks
+  const simple=document.getElementById('pomClockSimple');
+  if(simple) simple.textContent=timeStr;
+  const digital=document.getElementById('pomClockDigital');
+  if(digital) digital.textContent=timeStr;
+  const circleTime=document.getElementById('pomClockCircleTime');
+  if(circleTime) circleTime.textContent=timeStr;
+  const circlePhase=document.getElementById('pomClockCirclePhase');
+  if(circlePhase) circlePhase.textContent=pomPhase;
+  // arc progress
+  const arc=document.getElementById('pomProgressArc');
+  if(arc){
+    const pct=pomTotalSeconds>0?pomSecondsLeft/pomTotalSeconds:0;
+    arc.setAttribute('stroke-dashoffset', 628*(1-pct));
+  }
+  // phase labels
+  document.getElementById('pomPhaseLabel').textContent=pomPhase;
+}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function fmtDate(ts){const d=new Date(ts),now=new Date();if(d.toDateString()===now.toDateString())return'today '+d.toTimeString().slice(0,5);const diff=Math.floor((now-d)/86400000);if(diff===1)return'yesterday';if(diff<7)return diff+' days ago';return d.getDate()+'.'+(d.getMonth()+1).toString().padStart(2,'0')+'.'+d.getFullYear();}
 
@@ -2792,7 +3178,7 @@ saveBtn.disabled=true;saveBtn.textContent='loading…';
   let settRaw=null;
   if(isTG){try{settRaw=await cloudGet(CK_SETT);}catch{}}
   if(!settRaw)settRaw=LS.get(CK_SETT);
-  if(settRaw){try{const s=JSON.parse(settRaw);if(s.theme)currentTheme=s.theme;if(s.trackerNote)trackerNote=s.trackerNote;if(s.section)currentSection=s.section;if(s.modules)modules=Object.assign(modules,s.modules);if(s.font)currentFont=s.font;}catch{}}
+  if(settRaw){try{const s=JSON.parse(settRaw);if(s.theme)currentTheme=s.theme;if(s.trackerNote)trackerNote=s.trackerNote;if(s.section)currentSection=s.section;if(s.modules)modules=Object.assign(modules,s.modules);if(s.font)currentFont=s.font;if(s.androidPad)document.body.classList.add('android-padding');}catch{}}
 
   // habits
   let habitsRaw=null;
