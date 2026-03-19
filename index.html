@@ -775,15 +775,24 @@ textarea:focus{border-bottom-color:var(--accent);}
 #section-tracker{max-width:720px;margin:0 auto;padding:0 0 20px;}
 .tracker-top{padding-top:28px;}
 .focus-fab{
-  background:none;border:none;
-  font-size:16px;color:var(--text3);
-  cursor:pointer;padding:4px;
-  line-height:1;
-  transition:color 0.2s,transform 0.2s;
-  margin-left:auto;
+  position:fixed;
+  width:44px;height:44px;
+  border-radius:50%;
+  background:var(--glass);
+  border:1px solid var(--glass-border);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  cursor:grab;
+  display:flex;align-items:center;justify-content:center;
+  z-index:201;
+  font-size:18px;color:var(--text3);
+  box-shadow:0 4px 20px rgba(0,0,0,0.15);
+  transition:background 0.2s,color 0.2s,box-shadow 0.2s,transform 0.15s;
+  -webkit-user-select:none;user-select:none;
+  touch-action:none;
 }
-.focus-fab:hover{color:var(--accent);transform:scale(1.15);}
-.pomodoro-btn{display:none;}
+.focus-fab:hover{background:var(--surface2);color:var(--accent);box-shadow:0 6px 28px rgba(0,0,0,0.2);}
+.focus-fab:active{cursor:grabbing;transform:scale(0.95);}
+.focus-fab.dragging{cursor:grabbing;transform:scale(1.08);box-shadow:0 8px 32px rgba(0,0,0,0.25);}
 .tracker-note-wrap{margin-top:4px;}
 .tracker-note{
   width:100%;background:transparent;border:none;
@@ -1191,8 +1200,10 @@ textarea:focus{border-bottom-color:var(--accent);}
 <!-- ══════════ HEADER ══════════ -->
 <div class="app-header">
   <span id="storageIndicator"></span>
-  <button class="focus-fab" onclick="openPomodoro()" title="focus timer">◎</button>
 </div>
+
+<!-- ══ FOCUS FAB (draggable) ══ -->
+<button class="focus-fab" id="focusFab" onclick="openPomodoro()" title="focus timer">◎</button>
 
 <!-- ══════════ SIDE PANEL ══════════ -->
 <div class="side-panel" id="sidePanel">
@@ -3161,6 +3172,54 @@ function pomUpdateDisplay(){
   // phase labels
   document.getElementById('pomPhaseLabel').textContent=pomPhase;
 }
+/* ════ DRAGGABLE FOCUS FAB ════ */
+(()=>{
+  const fab=document.getElementById('focusFab');
+  if(!fab) return;
+
+  const saved=JSON.parse(localStorage.getItem('focusFabPos')||'null');
+  let x=saved?saved.x:window.innerWidth-64;
+  let y=saved?saved.y:window.innerHeight*0.4;
+
+  function clamp(){
+    x=Math.max(8,Math.min(window.innerWidth-52,x));
+    y=Math.max(8,Math.min(window.innerHeight-52,y));
+  }
+  function applyPos(){clamp();fab.style.left=x+'px';fab.style.top=y+'px';}
+  applyPos();
+
+  let dragging=false,ox=0,oy=0,moved=false;
+
+  fab.addEventListener('mousedown',e=>{
+    dragging=true;moved=false;ox=e.clientX-x;oy=e.clientY-y;
+    fab.classList.add('dragging');e.preventDefault();
+  });
+  document.addEventListener('mousemove',e=>{
+    if(!dragging)return;moved=true;x=e.clientX-ox;y=e.clientY-oy;applyPos();
+  });
+  document.addEventListener('mouseup',()=>{
+    if(!dragging)return;dragging=false;fab.classList.remove('dragging');
+    if(moved)localStorage.setItem('focusFabPos',JSON.stringify({x,y}));
+  });
+
+  fab.addEventListener('touchstart',e=>{
+    dragging=true;moved=false;
+    ox=e.touches[0].clientX-x;oy=e.touches[0].clientY-y;
+    fab.classList.add('dragging');e.preventDefault();
+  },{passive:false});
+  fab.addEventListener('touchmove',e=>{
+    if(!dragging)return;moved=true;
+    x=e.touches[0].clientX-ox;y=e.touches[0].clientY-oy;
+    applyPos();e.preventDefault();
+  },{passive:false});
+  fab.addEventListener('touchend',e=>{
+    dragging=false;fab.classList.remove('dragging');
+    if(moved){localStorage.setItem('focusFabPos',JSON.stringify({x,y}));e.preventDefault();}
+  });
+
+  window.addEventListener('resize',applyPos);
+})();
+
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function fmtDate(ts){const d=new Date(ts),now=new Date();if(d.toDateString()===now.toDateString())return'today '+d.toTimeString().slice(0,5);const diff=Math.floor((now-d)/86400000);if(diff===1)return'yesterday';if(diff<7)return diff+' days ago';return d.getDate()+'.'+(d.getMonth()+1).toString().padStart(2,'0')+'.'+d.getFullYear();}
 
