@@ -749,8 +749,9 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .slider-fill{height:100%;border-radius:2px;background:var(--accent);transition:width 0.05s,background var(--T);}
 .slider-thumb{position:absolute;width:22px;height:22px;border-radius:50%;background:var(--accent);border:3px solid var(--bg);box-shadow:0 0 0 1.5px var(--accent);transform:translateX(-50%);transition:background var(--T),box-shadow var(--T);pointer-events:none;top:50%;margin-top:-11px;}
 input[type=range]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;margin:0;padding:0;-webkit-appearance:none;appearance:none;}
-.slider-marks{display:flex;justify-content:space-between;}
+.slider-marks{display:flex;justify-content:space-between;padding:6px 2px 0;}
 .slider-marks span{font-family:var(--font-mono);font-size:9px;color:var(--muted);}
+.slider-tick{width:3px;height:3px;border-radius:50%;background:var(--border);display:inline-block;}
 .divider{height:1px;background:var(--border);margin:26px 0;transition:background var(--T);}
 .note-wrap{margin-bottom:24px;}
 textarea{width:100%;background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--font-mono);font-size:15px;font-weight:300;line-height:1.8;padding:4px 0 12px;resize:none;outline:none;min-height:110px;caret-color:var(--accent);transition:border-color var(--T),color var(--T);}
@@ -1296,7 +1297,12 @@ textarea:focus{border-bottom-color:var(--accent);}
       <div class="slider-thumb" id="sliderThumb"></div>
       <input type="range" id="ratingSlider" min="1" max="10" step="0.5" value="7">
     </div>
-    <div class="slider-marks"><span>1</span><span>3</span><span>5</span><span>7</span><span>10</span></div>
+    <div class="slider-marks">
+      <span class="slider-tick"></span><span class="slider-tick"></span><span class="slider-tick"></span>
+      <span class="slider-tick"></span><span class="slider-tick"></span><span class="slider-tick"></span>
+      <span class="slider-tick"></span><span class="slider-tick"></span><span class="slider-tick"></span>
+      <span class="slider-tick"></span>
+    </div>
     <div class="divider"></div>
     <div class="lbl">note</div>
     <div class="note-wrap">
@@ -3097,34 +3103,34 @@ function pomAdjust(type, delta){
   if(type==='focus'){pomFocus=Math.max(1,Math.min(90,pomFocus+delta));document.getElementById('pomFocusVal').textContent=pomFocus;}
   else{pomBreak=Math.max(1,Math.min(30,pomBreak+delta));document.getElementById('pomBreakVal').textContent=pomBreak;}
 }
-let pomStartedAt=0, pomPausedAt=0, pomPausedMs=0;
+let pomEndTime=0, pomPausedAt=0, pomPausedLeft=0;
 
 function pomStart(){
   pomPhase='focus';
-  pomSecondsLeft=pomFocus*60;
   pomTotalSeconds=pomFocus*60;
-  pomStartedAt=Date.now();
-  pomPausedMs=0;
+  pomEndTime=Date.now()+pomTotalSeconds*1000;
+  pomPausedAt=0;
   document.getElementById('pomSetup').style.display='none';
   document.getElementById('pomTimer').style.display='flex';
   pomSetClockStyle(pomClockStyle);
   pomSetColor(pomColor);
   pomSetFont(pomFont);
-  pomUpdateDisplay();
   pomRunning=true;
-  pomInterval=setInterval(pomTick,500);
+  pomUpdateDisplay();
+  clearInterval(pomInterval);
+  pomInterval=setInterval(pomTick,250);
   document.getElementById('pomToggleBtn').textContent='pause';
 }
 
 function pomTick(){
   if(!pomRunning) return;
-  // calculate from real time — survives screen lock/freeze
-  const elapsed=Math.floor((Date.now()-pomStartedAt-pomPausedMs)/1000);
-  pomSecondsLeft=Math.max(0, pomTotalSeconds-elapsed);
+  const left=Math.max(0, Math.ceil((pomEndTime-Date.now())/1000));
+  pomSecondsLeft=left;
   pomUpdateDisplay();
-  if(pomSecondsLeft<=0){
+  if(left<=0){
     clearInterval(pomInterval);
     if(navigator.vibrate) navigator.vibrate([200,100,200]);
+    // switch phase
     if(pomPhase==='focus'){
       pomPhase='break';
       pomTotalSeconds=pomBreak*60;
@@ -3132,20 +3138,22 @@ function pomTick(){
       pomPhase='focus';
       pomTotalSeconds=pomFocus*60;
     }
+    pomEndTime=Date.now()+pomTotalSeconds*1000;
     pomSecondsLeft=pomTotalSeconds;
-    pomStartedAt=Date.now();
-    pomPausedMs=0;
     pomUpdateDisplay();
-    pomInterval=setInterval(pomTick,500);
+    pomInterval=setInterval(pomTick,250);
   }
 }
 
 function pomToggle(){
   pomRunning=!pomRunning;
   if(!pomRunning){
+    // pause: save remaining time
+    pomPausedLeft=Math.max(0, pomEndTime-Date.now());
     pomPausedAt=Date.now();
   } else {
-    pomPausedMs+=Date.now()-pomPausedAt;
+    // resume: shift endTime forward by paused duration
+    pomEndTime=Date.now()+pomPausedLeft;
   }
   document.getElementById('pomToggleBtn').textContent=pomRunning?'pause':'resume';
 }
@@ -3156,6 +3164,11 @@ function pomStop(){
   document.getElementById('pomSetup').style.display='flex';
   document.getElementById('pomTimer').style.display='none';
 }
+
+// immediately sync when screen unlocks / tab becomes visible
+document.addEventListener('visibilitychange',()=>{
+  if(!document.hidden && pomRunning) pomTick();
+});
 function pomUpdateDisplay(){
   const m=String(Math.floor(pomSecondsLeft/60)).padStart(2,'0');
   const s=String(pomSecondsLeft%60).padStart(2,'0');
