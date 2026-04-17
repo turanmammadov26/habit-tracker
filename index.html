@@ -1464,7 +1464,7 @@
                   id="qi_${tracker.id}"
                   type="text"
                   inputmode="decimal"
-                  placeholder="72,5"
+                  placeholder=""
                   onkeypress="if(event.key==='Enter') addEntry('${tracker.id}','qi_${tracker.id}')"
                 >
                 <button class="quick-entry-btn" onclick="addEntry('${tracker.id}','qi_${tracker.id}')">+ запись</button>
@@ -1474,17 +1474,6 @@
               <div class="tracker-inner">
                 ${goalHtml}
                 ${tracker.entries.length ? `<div class="chart-wrap"><canvas id="ch_${tracker.id}" aria-label="График ${tracker.name}" role="img"></canvas></div>` : ''}
-                <div class="add-entry-row">
-                  <input
-                    class="entry-input"
-                    id="ei_${tracker.id}"
-                    type="text"
-                    inputmode="decimal"
-                    placeholder="Новое значение"
-                    onkeypress="if(event.key==='Enter') addEntry('${tracker.id}')"
-                  >
-                  <button class="primary-btn" onclick="addEntry('${tracker.id}')">+ добавить</button>
-                </div>
                 <div class="entries-mini">
                   ${latestEntries.map((entry) => `
                     <div class="entry-row">
