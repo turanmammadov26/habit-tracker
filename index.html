@@ -653,6 +653,40 @@
       margin-bottom: 0;
     }
 
+    .edit-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 16px 12px calc(12px + var(--safe-bottom));
+      background: rgba(10, 10, 10, 0.28);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .edit-overlay.hidden {
+      display: none;
+    }
+
+    .edit-sheet {
+      width: 100%;
+      max-width: 760px;
+      padding: 16px;
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      background: color-mix(in srgb, var(--surface) 86%, transparent);
+      box-shadow: var(--shadow);
+    }
+
+    .edit-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
     .sr-only {
       position: absolute;
       width: 1px;
@@ -781,6 +815,35 @@
     </section>
   </main>
 
+  <section class="edit-overlay hidden" id="editOverlay" aria-label="Редактирование показателя">
+    <div class="edit-sheet">
+      <div class="panel-title">Изменить показатель</div>
+      <div class="fields">
+        <input class="field" id="editName" placeholder="Название" maxlength="40">
+        <div class="fields-row">
+          <input class="field" id="editUnit" placeholder="Единица" maxlength="10">
+          <input class="field" id="editGoal" placeholder="Цель" type="text" inputmode="decimal">
+        </div>
+        <div class="fields-row">
+          <select class="field-select" id="editDir">
+            <option value="lower">Цель — меньше</option>
+            <option value="higher">Цель — больше</option>
+          </select>
+          <select class="field-select" id="editChart">
+            <option value="line">График — линия</option>
+            <option value="bar">График — столбцы</option>
+          </select>
+        </div>
+        <input class="field" id="editFolderName" placeholder="Папка или пусто для Без папки" maxlength="32">
+        <div class="color-dots" id="editColorPicker"></div>
+        <div class="edit-actions">
+          <button class="secondary-btn" id="cancelEditBtn">отмена</button>
+          <button class="primary-btn" id="saveEditBtn">сохранить</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
   <script>
@@ -801,6 +864,8 @@
     };
     let charts = {};
     let saveTimer = null;
+    let editingTrackerId = null;
+    let editSelectedColor = COLORS[0];
 
     const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
 
@@ -1100,6 +1165,46 @@
       ].join('');
     }
 
+    function renderEditColorPicker() {
+      const el = document.getElementById('editColorPicker');
+      if (!el) return;
+      el.innerHTML = COLORS.map((color) => `
+        <button
+          type="button"
+          class="color-dot-pick${color === editSelectedColor ? ' selected' : ''}"
+          style="background:${color}"
+          aria-label="Выбрать цвет ${color}"
+          onclick="selectEditColor('${color}')"
+        ></button>
+      `).join('');
+    }
+
+    function selectEditColor(color) {
+      editSelectedColor = color;
+      renderEditColorPicker();
+    }
+
+    function closeEditOverlay() {
+      editingTrackerId = null;
+      const overlay = document.getElementById('editOverlay');
+      if (overlay) overlay.classList.add('hidden');
+    }
+
+    function openEditOverlay(id) {
+      const tracker = state.trackers.find((item) => item.id === id);
+      if (!tracker) return;
+      editingTrackerId = id;
+      editSelectedColor = tracker.color || COLORS[0];
+      document.getElementById('editName').value = tracker.name || '';
+      document.getElementById('editUnit').value = tracker.unit || '';
+      document.getElementById('editGoal').value = tracker.goal ?? '';
+      document.getElementById('editDir').value = tracker.dir || 'higher';
+      document.getElementById('editChart').value = tracker.chartType || 'line';
+      document.getElementById('editFolderName').value = folderNameById(tracker.folderId) === 'Без папки' ? '' : folderNameById(tracker.folderId);
+      renderEditColorPicker();
+      document.getElementById('editOverlay').classList.remove('hidden');
+    }
+
     function syncComposerUi() {
       const section = document.getElementById('composerSection');
       const button = document.getElementById('composerToggleBtn');
@@ -1269,38 +1374,32 @@
     }
 
     function editTracker(id) {
-      const tracker = state.trackers.find((item) => item.id === id);
+      openEditOverlay(id);
+    }
+
+    function saveTrackerEdit() {
+      if (!editingTrackerId) return;
+      const tracker = state.trackers.find((item) => item.id === editingTrackerId);
       if (!tracker) return;
 
-      const nextName = window.prompt('Название показателя', tracker.name);
-      if (nextName === null) return;
-      const cleanName = nextName.trim();
+      const cleanName = document.getElementById('editName').value.trim();
       if (!cleanName) return;
 
-      const nextUnit = window.prompt('Единица измерения', tracker.unit || '');
-      if (nextUnit === null) return;
+      const nextUnit = document.getElementById('editUnit').value.trim();
+      const nextGoalRaw = document.getElementById('editGoal').value.trim();
+      const nextFolderRaw = document.getElementById('editFolderName').value.trim();
 
-      const nextGoalRaw = window.prompt('Цель. Оставьте пустым, если цели нет', tracker.goal ?? '');
-      if (nextGoalRaw === null) return;
-
-      const currentFolder = folderNameById(tracker.folderId);
-      const nextFolderRaw = window.prompt('Папка. Оставьте пустым для "Без папки"', currentFolder === 'Без папки' ? '' : currentFolder);
-      if (nextFolderRaw === null) return;
-
-      const currentColorIndex = Math.max(0, COLORS.indexOf(tracker.color));
-      const colorGuide = COLORS.map((color, index) => `${index + 1}: ${color}`).join('\n');
-      const nextColorRaw = window.prompt(`Цвет показателя:\n${colorGuide}`, String(currentColorIndex + 1));
-      if (nextColorRaw === null) return;
-
-      const parsedGoal = String(nextGoalRaw).trim() === '' ? null : parseLocaleNumber(String(nextGoalRaw));
-      const parsedColorIndex = Number(String(nextColorRaw).trim()) - 1;
+      const parsedGoal = nextGoalRaw === '' ? null : parseLocaleNumber(nextGoalRaw);
 
       tracker.name = cleanName;
-      tracker.unit = nextUnit.trim();
+      tracker.unit = nextUnit;
       tracker.goal = Number.isFinite(parsedGoal) ? parsedGoal : null;
+      tracker.dir = document.getElementById('editDir').value;
+      tracker.chartType = document.getElementById('editChart').value;
       tracker.folderId = ensureFolderByName(nextFolderRaw);
-      tracker.color = COLORS[parsedColorIndex] || tracker.color;
+      tracker.color = editSelectedColor;
 
+      closeEditOverlay();
       queueSave();
       render();
     }
@@ -1562,6 +1661,11 @@
         event.stopPropagation();
         toggleComposer();
       });
+      document.getElementById('cancelEditBtn').addEventListener('click', closeEditOverlay);
+      document.getElementById('saveEditBtn').addEventListener('click', saveTrackerEdit);
+      document.getElementById('editOverlay').addEventListener('click', (event) => {
+        if (event.target.id === 'editOverlay') closeEditOverlay();
+      });
     }
 
     async function start() {
@@ -1576,6 +1680,7 @@
     start();
 
     window.selectColor = selectColor;
+    window.selectEditColor = selectEditColor;
     window.toggleComposer = toggleComposer;
     window.setActiveFolder = setActiveFolder;
     window.deleteFolder = deleteFolder;
