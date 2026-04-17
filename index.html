@@ -132,13 +132,13 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      min-height: 42px;
-      padding: 10px 14px;
+      min-height: 40px;
+      padding: 9px 13px;
       border: 1px solid var(--glass-border);
       border-radius: 999px;
       background: var(--glass);
       color: var(--hint);
-      font-size: 13px;
+      font-size: 12px;
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
     }
@@ -163,8 +163,8 @@
     .metrics-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-      margin-bottom: 16px;
+      gap: 10px;
+      margin-bottom: 14px;
     }
 
     .metric-card,
@@ -174,14 +174,14 @@
     }
 
     .metric-card {
-      min-height: 104px;
-      padding: 16px 14px;
-      border-radius: 22px;
+      min-height: 92px;
+      padding: 14px 13px;
+      border-radius: 20px;
       background: var(--surface2);
       display: flex;
       flex-direction: column;
       justify-content: center;
-      gap: 6px;
+      gap: 4px;
     }
 
     .metric-val {
@@ -199,10 +199,10 @@
     }
 
     .folders-panel {
-      margin-bottom: 18px;
-      padding: 16px;
+      margin-bottom: 14px;
+      padding: 14px;
       border: 1px solid var(--glass-border);
-      border-radius: 24px;
+      border-radius: 22px;
       background: var(--glass);
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
@@ -226,13 +226,13 @@
     .folder-chips {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 12px;
+      gap: 8px;
+      margin-bottom: 10px;
     }
 
     .chip {
-      min-height: 42px;
-      padding: 10px 14px;
+      min-height: 38px;
+      padding: 8px 12px;
       border-radius: 999px;
       border: 1px solid var(--glass-border);
       background: var(--surface2);
@@ -266,13 +266,13 @@
     .trackers-list {
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 12px;
     }
 
     .tracker-card {
       background: var(--glass);
       border: 1px solid var(--glass-border);
-      border-radius: 26px;
+      border-radius: 22px;
       overflow: hidden;
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
@@ -283,8 +283,8 @@
       grid-template-columns: auto 1fr auto auto auto;
       gap: 10px;
       align-items: center;
-      min-height: 68px;
-      padding: 16px 18px 14px;
+      min-height: 60px;
+      padding: 14px 16px 12px;
       cursor: pointer;
     }
 
@@ -296,7 +296,7 @@
 
     .tracker-name {
       min-width: 0;
-      font-size: 17px;
+      font-size: 16px;
       font-weight: 650;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -304,13 +304,13 @@
     }
 
     .tracker-folder-tag {
-      margin-top: 4px;
-      font-size: 11px;
+      margin-top: 2px;
+      font-size: 10px;
       color: var(--hint);
     }
 
     .tracker-latest {
-      font-size: 19px;
+      font-size: 18px;
       font-weight: 700;
       letter-spacing: -0.03em;
       color: var(--accent);
@@ -347,7 +347,7 @@
 
     .tracker-card.collapsed .tracker-body { max-height: 0; }
 
-    .tracker-inner { padding: 0 18px 18px; }
+    .tracker-inner { padding: 0 16px 16px; }
 
     .goal-display {
       display: grid;
@@ -374,10 +374,10 @@
 
     .chart-wrap {
       position: relative;
-      height: 220px;
-      margin-bottom: 16px;
-      padding: 10px 10px 8px;
-      border-radius: 20px;
+      height: 200px;
+      margin-bottom: 14px;
+      padding: 8px 8px 6px;
+      border-radius: 18px;
       background: color-mix(in srgb, var(--surface2) 72%, transparent);
     }
 
@@ -392,10 +392,10 @@
     .entry-input,
     .field-select {
       width: 100%;
-      min-height: 52px;
-      padding: 14px 16px;
+      min-height: 48px;
+      padding: 12px 14px;
       border: 1px solid var(--glass-border);
-      border-radius: 16px;
+      border-radius: 14px;
       background: var(--surface2);
       color: var(--text);
       outline: none;
@@ -417,10 +417,10 @@
     .primary-btn,
     .secondary-btn,
     .danger-btn {
-      min-height: 52px;
-      border-radius: 16px;
+      min-height: 48px;
+      border-radius: 14px;
       border: none;
-      padding: 0 18px;
+      padding: 0 16px;
       cursor: pointer;
       transition: transform var(--transition), opacity var(--transition), background var(--transition);
     }
@@ -460,8 +460,8 @@
     .entries-mini {
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      max-height: 240px;
+      gap: 6px;
+      max-height: 220px;
       overflow: auto;
     }
 
@@ -469,10 +469,10 @@
       display: grid;
       grid-template-columns: auto 1fr auto;
       align-items: center;
-      gap: 10px;
-      min-height: 48px;
-      padding: 10px 12px;
-      border-radius: 16px;
+      gap: 8px;
+      min-height: 44px;
+      padding: 8px 10px;
+      border-radius: 14px;
       background: var(--surface2);
     }
 
@@ -502,14 +502,14 @@
     .entry-del:hover { color: var(--danger); }
 
     .floating-panel {
-      margin-top: 18px;
+      margin-top: 14px;
     }
 
     .panel-inner {
       width: 100%;
-      padding: 18px;
+      padding: 15px;
       border: 1px solid var(--glass-border);
-      border-radius: 28px;
+      border-radius: 22px;
       background: color-mix(in srgb, var(--surface) 78%, transparent);
       box-shadow: var(--shadow);
       backdrop-filter: blur(18px);
@@ -524,9 +524,9 @@
       margin-bottom: 12px;
     }
 
-    .fields { display: grid; gap: 10px; }
-    .fields-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-    .color-dots { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 2px; }
+    .fields { display: grid; gap: 8px; }
+    .fields-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .color-dots { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
 
     .color-dot-pick {
       width: 28px;
@@ -544,10 +544,10 @@
 
     .empty-state {
       margin-top: 8px;
-      padding: 42px 24px;
+      padding: 34px 20px;
       text-align: center;
       border: 1px dashed var(--glass-border);
-      border-radius: 28px;
+      border-radius: 22px;
       background: color-mix(in srgb, var(--surface2) 70%, transparent);
     }
 
@@ -568,7 +568,48 @@
     }
 
     .composer-section {
-      margin-top: 18px;
+      margin-top: 14px;
+    }
+
+    .composer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .composer-summary {
+      font-size: 13px;
+      color: var(--hint);
+    }
+
+    .composer-toggle {
+      min-height: 38px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--glass-border);
+      background: var(--surface2);
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .composer-body {
+      overflow: hidden;
+      max-height: 1200px;
+      transition: max-height 260ms ease, opacity 220ms ease, margin-top 220ms ease;
+      opacity: 1;
+      margin-top: 8px;
+    }
+
+    .composer-section.collapsed .composer-body {
+      max-height: 0;
+      opacity: 0;
+      margin-top: 0;
+    }
+
+    .composer-section.collapsed .panel-title {
+      margin-bottom: 0;
     }
 
     .sr-only {
@@ -655,36 +696,39 @@
 
     <section class="trackers-list" id="trackersList"></section>
 
-    <section class="floating-panel composer-section" aria-label="Создание нового показателя">
+    <section class="floating-panel composer-section collapsed" id="composerSection" aria-label="Создание нового показателя">
       <div class="panel-inner">
-        <div class="panel-title">Новый показатель</div>
-        <div class="fields">
-          <input class="field" id="newName" placeholder="Название: вес, бег, жим лёжа..." maxlength="40">
-          <div class="fields-row">
-            <input class="field" id="newUnit" placeholder="Единица: кг, км, мин" maxlength="10">
-            <input class="field" id="newGoal" placeholder="Цель" type="number" inputmode="decimal">
+        <div class="composer-header" onclick="toggleComposer()">
+          <div>
+            <div class="panel-title">Новый показатель</div>
+            <div class="composer-summary" id="composerSummary">Нажмите, чтобы добавить новый прогресс</div>
           </div>
-          <div class="fields-row">
-            <select class="field-select" id="newDir">
-              <option value="lower">Цель — меньше</option>
-              <option value="higher">Цель — больше</option>
-            </select>
-            <select class="field-select" id="newChart">
-              <option value="line">График — линия</option>
-              <option value="bar">График — столбцы</option>
-            </select>
-          </div>
-          <div class="fields-row">
+          <button type="button" class="composer-toggle" id="composerToggleBtn">Открыть</button>
+        </div>
+        <div class="composer-body">
+          <div class="fields">
+            <input class="field" id="newName" placeholder="Название: вес, бег, жим лёжа..." maxlength="40">
+            <div class="fields-row">
+              <input class="field" id="newUnit" placeholder="Единица: кг, км, мин" maxlength="10">
+              <input class="field" id="newGoal" placeholder="Цель" type="number" inputmode="decimal">
+            </div>
+            <div class="fields-row">
+              <select class="field-select" id="newDir">
+                <option value="lower">Цель — меньше</option>
+                <option value="higher">Цель — больше</option>
+              </select>
+              <select class="field-select" id="newChart">
+                <option value="line">График — линия</option>
+                <option value="bar">График — столбцы</option>
+              </select>
+            </div>
             <select class="field-select" id="newFolder">
               <option value="all">Без папки</option>
             </select>
-            <select class="field-select" id="trackerThemeHint" disabled>
-              <option>Тема берётся из переключателя сверху</option>
-            </select>
+            <div class="color-dots" id="colorPicker"></div>
+            <button class="primary-btn" id="createTrackerBtn">+ создать показатель</button>
+            <div class="sync-note" id="syncNote">Если приложение открыто внутри Telegram, данные будут синхронизироваться с облаком бота.</div>
           </div>
-          <div class="color-dots" id="colorPicker"></div>
-          <button class="primary-btn" id="createTrackerBtn">+ создать показатель</button>
-          <div class="sync-note" id="syncNote">Если приложение открыто внутри Telegram, данные будут синхронизироваться с облаком бота.</div>
         </div>
       </div>
     </section>
@@ -989,6 +1033,26 @@
       ].join('');
     }
 
+    function syncComposerUi() {
+      const section = document.getElementById('composerSection');
+      const button = document.getElementById('composerToggleBtn');
+      const summary = document.getElementById('composerSummary');
+      const collapsed = section.classList.contains('collapsed');
+      button.textContent = collapsed ? 'Открыть' : 'Скрыть';
+      summary.textContent = collapsed
+        ? 'Нажмите, чтобы добавить новый прогресс'
+        : 'Заполните поля и создайте новый показатель';
+    }
+
+    function toggleComposer(forceOpen) {
+      const section = document.getElementById('composerSection');
+      const shouldOpen = typeof forceOpen === 'boolean'
+        ? forceOpen
+        : section.classList.contains('collapsed');
+      section.classList.toggle('collapsed', !shouldOpen);
+      syncComposerUi();
+    }
+
     function renderFolders() {
       const el = document.getElementById('folderChips');
       const allActive = state.activeFolderId === DEFAULT_FOLDER_ID ? ' active' : '';
@@ -1079,6 +1143,7 @@
 
       queueSave();
       render();
+      toggleComposer(false);
       if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
     }
 
@@ -1370,12 +1435,17 @@
         applyTheme(event.target.value);
         queueSave(true);
       });
+      document.getElementById('composerToggleBtn').addEventListener('click', (event) => {
+        event.stopPropagation();
+        toggleComposer();
+      });
     }
 
     async function start() {
       renderColorPicker();
       bindEvents();
       await initStorage();
+      syncComposerUi();
       render();
       queueSave(true);
     }
@@ -1383,6 +1453,7 @@
     start();
 
     window.selectColor = selectColor;
+    window.toggleComposer = toggleComposer;
     window.setActiveFolder = setActiveFolder;
     window.deleteFolder = deleteFolder;
     window.toggleTracker = toggleTracker;
