@@ -1,331 +1,1398 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#F7F4EF">
+  <title>Progress Mini App</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-:root{
-  --bg:#F7F4EF;--bg2:#EDE9E2;--surface:#FFFFFF;--surface2:#F2EFE9;
-  --border:rgba(0,0,0,0.08);--text:#1C1916;--text2:#7A7470;--text3:#A89E98;
-  --accent:#C8865A;--accent2:#B56F43;--btn-fg:#FFFFFF;
-  --glass:rgba(255,255,255,0.65);--glass-border:rgba(255,255,255,0.5);
-  --glass-blur:16px;--del:#D4685C;--done:#C8865A;
-  --T:0.3s ease;
-  --font:'Inter',sans-serif;
-}
-@media(prefers-color-scheme:dark){
-  :root{
-    --bg:#141414;--bg2:#1E1E1E;--surface:#242424;--surface2:#1A1A1A;
-    --border:rgba(255,255,255,0.07);--text:#F0EDEA;--text2:#7A7875;--text3:#5A5855;
-    --accent:#E8D5B0;--accent2:#D4BC90;--btn-fg:#1C1916;
-    --glass:rgba(30,30,30,0.6);--glass-border:rgba(255,255,255,0.08);--del:#C06060;
-  }
-}
-body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;-webkit-user-select:none;user-select:none;}
-input,textarea{-webkit-user-select:text;user-select:text;}
-.wrap{max-width:560px;margin:0 auto;padding:20px 16px 60px;}
-.page-title{font-size:22px;font-weight:500;color:var(--text);margin-bottom:4px;}
-.page-sub{font-size:12px;color:var(--text3);margin-bottom:24px;letter-spacing:0.06em;}
+    :root {
+      --base-bg: #f6f1ea;
+      --base-surface: #ffffff;
+      --base-text: #1c1916;
+      --base-hint: #857b74;
+      --base-button: #c8865a;
+      --base-button-text: #ffffff;
+      --base-destructive: #d4685c;
+      --base-success: #5d9962;
+      --safe-top: max(16px, env(safe-area-inset-top));
+      --safe-bottom: max(18px, env(safe-area-inset-bottom));
+      --font: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --transition: 220ms ease;
+    }
 
-.metrics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px;}
-.metric-card{background:var(--surface2);border-radius:12px;padding:12px;text-align:center;}
-.metric-val{font-size:22px;font-weight:500;color:var(--accent);line-height:1.1;}
-.metric-lbl{font-size:10px;color:var(--text3);margin-top:3px;letter-spacing:0.08em;}
-.metric-diff{font-size:10px;margin-top:2px;font-weight:500;}
-.diff-pos{color:#5C8B52;}.diff-neg{color:var(--del);}
+    body.theme-auto {
+      --bg: var(--tg-theme-bg-color, var(--base-bg));
+      --surface: var(--tg-theme-secondary-bg-color, var(--base-surface));
+      --text: var(--tg-theme-text-color, var(--base-text));
+      --hint: var(--tg-theme-hint-color, var(--base-hint));
+      --button: var(--tg-theme-button-color, var(--base-button));
+      --button-text: var(--tg-theme-button-text-color, var(--base-button-text));
+      --destructive: var(--tg-theme-destructive-text-color, var(--base-destructive));
+      --success: var(--base-success);
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+    }
 
-.trackers-list{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+    body.theme-light {
+      --bg: #f7f4ef;
+      --surface: #ffffff;
+      --text: #1c1916;
+      --hint: #7f7670;
+      --button: #c8865a;
+      --button-text: #ffffff;
+      --destructive: #d4685c;
+      --success: #5d9962;
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+    }
 
-.tracker-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:18px;overflow:hidden;transition:box-shadow var(--T);}
-.tracker-head{display:flex;align-items:center;gap:10px;padding:14px 16px 12px;cursor:pointer;}
-.tracker-color-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-.tracker-name{flex:1;font-size:14px;font-weight:500;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.tracker-latest{font-size:13px;font-weight:500;color:var(--accent);flex-shrink:0;}
-.tracker-unit{font-size:10px;color:var(--text3);margin-left:2px;}
-.caret{font-size:12px;color:var(--text3);transition:transform 0.3s;flex-shrink:0;}
-.tracker-card.collapsed .caret{transform:rotate(-90deg);}
+    body.theme-dark {
+      --bg: #101111;
+      --surface: #1a1d1e;
+      --text: #f3efe8;
+      --hint: #9d9890;
+      --button: #e0c492;
+      --button-text: #1c1916;
+      --destructive: #ef7f73;
+      --success: #82bf88;
+      --shadow: 0 16px 48px rgba(0, 0, 0, 0.28);
+    }
 
-.tracker-body{overflow:hidden;max-height:9999px;transition:max-height 0.35s ease;}
-.tracker-card.collapsed .tracker-body{max-height:0;}
-.tracker-inner{padding:0 16px 16px;}
+    body {
+      --bg2: color-mix(in srgb, var(--bg) 85%, #d8cfc2 15%);
+      --surface2: color-mix(in srgb, var(--surface) 78%, var(--bg) 22%);
+      --surface3: color-mix(in srgb, var(--surface) 55%, var(--bg) 45%);
+      --glass: color-mix(in srgb, var(--surface) 78%, transparent);
+      --glass-border: color-mix(in srgb, var(--text) 10%, transparent);
+      --border: color-mix(in srgb, var(--text) 11%, transparent);
+      --accent: var(--button);
+      --danger: var(--destructive);
+      min-height: 100%;
+      background:
+        radial-gradient(circle at top, color-mix(in srgb, var(--accent) 10%, transparent) 0, transparent 34%),
+        linear-gradient(180deg, var(--bg2), var(--bg));
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 16px;
+      line-height: 1.4;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-user-select: none;
+      user-select: none;
+      overscroll-behavior-y: none;
+    }
 
-.chart-wrap{position:relative;width:100%;height:160px;margin-bottom:14px;}
+    html { min-height: 100%; background: var(--bg); }
+    input, textarea, select { -webkit-user-select: text; user-select: text; }
+    button, input, select { font: inherit; }
 
-.add-entry-row{display:flex;gap:8px;margin-bottom:12px;}
-.entry-input{flex:1;padding:9px 13px;border:1px solid var(--glass-border);border-radius:12px;background:var(--surface2);color:var(--text);font-family:var(--font);font-size:13px;outline:none;transition:border-color 0.2s;}
-.entry-input:focus{border-color:var(--accent);}
-.entry-input::placeholder{color:var(--text3);}
-.add-entry-btn{padding:9px 16px;border:none;border-radius:12px;background:var(--accent);color:var(--btn-fg);font-family:var(--font);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:opacity 0.2s;}
-.add-entry-btn:hover{opacity:0.85;}
+    .app {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: calc(var(--safe-top) + 8px) 16px calc(346px + var(--safe-bottom)) 16px;
+    }
 
-.entries-mini{display:flex;flex-direction:column;gap:4px;max-height:160px;overflow-y:auto;}
-.entry-row{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:10px;background:var(--surface2);font-size:12px;}
-.entry-date{color:var(--text3);flex-shrink:0;min-width:70px;}
-.entry-val{font-weight:500;color:var(--text);margin-left:auto;}
-.entry-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:0 2px;transition:color 0.15s;}
-.entry-del:hover{color:var(--del);}
+    .hero {
+      padding: 16px 6px 20px;
+    }
 
-.tracker-actions{display:flex;gap:6px;margin-top:10px;}
-.del-tracker-btn{flex:1;padding:8px;border:1px solid var(--border);border-radius:10px;background:none;color:var(--del);font-family:var(--font);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;transition:background 0.15s;}
-.del-tracker-btn:hover{background:var(--surface2);}
-.goal-display{font-family:var(--font);font-size:10px;color:var(--text3);padding:4px 0 8px;display:flex;align-items:center;gap:6px;}
-.goal-bar-wrap{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
-.goal-bar-fill{height:100%;border-radius:2px;background:var(--accent);transition:width 0.4s ease;}
+    .eyebrow {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--hint);
+      margin-bottom: 10px;
+    }
 
-.add-tracker-section{background:var(--glass);border:1px solid var(--glass-border);border-radius:18px;padding:16px;}
-.add-section-lbl{font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text3);margin-bottom:12px;}
-.add-fields{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
-.add-fields-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.field-input{padding:9px 13px;border:1px solid var(--glass-border);border-radius:12px;background:var(--surface2);color:var(--text);font-family:var(--font);font-size:13px;outline:none;transition:border-color 0.2s;width:100%;}
-.field-input:focus{border-color:var(--accent);}
-.field-input::placeholder{color:var(--text3);}
-.field-select{padding:9px 13px;border:1px solid var(--glass-border);border-radius:12px;background:var(--surface2);color:var(--text);font-family:var(--font);font-size:13px;outline:none;width:100%;cursor:pointer;}
-.create-btn{width:100%;padding:11px;border:none;border-radius:12px;background:var(--accent);color:var(--btn-fg);font-family:var(--font);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:opacity 0.2s;}
-.create-btn:hover{opacity:0.88;}
+    .title {
+      font-size: clamp(30px, 7vw, 42px);
+      line-height: 0.95;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      margin-bottom: 10px;
+    }
 
-.color-dots{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px;}
-.color-dot-pick{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:border-color 0.15s,transform 0.15s;}
-.color-dot-pick.selected{border-color:var(--text);transform:scale(1.15);}
+    .subtitle {
+      font-size: 15px;
+      color: var(--hint);
+      max-width: 40ch;
+    }
 
-.empty-state{text-align:center;padding:40px 20px;}
-.empty-state h3{font-size:15px;color:var(--text2);font-weight:400;margin-bottom:5px;}
-.empty-state p{font-size:11px;color:var(--text3);}
-</style>
+    .top-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 16px;
+    }
 
-<div class="wrap">
-  <h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);">Tracker прогресса — числовые показатели с графиком</h2>
-  <div class="page-title">progress</div>
-  <div class="page-sub" id="overallSub">отслеживание числовых показателей</div>
+    .status-pill,
+    .theme-switcher {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 10px 14px;
+      border: 1px solid var(--glass-border);
+      border-radius: 999px;
+      background: var(--glass);
+      color: var(--hint);
+      font-size: 13px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
 
-  <div class="metrics-grid" id="overallMetrics"></div>
-  <div class="trackers-list" id="trackersList"></div>
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--success) 20%, transparent);
+    }
 
-  <div class="add-tracker-section">
-    <div class="add-section-lbl">новый показатель</div>
-    <div class="add-fields">
-      <input class="field-input" id="newName" placeholder="Название (вес, жим лёжа, бег…)" maxlength="40">
-      <div class="add-fields-row">
-        <input class="field-input" id="newUnit" placeholder="Единица (кг, км, мин)" maxlength="10">
-        <input class="field-input" id="newGoal" placeholder="Цель (необязательно)" type="number">
-      </div>
-      <div class="add-fields-row">
-        <select class="field-select" id="newDir">
-          <option value="lower">Цель — меньше</option>
-          <option value="higher">Цель — больше</option>
-        </select>
-        <select class="field-select" id="newChart">
-          <option value="line">График линия</option>
-          <option value="bar">График столбцы</option>
-        </select>
-      </div>
-      <div class="color-dots" id="colorPicker"></div>
-    </div>
-    <button class="create-btn" onclick="createTracker()">+ создать</button>
-  </div>
-</div>
+    .theme-switcher select {
+      background: transparent;
+      border: none;
+      color: var(--text);
+      outline: none;
+      cursor: pointer;
+      min-width: 110px;
+    }
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<script>
-const COLORS=['#C8865A','#5B7CE6','#5C8B52','#E8A060','#E05C6A','#a09ad0','#00cc55','#F5A623','#7AB8D0','#D4685C'];
-const MONTHS=['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
-let selectedColor=COLORS[0];
-let trackers=[];
-let charts={};
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
 
-function pad(n){return String(n).padStart(2,'0');}
-function dateKey(d=new Date()){return`${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`;}
-function fmtDate(str){const[d,m]=str.split('.');return`${d} ${MONTHS[parseInt(m)-1]}`;}
+    .metric-card,
+    .folders-panel,
+    .tracker-card {
+      box-shadow: var(--shadow);
+    }
 
-function save(){try{localStorage.setItem('progress_v1',JSON.stringify(trackers));}catch{}}
-function load(){try{const r=localStorage.getItem('progress_v1');if(r)trackers=JSON.parse(r);}catch{}}
+    .metric-card {
+      min-height: 104px;
+      padding: 16px 14px;
+      border-radius: 22px;
+      background: var(--surface2);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 6px;
+    }
 
-function renderColorPicker(){
-  const el=document.getElementById('colorPicker');
-  el.innerHTML=COLORS.map(c=>`<div class="color-dot-pick${c===selectedColor?' selected':''}" style="background:${c}" onclick="selectColor('${c}')"></div>`).join('');
-}
+    .metric-val {
+      font-size: clamp(26px, 5vw, 32px);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      color: var(--accent);
+    }
 
-function selectColor(c){selectedColor=c;renderColorPicker();}
+    .metric-lbl {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--hint);
+    }
 
-function createTracker(){
-  const name=document.getElementById('newName').value.trim();
-  const unit=document.getElementById('newUnit').value.trim()||'';
-  const goalRaw=document.getElementById('newGoal').value.trim();
-  const goal=goalRaw?parseFloat(goalRaw):null;
-  const dir=document.getElementById('newDir').value;
-  const chartType=document.getElementById('newChart').value;
-  if(!name)return;
-  trackers.push({id:String(Date.now()),name,unit,goal,dir,chartType,color:selectedColor,entries:[],collapsed:false});
-  document.getElementById('newName').value='';
-  document.getElementById('newUnit').value='';
-  document.getElementById('newGoal').value='';
-  save();render();
-}
+    .folders-panel {
+      margin-bottom: 18px;
+      padding: 16px;
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      background: var(--glass);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
 
-function toggleTracker(id){
-  const t=trackers.find(t=>t.id===id);if(!t)return;
-  t.collapsed=!t.collapsed;save();render();
-}
+    .section-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
 
-function addEntry(id){
-  const inp=document.getElementById('ei_'+id);
-  if(!inp)return;
-  const val=parseFloat(inp.value);
-  if(isNaN(val))return;
-  const t=trackers.find(t=>t.id===id);if(!t)return;
-  const today=dateKey();
-  const existing=t.entries.findIndex(e=>e.date===today);
-  if(existing>=0)t.entries[existing].val=val;
-  else t.entries.push({date:today,val,ts:Date.now()});
-  t.entries.sort((a,b)=>a.ts-b.ts);
-  inp.value='';
-  save();render();
-}
+    .section-title {
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--hint);
+    }
 
-function deleteEntry(tid,ts){
-  const t=trackers.find(t=>t.id===tid);if(!t)return;
-  t.entries=t.entries.filter(e=>e.ts!==ts);
-  save();render();
-}
+    .folder-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
 
-function deleteTracker(id){
-  trackers=trackers.filter(t=>t.id!==id);
-  save();render();
-}
+    .chip {
+      min-height: 42px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--glass-border);
+      background: var(--surface2);
+      color: var(--text);
+      cursor: pointer;
+      transition: transform var(--transition), border-color var(--transition), background var(--transition);
+    }
 
-function getStats(t){
-  if(!t.entries.length)return null;
-  const vals=t.entries.map(e=>e.val);
-  const last=vals[vals.length-1];
-  const first=vals[0];
-  const prev=vals.length>1?vals[vals.length-2]:null;
-  const diff=prev!==null?+(last-prev).toFixed(2):null;
-  const best=t.dir==='lower'?Math.min(...vals):Math.max(...vals);
-  return{last,first,diff,best};
-}
+    .chip.active {
+      background: var(--accent);
+      border-color: transparent;
+      color: var(--button-text);
+    }
 
-function goalPct(t){
-  if(!t.goal||!t.entries.length)return null;
-  const last=t.entries[t.entries.length-1].val;
-  if(t.dir==='lower'){
-    const start=t.entries[0].val;
-    if(start===t.goal)return 100;
-    const pct=((start-last)/(start-t.goal)*100);
-    return Math.min(100,Math.max(0,Math.round(pct)));
-  } else {
-    const pct=(last/t.goal*100);
-    return Math.min(100,Math.round(pct));
-  }
-}
+    .chip small {
+      margin-left: 6px;
+      opacity: 0.75;
+    }
 
-function renderOverallMetrics(){
-  const el=document.getElementById('overallMetrics');
-  const sub=document.getElementById('overallSub');
-  if(!trackers.length){el.innerHTML='';sub.textContent='отслеживание числовых показателей';return;}
-  const active=trackers.filter(t=>t.entries.length>0);
-  const withGoal=trackers.filter(t=>t.goal&&t.entries.length);
-  const achieved=withGoal.filter(t=>{
-    const s=getStats(t);if(!s)return false;
-    return t.dir==='lower'?s.last<=t.goal:s.last>=t.goal;
-  });
-  const totalEntries=trackers.reduce((s,t)=>s+t.entries.length,0);
-  el.innerHTML=`
-    <div class="metric-card"><div class="metric-val">${trackers.length}</div><div class="metric-lbl">показателей</div></div>
-    <div class="metric-card"><div class="metric-val">${totalEntries}</div><div class="metric-lbl">записей</div></div>
-    <div class="metric-card"><div class="metric-val">${achieved.length}/${withGoal.length||'—'}</div><div class="metric-lbl">целей достигнуто</div></div>
-  `;
-  sub.textContent=`${active.length} активных · ${totalEntries} записей`;
-}
+    .chip.danger {
+      color: var(--danger);
+      border-color: color-mix(in srgb, var(--danger) 24%, transparent);
+    }
 
-function renderChart(t, canvasId){
-  if(charts[canvasId]){try{charts[canvasId].destroy();}catch{}}
-  const canvas=document.getElementById(canvasId);
-  if(!canvas||!t.entries.length)return;
-  const isDark=matchMedia('(prefers-color-scheme:dark)').matches;
-  const labels=t.entries.map(e=>fmtDate(e.date));
-  const data=t.entries.map(e=>e.val);
-  const gridColor=isDark?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.06)';
-  const textColor=isDark?'#7A7875':'#A89E98';
-  const goalLine=t.goal?{type:'line',scaleID:'y',value:t.goal,borderColor:isDark?'rgba(255,255,255,0.25)':'rgba(0,0,0,0.2)',borderDash:[4,4],borderWidth:1,label:{display:true,content:'цель',position:'start',font:{size:10},color:textColor,backgroundColor:'transparent',padding:0}}:null;
+    .folder-add-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+    }
 
-  const cfg={
-    type:t.chartType||'line',
-    data:{labels,datasets:[{
-      label:t.name,
-      data,
-      borderColor:t.color,
-      backgroundColor:t.chartType==='bar'?t.color+'cc':t.color+'22',
-      fill:t.chartType!=='bar',
-      tension:0.35,
-      pointBackgroundColor:t.color,
-      pointRadius:data.length>20?0:4,
-      pointHoverRadius:5,
-      borderWidth:2,
-    }]},
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{
-        legend:{display:false},
-        tooltip:{callbacks:{label:ctx=>`${ctx.parsed.y} ${t.unit}`}},
-        annotation:goalLine?{annotations:{goal:goalLine}}:{}
-      },
-      scales:{
-        x:{ticks:{color:textColor,font:{size:10},maxTicksLimit:6},grid:{display:false}},
-        y:{ticks:{color:textColor,font:{size:10}},grid:{color:gridColor}}
+    .trackers-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .tracker-card {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 26px;
+      overflow: hidden;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .tracker-head {
+      display: grid;
+      grid-template-columns: auto 1fr auto auto auto;
+      gap: 10px;
+      align-items: center;
+      min-height: 68px;
+      padding: 16px 18px 14px;
+      cursor: pointer;
+    }
+
+    .tracker-color-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .tracker-name {
+      min-width: 0;
+      font-size: 17px;
+      font-weight: 650;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .tracker-folder-tag {
+      margin-top: 4px;
+      font-size: 11px;
+      color: var(--hint);
+    }
+
+    .tracker-latest {
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--accent);
+    }
+
+    .tracker-unit,
+    .entry-unit {
+      font-size: 12px;
+      color: var(--hint);
+      margin-left: 4px;
+    }
+
+    .metric-diff {
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .diff-pos { color: var(--success); }
+    .diff-neg { color: var(--danger); }
+
+    .caret {
+      color: var(--hint);
+      transition: transform var(--transition);
+      font-size: 14px;
+    }
+
+    .tracker-card.collapsed .caret { transform: rotate(-90deg); }
+
+    .tracker-body {
+      overflow: hidden;
+      max-height: 1200px;
+      transition: max-height 280ms ease;
+    }
+
+    .tracker-card.collapsed .tracker-body { max-height: 0; }
+
+    .tracker-inner { padding: 0 18px 18px; }
+
+    .goal-display {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 10px;
+      align-items: center;
+      font-size: 12px;
+      color: var(--hint);
+      margin-bottom: 14px;
+    }
+
+    .goal-bar-wrap {
+      height: 6px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: var(--border);
+    }
+
+    .goal-bar-fill {
+      height: 100%;
+      border-radius: inherit;
+      transition: width 320ms ease;
+    }
+
+    .chart-wrap {
+      position: relative;
+      height: 220px;
+      margin-bottom: 16px;
+      padding: 10px 10px 8px;
+      border-radius: 20px;
+      background: color-mix(in srgb, var(--surface2) 72%, transparent);
+    }
+
+    .add-entry-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .field,
+    .entry-input,
+    .field-select {
+      width: 100%;
+      min-height: 52px;
+      padding: 14px 16px;
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      background: var(--surface2);
+      color: var(--text);
+      outline: none;
+      transition: border-color var(--transition), transform var(--transition);
+    }
+
+    .field:focus,
+    .entry-input:focus,
+    .field-select:focus {
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .field::placeholder,
+    .entry-input::placeholder {
+      color: color-mix(in srgb, var(--hint) 80%, transparent);
+    }
+
+    .primary-btn,
+    .secondary-btn,
+    .danger-btn {
+      min-height: 52px;
+      border-radius: 16px;
+      border: none;
+      padding: 0 18px;
+      cursor: pointer;
+      transition: transform var(--transition), opacity var(--transition), background var(--transition);
+    }
+
+    .primary-btn:active,
+    .secondary-btn:active,
+    .danger-btn:active {
+      transform: scale(0.98);
+    }
+
+    .primary-btn {
+      background: var(--accent);
+      color: var(--button-text);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      white-space: nowrap;
+    }
+
+    .secondary-btn {
+      background: var(--surface3);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .danger-btn {
+      width: 100%;
+      background: transparent;
+      color: var(--danger);
+      border: 1px solid color-mix(in srgb, var(--danger) 28%, transparent);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+    }
+
+    .entries-mini {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 240px;
+      overflow: auto;
+    }
+
+    .entry-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 10px;
+      min-height: 48px;
+      padding: 10px 12px;
+      border-radius: 16px;
+      background: var(--surface2);
+    }
+
+    .entry-date {
+      color: var(--hint);
+      font-size: 12px;
+      min-width: 70px;
+    }
+
+    .entry-val {
+      justify-self: end;
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .entry-del {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      border: none;
+      background: transparent;
+      color: var(--hint);
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .entry-del:hover { color: var(--danger); }
+
+    .floating-panel {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 10;
+      padding: 12px 12px var(--safe-bottom);
+      background:
+        linear-gradient(180deg, transparent 0, color-mix(in srgb, var(--bg) 80%, transparent) 14%, var(--bg) 100%);
+    }
+
+    .panel-inner {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 18px;
+      border: 1px solid var(--glass-border);
+      border-radius: 28px;
+      background: color-mix(in srgb, var(--surface) 78%, transparent);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .panel-title {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--hint);
+      margin-bottom: 12px;
+    }
+
+    .fields { display: grid; gap: 10px; }
+    .fields-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .color-dots { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 2px; }
+
+    .color-dot-pick {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: transform var(--transition), border-color var(--transition);
+    }
+
+    .color-dot-pick.selected {
+      border-color: var(--text);
+      transform: scale(1.14);
+    }
+
+    .empty-state {
+      margin-top: 8px;
+      padding: 42px 24px;
+      text-align: center;
+      border: 1px dashed var(--glass-border);
+      border-radius: 28px;
+      background: color-mix(in srgb, var(--surface2) 70%, transparent);
+    }
+
+    .empty-state h3 {
+      font-size: 19px;
+      margin-bottom: 6px;
+    }
+
+    .empty-state p {
+      color: var(--hint);
+      font-size: 14px;
+    }
+
+    .sync-note {
+      margin-top: 10px;
+      color: var(--hint);
+      font-size: 12px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 580px) {
+      .app {
+        padding-left: 12px;
+        padding-right: 12px;
+        padding-bottom: calc(430px + var(--safe-bottom));
       }
-    }
-  };
-  charts[canvasId]=new Chart(canvas,cfg);
-}
 
-function render(){
-  renderOverallMetrics();
-  const list=document.getElementById('trackersList');
-  if(!trackers.length){
-    list.innerHTML=`<div class="empty-state"><h3>Нет показателей</h3><p>создайте первый показатель ниже</p></div>`;
-    return;
-  }
-  list.innerHTML=trackers.map(t=>{
-    const s=getStats(t);
-    const pct=goalPct(t);
-    const last5=[...t.entries].slice(-5).reverse();
-    const diffHtml=s&&s.diff!==null?`<span class="metric-diff ${s.diff<=0&&t.dir==='lower'?'diff-pos':s.diff>=0&&t.dir==='higher'?'diff-pos':'diff-neg'}">${s.diff>0?'+':''}${s.diff}</span>`:'';
-    const goalHtml=pct!==null?`<div class="goal-display"><span>цель: ${t.goal} ${t.unit}</span><div class="goal-bar-wrap"><div class="goal-bar-fill" style="width:${pct}%;background:${t.color}"></div></div><span>${pct}%</span></div>`:'';
-    return`<div class="tracker-card ${t.collapsed?'collapsed':''}" id="tc_${t.id}">
-      <div class="tracker-head" onclick="toggleTracker('${t.id}')">
-        <div class="tracker-color-dot" style="background:${t.color}"></div>
-        <div class="tracker-name">${t.name}</div>
-        ${s?`<div class="tracker-latest">${s.last}<span class="tracker-unit">${t.unit}</span></div>${diffHtml}`:'<span style="font-size:10px;color:var(--text3)">нет данных</span>'}
-        <span class="caret">&#9660;</span>
-      </div>
-      <div class="tracker-body">
-        <div class="tracker-inner">
-          ${goalHtml}
-          ${t.entries.length?`<div class="chart-wrap"><canvas id="ch_${t.id}" role="img" aria-label="График ${t.name}"></canvas></div>`:''}
-          <div class="add-entry-row">
-            <input class="entry-input" id="ei_${t.id}" type="number" placeholder="Новое значение…" step="any"
-              onkeypress="if(event.key==='Enter')addEntry('${t.id}')">
-            <button class="add-entry-btn" onclick="addEntry('${t.id}')">+ добавить</button>
-          </div>
-          <div class="entries-mini">
-            ${last5.map(e=>`<div class="entry-row">
-              <span class="entry-date">${fmtDate(e.date)}</span>
-              <span class="entry-val">${e.val} ${t.unit}</span>
-              <button class="entry-del" onclick="deleteEntry('${t.id}',${e.ts})">×</button>
-            </div>`).join('')}
-          </div>
-          <div class="tracker-actions">
-            <button class="del-tracker-btn" onclick="deleteTracker('${t.id}')">удалить показатель</button>
-          </div>
+      .metrics-grid,
+      .fields-row,
+      .add-entry-row,
+      .folder-add-row {
+        grid-template-columns: 1fr;
+      }
+
+      .tracker-head {
+        grid-template-columns: auto 1fr auto;
+        grid-template-areas:
+          "dot name caret"
+          "dot latest diff";
+        row-gap: 6px;
+      }
+
+      .tracker-color-dot { grid-area: dot; align-self: start; margin-top: 4px; }
+      .tracker-name-wrap { grid-area: name; }
+      .tracker-latest { grid-area: latest; }
+      .metric-diff { grid-area: diff; justify-self: end; align-self: center; }
+      .caret { grid-area: caret; justify-self: end; }
+
+      .goal-display { grid-template-columns: 1fr; }
+      .entry-val { justify-self: start; }
+    }
+  </style>
+</head>
+<body class="theme-auto">
+  <main class="app">
+    <h1 class="sr-only">Tracker progress для Telegram Mini App</h1>
+
+    <section class="hero">
+      <div class="eyebrow">Telegram Mini App</div>
+      <div class="title">progress</div>
+      <div class="subtitle" id="overallSub">Отслеживание числовых показателей по папкам с облачным сохранением.</div>
+      <div class="top-row">
+        <div class="status-pill" id="syncStatus">
+          <span class="status-dot"></span>
+          <span id="syncText">Подготовка хранилища...</span>
         </div>
+        <label class="theme-switcher" for="themeSelect">
+          <span>Тема</span>
+          <select id="themeSelect">
+            <option value="auto">Авто / Telegram</option>
+            <option value="light">Светлая</option>
+            <option value="dark">Тёмная</option>
+          </select>
+        </label>
       </div>
-    </div>`;
-  }).join('');
+    </section>
 
-  trackers.forEach(t=>{
-    if(!t.collapsed && t.entries.length){
-      renderChart(t,'ch_'+t.id);
+    <section class="metrics-grid" id="overallMetrics" aria-label="Общие метрики"></section>
+
+    <section class="folders-panel">
+      <div class="section-top">
+        <div class="section-title">Папки</div>
+      </div>
+      <div class="folder-chips" id="folderChips"></div>
+      <div class="folder-add-row">
+        <input class="field" id="newFolderName" maxlength="32" placeholder="Новая папка: спорт, диета, сон...">
+        <button class="secondary-btn" id="addFolderBtn">+ папка</button>
+      </div>
+    </section>
+
+    <section class="trackers-list" id="trackersList"></section>
+  </main>
+
+  <section class="floating-panel" aria-label="Создание нового показателя">
+    <div class="panel-inner">
+      <div class="panel-title">Новый показатель</div>
+      <div class="fields">
+        <input class="field" id="newName" placeholder="Название: вес, бег, жим лёжа..." maxlength="40">
+        <div class="fields-row">
+          <input class="field" id="newUnit" placeholder="Единица: кг, км, мин" maxlength="10">
+          <input class="field" id="newGoal" placeholder="Цель" type="number" inputmode="decimal">
+        </div>
+        <div class="fields-row">
+          <select class="field-select" id="newDir">
+            <option value="lower">Цель — меньше</option>
+            <option value="higher">Цель — больше</option>
+          </select>
+          <select class="field-select" id="newChart">
+            <option value="line">График — линия</option>
+            <option value="bar">График — столбцы</option>
+          </select>
+        </div>
+        <div class="fields-row">
+          <select class="field-select" id="newFolder">
+            <option value="all">Без папки</option>
+          </select>
+          <select class="field-select" id="trackerThemeHint" disabled>
+            <option>Тема берётся из переключателя сверху</option>
+          </select>
+        </div>
+        <div class="color-dots" id="colorPicker"></div>
+        <button class="primary-btn" id="createTrackerBtn">+ создать показатель</button>
+        <div class="sync-note" id="syncNote">Если приложение открыто внутри Telegram, данные будут синхронизироваться с облаком бота.</div>
+      </div>
+    </div>
+  </section>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <script>
+    const COLORS = ['#C8865A', '#5B7CE6', '#5C8B52', '#E8A060', '#E05C6A', '#8B80D9', '#00B56A', '#F5A623', '#5CB7D8', '#D4685C'];
+    const MONTHS = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+    const STORAGE_META_KEY = 'progress_v3_meta';
+    const STORAGE_CHUNK_PREFIX = 'progress_v3_chunk_';
+    const LEGACY_STORAGE_KEY = 'progress_v2';
+    const STORAGE_CHUNK_SIZE = 3500;
+    const DEFAULT_FOLDER_ID = 'all';
+
+    let selectedColor = COLORS[0];
+    let state = {
+      folders: [],
+      trackers: [],
+      activeFolderId: DEFAULT_FOLDER_ID,
+      theme: 'auto'
+    };
+    let charts = {};
+    let saveTimer = null;
+
+    const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+
+    function uid(prefix) {
+      return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
     }
-  });
-}
 
-load();
-renderColorPicker();
-render();
-</script>
+    function pad(n) { return String(n).padStart(2, '0'); }
+    function dateKey(d = new Date()) { return `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()}`; }
+    function fmtDate(str) {
+      const [d, m] = str.split('.');
+      return `${d} ${MONTHS[parseInt(m, 10) - 1]}`;
+    }
+
+    function setSyncStatus(text, mode = 'idle') {
+      const el = document.getElementById('syncText');
+      const dot = document.querySelector('.status-dot');
+      el.textContent = text;
+      dot.style.background = mode === 'error' ? 'var(--danger)' : mode === 'saving' ? 'var(--accent)' : 'var(--success)';
+      dot.style.boxShadow = `0 0 0 4px ${mode === 'error' ? 'color-mix(in srgb, var(--danger) 20%, transparent)' : mode === 'saving' ? 'color-mix(in srgb, var(--accent) 20%, transparent)' : 'color-mix(in srgb, var(--success) 20%, transparent)'}`;
+    }
+
+    function isTelegramCloudAvailable() {
+      return !!(tg && tg.CloudStorage && typeof tg.CloudStorage.getItem === 'function');
+    }
+
+    function cloudGetItem(key) {
+      return new Promise((resolve, reject) => {
+        tg.CloudStorage.getItem(key, (error, value) => {
+          if (error) reject(error);
+          else resolve(value || '');
+        });
+      });
+    }
+
+    function cloudSetItem(key, value) {
+      return new Promise((resolve, reject) => {
+        tg.CloudStorage.setItem(key, value, (error, stored) => {
+          if (error) reject(error);
+          else resolve(stored);
+        });
+      });
+    }
+
+    function cloudRemoveItems(keys) {
+      return new Promise((resolve, reject) => {
+        if (!keys.length) return resolve(true);
+        tg.CloudStorage.removeItems(keys, (error, removed) => {
+          if (error) reject(error);
+          else resolve(removed);
+        });
+      });
+    }
+
+    function splitIntoChunks(str, size) {
+      const chunks = [];
+      for (let i = 0; i < str.length; i += size) chunks.push(str.slice(i, i + size));
+      return chunks.length ? chunks : [''];
+    }
+
+    async function saveToTelegramCloud(payload) {
+      const json = JSON.stringify(payload);
+      const chunks = splitIntoChunks(json, STORAGE_CHUNK_SIZE);
+      const meta = JSON.stringify({ version: 3, chunkCount: chunks.length, updatedAt: Date.now() });
+      const previousMeta = await cloudGetItem(STORAGE_META_KEY);
+      let previousCount = 0;
+
+      try {
+        if (previousMeta) previousCount = JSON.parse(previousMeta).chunkCount || 0;
+      } catch {}
+
+      await cloudSetItem(STORAGE_META_KEY, meta);
+      for (let i = 0; i < chunks.length; i += 1) {
+        await cloudSetItem(`${STORAGE_CHUNK_PREFIX}${i}`, chunks[i]);
+      }
+
+      const extraKeys = [];
+      for (let i = chunks.length; i < previousCount; i += 1) extraKeys.push(`${STORAGE_CHUNK_PREFIX}${i}`);
+      if (extraKeys.length) await cloudRemoveItems(extraKeys);
+    }
+
+    async function loadFromTelegramCloud() {
+      const metaRaw = await cloudGetItem(STORAGE_META_KEY);
+      if (!metaRaw) return null;
+      const meta = JSON.parse(metaRaw);
+      const count = meta.chunkCount || 0;
+      if (!count) return null;
+
+      const parts = [];
+      for (let i = 0; i < count; i += 1) {
+        parts.push(await cloudGetItem(`${STORAGE_CHUNK_PREFIX}${i}`));
+      }
+
+      const json = parts.join('');
+      return json ? JSON.parse(json) : null;
+    }
+
+    function saveToLocal(payload) {
+      try {
+        localStorage.setItem(STORAGE_META_KEY, JSON.stringify(payload));
+      } catch {}
+    }
+
+    function loadFromLocal() {
+      try {
+        const raw = localStorage.getItem(STORAGE_META_KEY);
+        if (raw) return JSON.parse(raw);
+
+        const legacyRaw = localStorage.getItem(LEGACY_STORAGE_KEY);
+        if (legacyRaw) return JSON.parse(legacyRaw);
+      } catch {}
+      return null;
+    }
+
+    function folderCount(folderId) {
+      return state.trackers.filter((tracker) => (folderId === DEFAULT_FOLDER_ID ? true : tracker.folderId === folderId)).length;
+    }
+
+    function normalizedFolders(folders) {
+      if (!Array.isArray(folders)) return [];
+      const seen = new Set();
+      return folders
+        .map((folder) => {
+          const name = String(folder.name || '').trim();
+          if (!name) return null;
+          const id = folder.id || uid('folder');
+          if (seen.has(id)) return null;
+          seen.add(id);
+          return { id, name };
+        })
+        .filter(Boolean);
+    }
+
+    function normalizeState(raw) {
+      if (Array.isArray(raw)) {
+        return {
+          folders: [],
+          trackers: normalizeTrackers(raw, []),
+          activeFolderId: DEFAULT_FOLDER_ID,
+          theme: 'auto'
+        };
+      }
+
+      const folders = normalizedFolders(raw && raw.folders);
+      const trackers = normalizeTrackers(raw && raw.trackers, folders);
+      const activeFolderId = raw && raw.activeFolderId ? raw.activeFolderId : DEFAULT_FOLDER_ID;
+      const theme = raw && ['auto', 'light', 'dark'].includes(raw.theme) ? raw.theme : 'auto';
+      return { folders, trackers, activeFolderId, theme };
+    }
+
+    function normalizeTrackers(trackers, folders) {
+      const folderIds = new Set(folders.map((folder) => folder.id));
+      if (!Array.isArray(trackers)) return [];
+      return trackers.map((tracker) => ({
+        id: tracker.id || uid('tracker'),
+        name: tracker.name || 'Без названия',
+        unit: tracker.unit || '',
+        goal: typeof tracker.goal === 'number' ? tracker.goal : (tracker.goal || tracker.goal === 0 ? parseFloat(tracker.goal) : null),
+        dir: tracker.dir === 'lower' ? 'lower' : 'higher',
+        chartType: tracker.chartType === 'bar' ? 'bar' : 'line',
+        color: tracker.color || COLORS[0],
+        collapsed: !!tracker.collapsed,
+        folderId: folderIds.has(tracker.folderId) ? tracker.folderId : DEFAULT_FOLDER_ID,
+        entries: Array.isArray(tracker.entries)
+          ? tracker.entries
+              .map((entry) => ({
+                date: entry.date || dateKey(),
+                val: Number(entry.val),
+                ts: entry.ts || Date.now()
+              }))
+              .filter((entry) => Number.isFinite(entry.val))
+          : []
+      }));
+    }
+
+    function persistNow() {
+      const payload = { ...state };
+      setSyncStatus(isTelegramCloudAvailable() ? 'Сохранение в Telegram...' : 'Сохранение на устройстве...', 'saving');
+      const action = isTelegramCloudAvailable() ? saveToTelegramCloud(payload) : Promise.resolve();
+
+      action
+        .then(() => {
+          saveToLocal(payload);
+          setSyncStatus(isTelegramCloudAvailable() ? 'Прогресс сохранён в Telegram' : 'Прогресс сохранён на устройстве');
+        })
+        .catch((error) => {
+          console.error(error);
+          saveToLocal(payload);
+          setSyncStatus('Ошибка облака, сохранено локально', 'error');
+        });
+    }
+
+    function queueSave(immediate = false) {
+      if (saveTimer) clearTimeout(saveTimer);
+      if (immediate) {
+        persistNow();
+        return;
+      }
+      saveTimer = setTimeout(persistNow, 320);
+    }
+
+    function applyTheme(theme) {
+      state.theme = theme;
+      document.body.classList.remove('theme-auto', 'theme-light', 'theme-dark');
+      document.body.classList.add(`theme-${theme}`);
+      document.getElementById('themeSelect').value = theme;
+      const metaTheme = theme === 'dark' ? '#101111' : '#F7F4EF';
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', metaTheme);
+      render();
+    }
+
+    function folderNameById(folderId) {
+      if (folderId === DEFAULT_FOLDER_ID) return 'Без папки';
+      const folder = state.folders.find((item) => item.id === folderId);
+      return folder ? folder.name : 'Без папки';
+    }
+
+    function visibleTrackers() {
+      if (state.activeFolderId === DEFAULT_FOLDER_ID) return state.trackers;
+      return state.trackers.filter((tracker) => tracker.folderId === state.activeFolderId);
+    }
+
+    async function initStorage() {
+      if (tg) {
+        tg.ready();
+        tg.expand();
+        tg.enableClosingConfirmation();
+      }
+
+      document.getElementById('syncNote').textContent = isTelegramCloudAvailable()
+        ? 'Данные синхронизируются через Telegram CloudStorage и дополнительно кэшируются локально.'
+        : 'Если открыть этот экран как Mini App внутри Telegram, данные начнут сохраняться в облаке бота.';
+
+      try {
+        const cloudValue = isTelegramCloudAvailable() ? await loadFromTelegramCloud() : null;
+        state = normalizeState(cloudValue || loadFromLocal() || null);
+        setSyncStatus(
+          cloudValue
+            ? 'Данные загружены из Telegram'
+            : (isTelegramCloudAvailable() ? 'Telegram подключён, можно сохранять' : 'Работа в локальном режиме')
+        );
+      } catch (error) {
+        console.error(error);
+        state = normalizeState(loadFromLocal() || null);
+        setSyncStatus('Ошибка Telegram, использую локальное хранилище', 'error');
+      }
+
+      if (!state.folders.length) {
+        state.folders = [
+          { id: uid('folder'), name: 'Спорт' },
+          { id: uid('folder'), name: 'Диета' }
+        ];
+      }
+
+      applyTheme(state.theme);
+      renderFolderSelect();
+    }
+
+    function renderColorPicker() {
+      const el = document.getElementById('colorPicker');
+      el.innerHTML = COLORS.map((color) => `
+        <button
+          type="button"
+          class="color-dot-pick${color === selectedColor ? ' selected' : ''}"
+          style="background:${color}"
+          aria-label="Выбрать цвет ${color}"
+          onclick="selectColor('${color}')"
+        ></button>
+      `).join('');
+    }
+
+    function renderFolderSelect() {
+      const select = document.getElementById('newFolder');
+      select.innerHTML = [
+        `<option value="${DEFAULT_FOLDER_ID}">Без папки</option>`,
+        ...state.folders.map((folder) => `<option value="${folder.id}">${folder.name}</option>`)
+      ].join('');
+    }
+
+    function renderFolders() {
+      const el = document.getElementById('folderChips');
+      const allActive = state.activeFolderId === DEFAULT_FOLDER_ID ? ' active' : '';
+      const built = [
+        `<button class="chip${allActive}" onclick="setActiveFolder('${DEFAULT_FOLDER_ID}')">Все<small>${state.trackers.length}</small></button>`
+      ];
+
+      state.folders.forEach((folder) => {
+        const active = state.activeFolderId === folder.id ? ' active' : '';
+        built.push(`<button class="chip${active}" onclick="setActiveFolder('${folder.id}')">${folder.name}<small>${folderCount(folder.id)}</small></button>`);
+      });
+
+      if (state.activeFolderId !== DEFAULT_FOLDER_ID) {
+        built.push(`<button class="chip danger" onclick="deleteFolder('${state.activeFolderId}')">Удалить папку</button>`);
+      }
+
+      el.innerHTML = built.join('');
+    }
+
+    function selectColor(color) {
+      selectedColor = color;
+      renderColorPicker();
+      if (tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+    }
+
+    function addFolder() {
+      const input = document.getElementById('newFolderName');
+      const name = input.value.trim();
+      if (!name) return;
+      if (state.folders.some((folder) => folder.name.toLowerCase() === name.toLowerCase())) {
+        input.value = '';
+        return;
+      }
+      const folder = { id: uid('folder'), name };
+      state.folders.push(folder);
+      state.activeFolderId = folder.id;
+      input.value = '';
+      renderFolderSelect();
+      queueSave();
+      render();
+    }
+
+    function setActiveFolder(folderId) {
+      state.activeFolderId = folderId;
+      render();
+    }
+
+    function deleteFolder(folderId) {
+      state.trackers = state.trackers.map((tracker) => ({
+        ...tracker,
+        folderId: tracker.folderId === folderId ? DEFAULT_FOLDER_ID : tracker.folderId
+      }));
+      state.folders = state.folders.filter((folder) => folder.id !== folderId);
+      state.activeFolderId = DEFAULT_FOLDER_ID;
+      renderFolderSelect();
+      queueSave();
+      render();
+    }
+
+    function createTracker() {
+      const name = document.getElementById('newName').value.trim();
+      const unit = document.getElementById('newUnit').value.trim();
+      const goalRaw = document.getElementById('newGoal').value.trim();
+      const dir = document.getElementById('newDir').value;
+      const chartType = document.getElementById('newChart').value;
+      const folderId = document.getElementById('newFolder').value || DEFAULT_FOLDER_ID;
+      const goal = goalRaw ? parseFloat(goalRaw) : null;
+
+      if (!name) return;
+
+      state.trackers.unshift({
+        id: uid('tracker'),
+        name,
+        unit,
+        goal: Number.isFinite(goal) ? goal : null,
+        dir,
+        chartType,
+        color: selectedColor,
+        folderId,
+        entries: [],
+        collapsed: false
+      });
+
+      document.getElementById('newName').value = '';
+      document.getElementById('newUnit').value = '';
+      document.getElementById('newGoal').value = '';
+      document.getElementById('newFolder').value = folderId;
+
+      queueSave();
+      render();
+      if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+    }
+
+    function toggleTracker(id) {
+      const tracker = state.trackers.find((item) => item.id === id);
+      if (!tracker) return;
+      tracker.collapsed = !tracker.collapsed;
+      queueSave();
+      render();
+    }
+
+    function addEntry(id) {
+      const input = document.getElementById(`ei_${id}`);
+      if (!input) return;
+      const value = parseFloat(input.value);
+      if (!Number.isFinite(value)) return;
+
+      const tracker = state.trackers.find((item) => item.id === id);
+      if (!tracker) return;
+
+      const today = dateKey();
+      const existingIndex = tracker.entries.findIndex((entry) => entry.date === today);
+      if (existingIndex >= 0) {
+        tracker.entries[existingIndex].val = value;
+        tracker.entries[existingIndex].ts = Date.now();
+      } else {
+        tracker.entries.push({ date: today, val: value, ts: Date.now() });
+      }
+
+      tracker.entries.sort((a, b) => a.ts - b.ts);
+      input.value = '';
+      queueSave();
+      render();
+      if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+    }
+
+    function deleteEntry(trackerId, ts) {
+      const tracker = state.trackers.find((item) => item.id === trackerId);
+      if (!tracker) return;
+      tracker.entries = tracker.entries.filter((entry) => entry.ts !== ts);
+      queueSave();
+      render();
+    }
+
+    function deleteTracker(id) {
+      state.trackers = state.trackers.filter((item) => item.id !== id);
+      queueSave();
+      render();
+    }
+
+    function getStats(tracker) {
+      if (!tracker.entries.length) return null;
+      const values = tracker.entries.map((entry) => entry.val);
+      const last = values[values.length - 1];
+      const prev = values.length > 1 ? values[values.length - 2] : null;
+      const diff = prev !== null ? +(last - prev).toFixed(2) : null;
+      const best = tracker.dir === 'lower' ? Math.min(...values) : Math.max(...values);
+      return { last, prev, diff, best };
+    }
+
+    function goalPct(tracker) {
+      if (tracker.goal === null || !tracker.entries.length) return null;
+      const last = tracker.entries[tracker.entries.length - 1].val;
+
+      if (tracker.dir === 'lower') {
+        const start = tracker.entries[0].val;
+        if (start === tracker.goal) return 100;
+        const pct = ((start - last) / (start - tracker.goal)) * 100;
+        return Math.min(100, Math.max(0, Math.round(pct)));
+      }
+
+      const pct = (last / tracker.goal) * 100;
+      return Math.min(100, Math.max(0, Math.round(pct)));
+    }
+
+    function renderOverallMetrics() {
+      const el = document.getElementById('overallMetrics');
+      const sub = document.getElementById('overallSub');
+      const visible = visibleTrackers();
+
+      if (!state.trackers.length) {
+        el.innerHTML = '';
+        sub.textContent = 'Отслеживание числовых показателей по папкам с облачным сохранением.';
+        return;
+      }
+
+      const withEntries = visible.filter((tracker) => tracker.entries.length > 0);
+      const withGoal = visible.filter((tracker) => tracker.goal !== null && tracker.entries.length > 0);
+      const achieved = withGoal.filter((tracker) => {
+        const stats = getStats(tracker);
+        return stats && (tracker.dir === 'lower' ? stats.last <= tracker.goal : stats.last >= tracker.goal);
+      });
+      const totalEntries = visible.reduce((sum, tracker) => sum + tracker.entries.length, 0);
+      const folderLabel = state.activeFolderId === DEFAULT_FOLDER_ID ? 'все папки' : folderNameById(state.activeFolderId);
+
+      el.innerHTML = `
+        <article class="metric-card">
+          <div class="metric-val">${visible.length}</div>
+          <div class="metric-lbl">Показателей</div>
+        </article>
+        <article class="metric-card">
+          <div class="metric-val">${totalEntries}</div>
+          <div class="metric-lbl">Записей</div>
+        </article>
+        <article class="metric-card">
+          <div class="metric-val">${achieved.length}/${withGoal.length || '—'}</div>
+          <div class="metric-lbl">Целей</div>
+        </article>
+      `;
+
+      sub.textContent = `${folderLabel} · ${withEntries.length} активных · ${totalEntries} записей`;
+    }
+
+    function chartOptions(tracker) {
+      const textColor = getComputedStyle(document.body).getPropertyValue('--hint').trim() || '#857b74';
+      const gridColor = 'rgba(127,127,127,0.16)';
+      return {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            displayColors: false,
+            backgroundColor: 'rgba(28,25,22,0.92)',
+            callbacks: {
+              label: (ctx) => `${ctx.parsed.y} ${tracker.unit || ''}`.trim()
+            }
+          }
+        },
+        scales: {
+          x: {
+            ticks: { color: textColor, font: { size: 11 }, maxTicksLimit: 6 },
+            grid: { display: false }
+          },
+          y: {
+            ticks: { color: textColor, font: { size: 11 } },
+            grid: { color: gridColor }
+          }
+        }
+      };
+    }
+
+    function renderChart(tracker, canvasId) {
+      if (charts[canvasId]) {
+        try { charts[canvasId].destroy(); } catch {}
+      }
+
+      const canvas = document.getElementById(canvasId);
+      if (!canvas || !tracker.entries.length) return;
+
+      const labels = tracker.entries.map((entry) => fmtDate(entry.date));
+      const values = tracker.entries.map((entry) => entry.val);
+      const datasets = [{
+        label: tracker.name,
+        data: values,
+        borderColor: tracker.color,
+        backgroundColor: tracker.chartType === 'bar' ? `${tracker.color}cc` : `${tracker.color}22`,
+        fill: tracker.chartType !== 'bar',
+        tension: 0.35,
+        pointBackgroundColor: tracker.color,
+        pointBorderWidth: 0,
+        pointRadius: values.length > 20 ? 0 : 4,
+        pointHoverRadius: 5,
+        borderWidth: 2.5
+      }];
+
+      if (tracker.goal !== null) {
+        datasets.push({
+          label: 'Цель',
+          data: labels.map(() => tracker.goal),
+          borderColor: 'rgba(127,127,127,0.55)',
+          borderDash: [6, 6],
+          pointRadius: 0,
+          fill: false,
+          borderWidth: 1.5,
+          type: 'line'
+        });
+      }
+
+      charts[canvasId] = new Chart(canvas, {
+        type: tracker.chartType || 'line',
+        data: { labels, datasets },
+        options: chartOptions(tracker)
+      });
+    }
+
+    function render() {
+      renderFolders();
+      renderFolderSelect();
+      renderOverallMetrics();
+
+      const list = document.getElementById('trackersList');
+      const visible = visibleTrackers();
+
+      if (!visible.length) {
+        list.innerHTML = `
+          <div class="empty-state">
+            <h3>Пока нет показателей</h3>
+            <p>Создайте первый трекер, например в папке “Спорт” или “Диета”.</p>
+          </div>
+        `;
+        return;
+      }
+
+      list.innerHTML = visible.map((tracker) => {
+        const stats = getStats(tracker);
+        const pct = goalPct(tracker);
+        const latestEntries = [...tracker.entries].slice(-6).reverse();
+        const diffClass = stats && stats.diff !== null
+          ? (tracker.dir === 'lower' ? (stats.diff <= 0 ? 'diff-pos' : 'diff-neg') : (stats.diff >= 0 ? 'diff-pos' : 'diff-neg'))
+          : '';
+        const diffHtml = stats && stats.diff !== null
+          ? `<span class="metric-diff ${diffClass}">${stats.diff > 0 ? '+' : ''}${stats.diff}</span>`
+          : '';
+        const goalHtml = pct !== null ? `
+          <div class="goal-display">
+            <span>Цель: ${tracker.goal} ${tracker.unit || ''}</span>
+            <div class="goal-bar-wrap"><div class="goal-bar-fill" style="width:${pct}%;background:${tracker.color}"></div></div>
+            <span>${pct}%</span>
+          </div>
+        ` : '';
+
+        return `
+          <article class="tracker-card ${tracker.collapsed ? 'collapsed' : ''}">
+            <div class="tracker-head" onclick="toggleTracker('${tracker.id}')">
+              <div class="tracker-color-dot" style="background:${tracker.color}"></div>
+              <div class="tracker-name-wrap">
+                <div class="tracker-name">${tracker.name}</div>
+                <div class="tracker-folder-tag">${folderNameById(tracker.folderId)}</div>
+              </div>
+              ${stats
+                ? `<div class="tracker-latest">${stats.last}<span class="tracker-unit">${tracker.unit || ''}</span></div>${diffHtml}`
+                : '<span class="metric-diff">нет данных</span>'}
+              <span class="caret">&#9660;</span>
+            </div>
+            <div class="tracker-body">
+              <div class="tracker-inner">
+                ${goalHtml}
+                ${tracker.entries.length ? `<div class="chart-wrap"><canvas id="ch_${tracker.id}" aria-label="График ${tracker.name}" role="img"></canvas></div>` : ''}
+                <div class="add-entry-row">
+                  <input
+                    class="entry-input"
+                    id="ei_${tracker.id}"
+                    type="number"
+                    inputmode="decimal"
+                    step="any"
+                    placeholder="Новое значение"
+                    onkeypress="if(event.key==='Enter') addEntry('${tracker.id}')"
+                  >
+                  <button class="primary-btn" onclick="addEntry('${tracker.id}')">+ добавить</button>
+                </div>
+                <div class="entries-mini">
+                  ${latestEntries.map((entry) => `
+                    <div class="entry-row">
+                      <span class="entry-date">${fmtDate(entry.date)}</span>
+                      <span class="entry-val">${entry.val}<span class="entry-unit">${tracker.unit || ''}</span></span>
+                      <button class="entry-del" aria-label="Удалить запись" onclick="deleteEntry('${tracker.id}', ${entry.ts})">&times;</button>
+                    </div>
+                  `).join('')}
+                </div>
+                <div style="margin-top:12px">
+                  <button class="danger-btn" onclick="deleteTracker('${tracker.id}')">Удалить показатель</button>
+                </div>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      visible.forEach((tracker) => {
+        if (!tracker.collapsed && tracker.entries.length) {
+          renderChart(tracker, `ch_${tracker.id}`);
+        }
+      });
+    }
+
+    function bindEvents() {
+      document.getElementById('createTrackerBtn').addEventListener('click', createTracker);
+      document.getElementById('addFolderBtn').addEventListener('click', addFolder);
+      document.getElementById('newName').addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') createTracker();
+      });
+      document.getElementById('newFolderName').addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') addFolder();
+      });
+      document.getElementById('themeSelect').addEventListener('change', (event) => {
+        applyTheme(event.target.value);
+        queueSave(true);
+      });
+    }
+
+    async function start() {
+      renderColorPicker();
+      bindEvents();
+      await initStorage();
+      render();
+      queueSave(true);
+    }
+
+    start();
+
+    window.selectColor = selectColor;
+    window.setActiveFolder = setActiveFolder;
+    window.deleteFolder = deleteFolder;
+    window.toggleTracker = toggleTracker;
+    window.addEntry = addEntry;
+    window.deleteEntry = deleteEntry;
+    window.deleteTracker = deleteTracker;
+  </script>
+</body>
+</html>
