@@ -160,12 +160,7 @@
       min-width: 110px;
     }
 
-    .metrics-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-      margin-bottom: 14px;
-    }
+    .metrics-grid { display: none; }
 
     .metric-card,
     .folders-panel,
@@ -208,13 +203,7 @@
       -webkit-backdrop-filter: blur(18px);
     }
 
-    .section-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
+    .section-top { display: none; }
 
     .section-title {
       font-size: 12px;
@@ -247,10 +236,7 @@
       color: var(--button-text);
     }
 
-    .chip small {
-      margin-left: 6px;
-      opacity: 0.75;
-    }
+    .chip small { display: none; }
 
     .chip.danger {
       color: var(--danger);
@@ -483,6 +469,13 @@
       font-size: 12px;
       text-transform: uppercase;
       letter-spacing: 0.14em;
+    }
+
+    .tracker-footer-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
     }
 
     .entries-mini {
@@ -1028,6 +1021,17 @@
       return folder ? folder.name : 'Без папки';
     }
 
+    function ensureFolderByName(name) {
+      const cleanName = String(name || '').trim();
+      if (!cleanName) return DEFAULT_FOLDER_ID;
+      const existing = state.folders.find((folder) => folder.name.toLowerCase() === cleanName.toLowerCase());
+      if (existing) return existing.id;
+      const folder = { id: uid('folder'), name: cleanName };
+      state.folders.push(folder);
+      renderFolderSelect();
+      return folder.id;
+    }
+
     function visibleTrackers() {
       if (state.activeFolderId === DEFAULT_FOLDER_ID) return state.trackers;
       return state.trackers.filter((tracker) => tracker.folderId === state.activeFolderId);
@@ -1258,6 +1262,36 @@
       saveEntryValue(trackerId, nextValue, ts);
     }
 
+    function editTracker(id) {
+      const tracker = state.trackers.find((item) => item.id === id);
+      if (!tracker) return;
+
+      const nextName = window.prompt('Название показателя', tracker.name);
+      if (nextName === null) return;
+      const cleanName = nextName.trim();
+      if (!cleanName) return;
+
+      const nextUnit = window.prompt('Единица измерения', tracker.unit || '');
+      if (nextUnit === null) return;
+
+      const nextGoalRaw = window.prompt('Цель. Оставьте пустым, если цели нет', tracker.goal ?? '');
+      if (nextGoalRaw === null) return;
+
+      const currentFolder = folderNameById(tracker.folderId);
+      const nextFolderRaw = window.prompt('Папка. Оставьте пустым для "Без папки"', currentFolder === 'Без папки' ? '' : currentFolder);
+      if (nextFolderRaw === null) return;
+
+      const parsedGoal = String(nextGoalRaw).trim() === '' ? null : parseLocaleNumber(String(nextGoalRaw));
+
+      tracker.name = cleanName;
+      tracker.unit = nextUnit.trim();
+      tracker.goal = Number.isFinite(parsedGoal) ? parsedGoal : null;
+      tracker.folderId = ensureFolderByName(nextFolderRaw);
+
+      queueSave();
+      render();
+    }
+
     function deleteEntry(trackerId, ts) {
       const tracker = state.trackers.find((item) => item.id === trackerId);
       if (!tracker) return;
@@ -1304,35 +1338,12 @@
 
       if (!state.trackers.length) {
         el.innerHTML = '';
-        sub.textContent = 'Отслеживание числовых показателей по папкам с облачным сохранением.';
+        sub.textContent = 'Минималистичный трекер прогресса по папкам.';
         return;
       }
-
-      const withEntries = visible.filter((tracker) => tracker.entries.length > 0);
-      const withGoal = visible.filter((tracker) => tracker.goal !== null && tracker.entries.length > 0);
-      const achieved = withGoal.filter((tracker) => {
-        const stats = getStats(tracker);
-        return stats && (tracker.dir === 'lower' ? stats.last <= tracker.goal : stats.last >= tracker.goal);
-      });
-      const totalEntries = visible.reduce((sum, tracker) => sum + tracker.entries.length, 0);
       const folderLabel = state.activeFolderId === DEFAULT_FOLDER_ID ? 'все папки' : folderNameById(state.activeFolderId);
-
-      el.innerHTML = `
-        <article class="metric-card">
-          <div class="metric-val">${visible.length}</div>
-          <div class="metric-lbl">Показателей</div>
-        </article>
-        <article class="metric-card">
-          <div class="metric-val">${totalEntries}</div>
-          <div class="metric-lbl">Записей</div>
-        </article>
-        <article class="metric-card">
-          <div class="metric-val">${achieved.length}/${withGoal.length || '—'}</div>
-          <div class="metric-lbl">Целей</div>
-        </article>
-      `;
-
-      sub.textContent = `${folderLabel} · ${withEntries.length} активных · ${totalEntries} записей`;
+      el.innerHTML = '';
+      sub.textContent = `${folderLabel} · ${visible.length} показателей`;
     }
 
     function chartOptions(tracker) {
@@ -1488,8 +1499,9 @@
                     </div>
                   `).join('')}
                 </div>
-                <div style="margin-top:12px">
-                  <button class="danger-btn" onclick="deleteTracker('${tracker.id}')">Удалить показатель</button>
+                <div class="tracker-footer-actions">
+                  <button class="secondary-btn" onclick="editTracker('${tracker.id}')">изменить</button>
+                  <button class="danger-btn" onclick="deleteTracker('${tracker.id}')">удалить</button>
                 </div>
               </div>
             </div>
@@ -1540,6 +1552,7 @@
     window.deleteFolder = deleteFolder;
     window.toggleTracker = toggleTracker;
     window.addEntry = addEntry;
+    window.editTracker = editTracker;
     window.editEntry = editEntry;
     window.deleteEntry = deleteEntry;
     window.deleteTracker = deleteTracker;
