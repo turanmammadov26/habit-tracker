@@ -89,7 +89,7 @@
     .app {
       max-width: 760px;
       margin: 0 auto;
-      padding: calc(var(--safe-top) + 8px) 16px calc(346px + var(--safe-bottom)) 16px;
+      padding: calc(var(--safe-top) + 8px) 16px calc(28px + var(--safe-bottom)) 16px;
     }
 
     .hero {
@@ -502,19 +502,11 @@
     .entry-del:hover { color: var(--danger); }
 
     .floating-panel {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 10;
-      padding: 12px 12px var(--safe-bottom);
-      background:
-        linear-gradient(180deg, transparent 0, color-mix(in srgb, var(--bg) 80%, transparent) 14%, var(--bg) 100%);
+      margin-top: 18px;
     }
 
     .panel-inner {
-      max-width: 760px;
-      margin: 0 auto;
+      width: 100%;
       padding: 18px;
       border: 1px solid var(--glass-border);
       border-radius: 28px;
@@ -575,6 +567,10 @@
       font-size: 12px;
     }
 
+    .composer-section {
+      margin-top: 18px;
+    }
+
     .sr-only {
       position: absolute;
       width: 1px;
@@ -591,7 +587,7 @@
       .app {
         padding-left: 12px;
         padding-right: 12px;
-        padding-bottom: calc(430px + var(--safe-bottom));
+        padding-bottom: calc(22px + var(--safe-bottom));
       }
 
       .metrics-grid,
@@ -658,41 +654,41 @@
     </section>
 
     <section class="trackers-list" id="trackersList"></section>
-  </main>
 
-  <section class="floating-panel" aria-label="Создание нового показателя">
-    <div class="panel-inner">
-      <div class="panel-title">Новый показатель</div>
-      <div class="fields">
-        <input class="field" id="newName" placeholder="Название: вес, бег, жим лёжа..." maxlength="40">
-        <div class="fields-row">
-          <input class="field" id="newUnit" placeholder="Единица: кг, км, мин" maxlength="10">
-          <input class="field" id="newGoal" placeholder="Цель" type="number" inputmode="decimal">
+    <section class="floating-panel composer-section" aria-label="Создание нового показателя">
+      <div class="panel-inner">
+        <div class="panel-title">Новый показатель</div>
+        <div class="fields">
+          <input class="field" id="newName" placeholder="Название: вес, бег, жим лёжа..." maxlength="40">
+          <div class="fields-row">
+            <input class="field" id="newUnit" placeholder="Единица: кг, км, мин" maxlength="10">
+            <input class="field" id="newGoal" placeholder="Цель" type="number" inputmode="decimal">
+          </div>
+          <div class="fields-row">
+            <select class="field-select" id="newDir">
+              <option value="lower">Цель — меньше</option>
+              <option value="higher">Цель — больше</option>
+            </select>
+            <select class="field-select" id="newChart">
+              <option value="line">График — линия</option>
+              <option value="bar">График — столбцы</option>
+            </select>
+          </div>
+          <div class="fields-row">
+            <select class="field-select" id="newFolder">
+              <option value="all">Без папки</option>
+            </select>
+            <select class="field-select" id="trackerThemeHint" disabled>
+              <option>Тема берётся из переключателя сверху</option>
+            </select>
+          </div>
+          <div class="color-dots" id="colorPicker"></div>
+          <button class="primary-btn" id="createTrackerBtn">+ создать показатель</button>
+          <div class="sync-note" id="syncNote">Если приложение открыто внутри Telegram, данные будут синхронизироваться с облаком бота.</div>
         </div>
-        <div class="fields-row">
-          <select class="field-select" id="newDir">
-            <option value="lower">Цель — меньше</option>
-            <option value="higher">Цель — больше</option>
-          </select>
-          <select class="field-select" id="newChart">
-            <option value="line">График — линия</option>
-            <option value="bar">График — столбцы</option>
-          </select>
-        </div>
-        <div class="fields-row">
-          <select class="field-select" id="newFolder">
-            <option value="all">Без папки</option>
-          </select>
-          <select class="field-select" id="trackerThemeHint" disabled>
-            <option>Тема берётся из переключателя сверху</option>
-          </select>
-        </div>
-        <div class="color-dots" id="colorPicker"></div>
-        <button class="primary-btn" id="createTrackerBtn">+ создать показатель</button>
-        <div class="sync-note" id="syncNote">Если приложение открыто внутри Telegram, данные будут синхронизироваться с облаком бота.</div>
       </div>
-    </div>
-  </section>
+    </section>
+  </main>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
