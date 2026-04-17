@@ -270,7 +270,7 @@
 
     .tracker-head {
       display: grid;
-      grid-template-columns: auto 1fr auto auto auto;
+      grid-template-columns: auto minmax(0, 1fr) auto auto auto auto;
       gap: 10px;
       align-items: center;
       min-height: 60px;
@@ -310,6 +310,7 @@
       display: flex;
       align-items: center;
       gap: 6px;
+      justify-self: end;
     }
 
     .quick-entry-input {
@@ -682,7 +683,8 @@
         grid-template-columns: auto 1fr auto;
         grid-template-areas:
           "dot name caret"
-          "dot latest diff";
+          "dot latest diff"
+          "actions actions actions";
         row-gap: 6px;
       }
 
@@ -692,7 +694,9 @@
       .metric-diff { grid-area: diff; justify-self: end; align-self: center; }
       .caret { grid-area: caret; justify-self: end; }
       .tracker-head-actions {
+        grid-area: actions;
         grid-column: 1 / -1;
+        justify-self: stretch;
       }
       .quick-entry-input,
       .quick-entry-btn {
@@ -753,7 +757,7 @@
             <input class="field" id="newName" placeholder="Название: вес, бег, жим лёжа..." maxlength="40">
             <div class="fields-row">
               <input class="field" id="newUnit" placeholder="Единица: кг, км, мин" maxlength="10">
-            <input class="field" id="newGoal" placeholder="Цель" type="text" inputmode="decimal">
+              <input class="field" id="newGoal" placeholder="Цель" type="text" inputmode="decimal">
             </div>
             <div class="fields-row">
               <select class="field-select" id="newDir">
