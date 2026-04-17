@@ -316,6 +316,34 @@
       color: var(--accent);
     }
 
+    .tracker-head-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .quick-entry-input {
+      width: 96px;
+      min-height: 38px;
+      padding: 8px 10px;
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      background: var(--surface2);
+      color: var(--text);
+      outline: none;
+    }
+
+    .quick-entry-btn,
+    .entry-edit-btn {
+      min-height: 38px;
+      padding: 0 12px;
+      border-radius: 12px;
+      border: 1px solid var(--glass-border);
+      background: var(--surface2);
+      color: var(--text);
+      cursor: pointer;
+    }
+
     .tracker-unit,
     .entry-unit {
       font-size: 12px;
@@ -474,6 +502,21 @@
       padding: 8px 10px;
       border-radius: 14px;
       background: var(--surface2);
+    }
+
+    .entry-main {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .entry-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: auto;
     }
 
     .entry-date {
@@ -651,6 +694,13 @@
       .tracker-latest { grid-area: latest; }
       .metric-diff { grid-area: diff; justify-self: end; align-self: center; }
       .caret { grid-area: caret; justify-self: end; }
+      .tracker-head-actions {
+        grid-column: 1 / -1;
+      }
+      .quick-entry-input,
+      .quick-entry-btn {
+        width: 100%;
+      }
 
       .goal-display { grid-template-columns: 1fr; }
       .entry-val { justify-self: start; }
@@ -710,7 +760,7 @@
             <input class="field" id="newName" placeholder="Название: вес, бег, жим лёжа..." maxlength="40">
             <div class="fields-row">
               <input class="field" id="newUnit" placeholder="Единица: кг, км, мин" maxlength="10">
-              <input class="field" id="newGoal" placeholder="Цель" type="number" inputmode="decimal">
+            <input class="field" id="newGoal" placeholder="Цель" type="text" inputmode="decimal">
             </div>
             <div class="fields-row">
               <select class="field-select" id="newDir">
@@ -766,6 +816,13 @@
     function fmtDate(str) {
       const [d, m] = str.split('.');
       return `${d} ${MONTHS[parseInt(m, 10) - 1]}`;
+    }
+
+    function parseLocaleNumber(value) {
+      if (typeof value !== 'string') return Number.isFinite(value) ? value : NaN;
+      const normalized = value.replace(',', '.').replace(/\s+/g, '').trim();
+      if (!normalized) return NaN;
+      return Number(normalized);
     }
 
     function setSyncStatus(text, mode = 'idle') {
@@ -1119,7 +1176,7 @@
       const dir = document.getElementById('newDir').value;
       const chartType = document.getElementById('newChart').value;
       const folderId = document.getElementById('newFolder').value || DEFAULT_FOLDER_ID;
-      const goal = goalRaw ? parseFloat(goalRaw) : null;
+      const goal = goalRaw ? parseLocaleNumber(goalRaw) : null;
 
       if (!name) return;
 
@@ -1155,29 +1212,50 @@
       render();
     }
 
-    function addEntry(id) {
-      const input = document.getElementById(`ei_${id}`);
-      if (!input) return;
-      const value = parseFloat(input.value);
+    function saveEntryValue(id, rawValue, targetTs = null) {
+      const value = parseLocaleNumber(rawValue);
       if (!Number.isFinite(value)) return;
 
       const tracker = state.trackers.find((item) => item.id === id);
       if (!tracker) return;
 
-      const today = dateKey();
-      const existingIndex = tracker.entries.findIndex((entry) => entry.date === today);
-      if (existingIndex >= 0) {
-        tracker.entries[existingIndex].val = value;
-        tracker.entries[existingIndex].ts = Date.now();
+      if (targetTs !== null) {
+        const entry = tracker.entries.find((item) => item.ts === targetTs);
+        if (!entry) return;
+        entry.val = value;
       } else {
-        tracker.entries.push({ date: today, val: value, ts: Date.now() });
+        const today = dateKey();
+        const existingIndex = tracker.entries.findIndex((entry) => entry.date === today);
+        if (existingIndex >= 0) {
+          tracker.entries[existingIndex].val = value;
+          tracker.entries[existingIndex].ts = Date.now();
+        } else {
+          tracker.entries.push({ date: today, val: value, ts: Date.now() });
+        }
       }
 
       tracker.entries.sort((a, b) => a.ts - b.ts);
-      input.value = '';
       queueSave();
       render();
       if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+    }
+
+    function addEntry(id, inputId = null) {
+      const input = document.getElementById(inputId || `ei_${id}`);
+      if (!input) return;
+      saveEntryValue(id, input.value);
+      input.value = '';
+    }
+
+    function editEntry(trackerId, ts) {
+      const tracker = state.trackers.find((item) => item.id === trackerId);
+      if (!tracker) return;
+      const entry = tracker.entries.find((item) => item.ts === ts);
+      if (!entry) return;
+
+      const nextValue = window.prompt('Изменить значение', String(entry.val).replace('.', ','));
+      if (nextValue === null) return;
+      saveEntryValue(trackerId, nextValue, ts);
     }
 
     function deleteEntry(trackerId, ts) {
@@ -1380,6 +1458,17 @@
                 ? `<div class="tracker-latest">${stats.last}<span class="tracker-unit">${tracker.unit || ''}</span></div>${diffHtml}`
                 : '<span class="metric-diff">нет данных</span>'}
               <span class="caret">&#9660;</span>
+              <div class="tracker-head-actions" onclick="event.stopPropagation()">
+                <input
+                  class="quick-entry-input"
+                  id="qi_${tracker.id}"
+                  type="text"
+                  inputmode="decimal"
+                  placeholder="72,5"
+                  onkeypress="if(event.key==='Enter') addEntry('${tracker.id}','qi_${tracker.id}')"
+                >
+                <button class="quick-entry-btn" onclick="addEntry('${tracker.id}','qi_${tracker.id}')">+ запись</button>
+              </div>
             </div>
             <div class="tracker-body">
               <div class="tracker-inner">
@@ -1389,9 +1478,8 @@
                   <input
                     class="entry-input"
                     id="ei_${tracker.id}"
-                    type="number"
+                    type="text"
                     inputmode="decimal"
-                    step="any"
                     placeholder="Новое значение"
                     onkeypress="if(event.key==='Enter') addEntry('${tracker.id}')"
                   >
@@ -1401,8 +1489,13 @@
                   ${latestEntries.map((entry) => `
                     <div class="entry-row">
                       <span class="entry-date">${fmtDate(entry.date)}</span>
-                      <span class="entry-val">${entry.val}<span class="entry-unit">${tracker.unit || ''}</span></span>
-                      <button class="entry-del" aria-label="Удалить запись" onclick="deleteEntry('${tracker.id}', ${entry.ts})">&times;</button>
+                      <div class="entry-main">
+                        <span class="entry-val">${entry.val}<span class="entry-unit">${tracker.unit || ''}</span></span>
+                      </div>
+                      <div class="entry-actions">
+                        <button class="entry-edit-btn" aria-label="Редактировать запись" onclick="editEntry('${tracker.id}', ${entry.ts})">изм.</button>
+                        <button class="entry-del" aria-label="Удалить запись" onclick="deleteEntry('${tracker.id}', ${entry.ts})">&times;</button>
+                      </div>
                     </div>
                   `).join('')}
                 </div>
@@ -1458,6 +1551,7 @@
     window.deleteFolder = deleteFolder;
     window.toggleTracker = toggleTracker;
     window.addEntry = addEntry;
+    window.editEntry = editEntry;
     window.deleteEntry = deleteEntry;
     window.deleteTracker = deleteTracker;
   </script>
