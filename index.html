@@ -1203,6 +1203,7 @@
       document.getElementById('editFolderName').value = folderNameById(tracker.folderId) === 'Без папки' ? '' : folderNameById(tracker.folderId);
       renderEditColorPicker();
       document.getElementById('editOverlay').classList.remove('hidden');
+      document.getElementById('editName').focus();
     }
 
     function syncComposerUi() {
@@ -1602,7 +1603,7 @@
                   placeholder=""
                   onkeypress="if(event.key==='Enter') addEntry('${tracker.id}','qi_${tracker.id}')"
                 >
-                <button class="entry-edit-btn" onclick="editTracker('${tracker.id}')">изм.</button>
+                <button class="entry-edit-btn" onclick="editTracker('${tracker.id}')">показатель</button>
                 <button class="quick-entry-btn" onclick="addEntry('${tracker.id}','qi_${tracker.id}')">+ запись</button>
               </div>
             </div>
@@ -1618,14 +1619,14 @@
                         <span class="entry-val">${entry.val}<span class="entry-unit">${tracker.unit || ''}</span></span>
                       </div>
                       <div class="entry-actions">
-                        <button class="entry-edit-btn" aria-label="Редактировать запись" onclick="editEntry('${tracker.id}', ${entry.ts})">изм.</button>
+                        <button class="entry-edit-btn" aria-label="Редактировать запись" onclick="editEntry('${tracker.id}', ${entry.ts})">запись</button>
                         <button class="entry-del" aria-label="Удалить запись" onclick="deleteEntry('${tracker.id}', ${entry.ts})">&times;</button>
                       </div>
                     </div>
                   `).join('')}
                 </div>
                 <div class="tracker-footer-actions">
-                  <button class="secondary-btn" onclick="editTracker('${tracker.id}')">изменить</button>
+                  <button class="secondary-btn" onclick="editTracker('${tracker.id}')">изменить показатель</button>
                   <button class="danger-btn" onclick="deleteTracker('${tracker.id}')">удалить</button>
                 </div>
               </div>
