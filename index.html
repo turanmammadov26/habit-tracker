@@ -92,40 +92,11 @@
       padding: calc(var(--safe-top) + 8px) 16px calc(28px + var(--safe-bottom)) 16px;
     }
 
-    .hero {
-      padding: 16px 6px 20px;
-    }
-
-    .eyebrow {
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      color: var(--hint);
-      margin-bottom: 10px;
-    }
-
-    .title {
-      font-size: clamp(30px, 7vw, 42px);
-      line-height: 0.95;
-      font-weight: 700;
-      letter-spacing: -0.04em;
-      margin-bottom: 10px;
-    }
-
-    .subtitle {
-      font-size: 15px;
-      color: var(--hint);
-      max-width: 40ch;
-    }
-
-    .top-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 16px;
-    }
+    .hero { display: none; }
+    .eyebrow,
+    .title,
+    .subtitle,
+    .top-row { display: none; }
 
     .status-pill,
     .theme-switcher {
@@ -194,10 +165,10 @@
     }
 
     .folders-panel {
-      margin-bottom: 14px;
-      padding: 14px;
+      margin-bottom: 10px;
+      padding: 10px;
       border: 1px solid var(--glass-border);
-      border-radius: 22px;
+      border-radius: 18px;
       background: var(--glass);
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
@@ -215,13 +186,13 @@
     .folder-chips {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 10px;
+      gap: 6px;
+      margin-bottom: 8px;
     }
 
     .chip {
-      min-height: 38px;
-      padding: 8px 12px;
+      min-height: 34px;
+      padding: 6px 10px;
       border-radius: 999px;
       border: 1px solid var(--glass-border);
       background: var(--surface2);
@@ -246,7 +217,7 @@
     .folder-add-row {
       display: grid;
       grid-template-columns: 1fr auto;
-      gap: 10px;
+      gap: 8px;
     }
 
     .trackers-list {
@@ -305,15 +276,15 @@
     .tracker-head-actions {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
 
     .quick-entry-input {
-      width: 96px;
-      min-height: 38px;
-      padding: 8px 10px;
+      width: 74px;
+      min-height: 34px;
+      padding: 6px 8px;
       border: 1px solid var(--glass-border);
-      border-radius: 12px;
+      border-radius: 10px;
       background: var(--surface2);
       color: var(--text);
       outline: none;
@@ -321,9 +292,9 @@
 
     .quick-entry-btn,
     .entry-edit-btn {
-      min-height: 38px;
-      padding: 0 12px;
-      border-radius: 12px;
+      min-height: 34px;
+      padding: 0 10px;
+      border-radius: 10px;
       border: 1px solid var(--glass-border);
       background: var(--surface2);
       color: var(--text);
@@ -473,7 +444,7 @@
 
     .tracker-footer-actions {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
       gap: 8px;
       margin-top: 12px;
     }
@@ -704,28 +675,6 @@
   <main class="app">
     <h1 class="sr-only">Tracker progress для Telegram Mini App</h1>
 
-    <section class="hero">
-      <div class="eyebrow">Telegram Mini App</div>
-      <div class="title">progress</div>
-      <div class="subtitle" id="overallSub">Отслеживание числовых показателей по папкам с облачным сохранением.</div>
-      <div class="top-row">
-        <div class="status-pill" id="syncStatus">
-          <span class="status-dot"></span>
-          <span id="syncText">Подготовка хранилища...</span>
-        </div>
-        <label class="theme-switcher" for="themeSelect">
-          <span>Тема</span>
-          <select id="themeSelect">
-            <option value="auto">Авто / Telegram</option>
-            <option value="light">Светлая</option>
-            <option value="dark">Тёмная</option>
-          </select>
-        </label>
-      </div>
-    </section>
-
-    <section class="metrics-grid" id="overallMetrics" aria-label="Общие метрики"></section>
-
     <section class="folders-panel">
       <div class="section-top">
         <div class="section-title">Папки</div>
@@ -821,6 +770,7 @@
     function setSyncStatus(text, mode = 'idle') {
       const el = document.getElementById('syncText');
       const dot = document.querySelector('.status-dot');
+      if (!el || !dot) return;
       el.textContent = text;
       dot.style.background = mode === 'error' ? 'var(--danger)' : mode === 'saving' ? 'var(--accent)' : 'var(--success)';
       dot.style.boxShadow = `0 0 0 4px ${mode === 'error' ? 'color-mix(in srgb, var(--danger) 20%, transparent)' : mode === 'saving' ? 'color-mix(in srgb, var(--accent) 20%, transparent)' : 'color-mix(in srgb, var(--success) 20%, transparent)'}`;
@@ -1009,7 +959,8 @@
       state.theme = theme;
       document.body.classList.remove('theme-auto', 'theme-light', 'theme-dark');
       document.body.classList.add(`theme-${theme}`);
-      document.getElementById('themeSelect').value = theme;
+      const themeSelect = document.getElementById('themeSelect');
+      if (themeSelect) themeSelect.value = theme;
       const metaTheme = theme === 'dark' ? '#101111' : '#F7F4EF';
       document.querySelector('meta[name="theme-color"]').setAttribute('content', metaTheme);
       render();
@@ -1281,12 +1232,19 @@
       const nextFolderRaw = window.prompt('Папка. Оставьте пустым для "Без папки"', currentFolder === 'Без папки' ? '' : currentFolder);
       if (nextFolderRaw === null) return;
 
+      const currentColorIndex = Math.max(0, COLORS.indexOf(tracker.color));
+      const colorGuide = COLORS.map((color, index) => `${index + 1}: ${color}`).join('\n');
+      const nextColorRaw = window.prompt(`Цвет показателя:\n${colorGuide}`, String(currentColorIndex + 1));
+      if (nextColorRaw === null) return;
+
       const parsedGoal = String(nextGoalRaw).trim() === '' ? null : parseLocaleNumber(String(nextGoalRaw));
+      const parsedColorIndex = Number(String(nextColorRaw).trim()) - 1;
 
       tracker.name = cleanName;
       tracker.unit = nextUnit.trim();
       tracker.goal = Number.isFinite(parsedGoal) ? parsedGoal : null;
       tracker.folderId = ensureFolderByName(nextFolderRaw);
+      tracker.color = COLORS[parsedColorIndex] || tracker.color;
 
       queueSave();
       render();
@@ -1333,17 +1291,16 @@
 
     function renderOverallMetrics() {
       const el = document.getElementById('overallMetrics');
-      const sub = document.getElementById('overallSub');
       const visible = visibleTrackers();
+      if (!el) return;
 
       if (!state.trackers.length) {
         el.innerHTML = '';
-        sub.textContent = 'Минималистичный трекер прогресса по папкам.';
         return;
       }
       const folderLabel = state.activeFolderId === DEFAULT_FOLDER_ID ? 'все папки' : folderNameById(state.activeFolderId);
       el.innerHTML = '';
-      sub.textContent = `${folderLabel} · ${visible.length} показателей`;
+      document.title = `Progress - ${folderLabel} (${visible.length})`;
     }
 
     function chartOptions(tracker) {
@@ -1478,6 +1435,7 @@
                   placeholder=""
                   onkeypress="if(event.key==='Enter') addEntry('${tracker.id}','qi_${tracker.id}')"
                 >
+                <button class="entry-edit-btn" onclick="editTracker('${tracker.id}')">изм.</button>
                 <button class="quick-entry-btn" onclick="addEntry('${tracker.id}','qi_${tracker.id}')">+ запись</button>
               </div>
             </div>
@@ -1500,7 +1458,6 @@
                   `).join('')}
                 </div>
                 <div class="tracker-footer-actions">
-                  <button class="secondary-btn" onclick="editTracker('${tracker.id}')">изменить</button>
                   <button class="danger-btn" onclick="deleteTracker('${tracker.id}')">удалить</button>
                 </div>
               </div>
@@ -1525,10 +1482,13 @@
       document.getElementById('newFolderName').addEventListener('keypress', (event) => {
         if (event.key === 'Enter') addFolder();
       });
-      document.getElementById('themeSelect').addEventListener('change', (event) => {
-        applyTheme(event.target.value);
-        queueSave(true);
-      });
+      const themeSelect = document.getElementById('themeSelect');
+      if (themeSelect) {
+        themeSelect.addEventListener('change', (event) => {
+          applyTheme(event.target.value);
+          queueSave(true);
+        });
+      }
       document.getElementById('composerToggleBtn').addEventListener('click', (event) => {
         event.stopPropagation();
         toggleComposer();
